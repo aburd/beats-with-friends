@@ -1,0 +1,4 @@
+.SequencerBar {
+  display: flex;
+  flex-direction: horizontal;
+}

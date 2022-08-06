@@ -28,4 +28,3 @@ Beatmakers should understand the general concept of beats with friends. Collabor
 #### Collaboration
 
 - [] Turn Mode - Easier to implement than Performance Mode which may require more testing
-

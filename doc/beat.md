@@ -34,4 +34,3 @@ A sequence of different patterns.
 
 A song. Has a name, a sheet, a tempo. 
 
-

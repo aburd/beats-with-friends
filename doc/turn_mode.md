@@ -18,4 +18,3 @@ rectangle turn_mode {
 }
 @enduml
 ```
-

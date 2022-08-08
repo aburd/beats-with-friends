@@ -15,6 +15,13 @@ export function setPattern(bar: Bar) {
   });
 }
 
+/***
+ * Do something every chunk of notes
+ */
+export function subscribe(callback: () => void, noteN: number) {
+  Tone.Transport.scheduleRepeat(callback, `${noteN}n`)
+}
+
 export function init() {
   Tone.Transport.setLoopPoints("0:0:0", "1:0:0");
   Tone.Transport.loop = true;

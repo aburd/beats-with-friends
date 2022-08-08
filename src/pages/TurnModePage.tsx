@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Sequencer from "@/components/Sequencer";
 import api from "@/api";
+import useGlobalDOMEvents from "@/hooks/useGlobalDOMEvents";
 import * as util from "@/util";
 import * as audio from "@/audio";
 
@@ -32,6 +33,15 @@ export default function TurnModePage(props: TurnModePageProps) {
     }
     audio.play();
   }
+
+  useGlobalDOMEvents({
+    keyup: function(ev) {
+      const { key } = ev as KeyboardEvent;
+      if (key === " ") {
+        handlePlayClick();
+      }
+    }
+  });
 
   function handleBpmChange(newBpm: number) {
     if (newBpm > 0) {

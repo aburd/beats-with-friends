@@ -1,9 +1,16 @@
 .BeatButton {
   display: inline-flex;
+  position: relative;
   width: 3rem;
   height: 5rem;
   border: 2px solid black;
   border-radius: 3px;
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.4);
+}
+.BeatButton:active {
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
+  /* left: 1px; */
+  top: 1px;
 }
 
 .BeatButton.red {
@@ -37,4 +44,3 @@
 .BeatButton--led.active {
   background-color: yellow;
 }
-

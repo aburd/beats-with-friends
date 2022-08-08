@@ -13,14 +13,10 @@ export default function TurnModePage(props: TurnModePageProps) {
     4, 4,
   ]);
 
-  function fetchSong() {
+  useEffect(() => {
     api.song.get("dummy-id").then((song) => {
       setSong(song);
     });
-  }
-
-  useEffect(() => {
-    fetchSong();
   }, []);
 
   function handlePlayClick() {
@@ -34,8 +30,8 @@ export default function TurnModePage(props: TurnModePageProps) {
     }
   }
 
-  function handleSequenceChange(id: any, sequence: any) {
-    console.log({ id, sequence });
+  function handleSequenceChange(id: string, sixteenth: number, on: boolean) {
+    console.log({ id, sixteenth, on });
   }
 
   const initialSequence = song
@@ -45,17 +41,16 @@ export default function TurnModePage(props: TurnModePageProps) {
   return (
     <div className="TurnModePage">
       <h1>Turn Mode</h1>
-      <div className="card">{song?.name}</div>
-      <div className="card">Pattern: {patternId}</div>
+      <div>{song?.name}</div>
+      <div>Pattern: {patternId}</div>
       {initialSequence && (
         <Sequencer
           sequences={[initialSequence]}
           onPlayClick={handlePlayClick}
           onStopClick={audio.stop}
-          onSequenceChange={handleSequenceChange}
+          onSequenceBtnClick={handleSequenceChange}
         />
       )}
     </div>
   );
 }
-

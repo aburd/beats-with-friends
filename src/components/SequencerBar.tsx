@@ -6,45 +6,37 @@ type Sequence = boolean[];
 
 interface Props {
   initialSequence: Sequence;
+  id: string;
   timeSignature?: [number, number]; // [ top, buttom ]
-  onSequenceChange?: (sequence: Sequence) => void,
+  onBtnClick: (id: string, sixteenth: number, on: boolean) => void;
 }
 
 export default function SequencerBar({
+  id,
   initialSequence,
   timeSignature = [4, 4],
-  onSequenceChange = () => {},
+  onBtnClick = () => {},
 }: Props) {
   const [top, bottom] = timeSignature;
-  const [sequence, setSequence] = useState(initialSequence.slice(0, top*bottom));
-
-  useEffect(() => {
-    onSequenceChange(sequence);
-  }, [sequence]);
 
   const btns = useMemo(() => {
     const btnColors = ['red', 'orange', 'yellow', 'white'];
     return Array(top * bottom).fill(null).map((v, i) => {
-      const active = sequence[i];
+      const active = initialSequence[i];
       const bgColor = btnColors[Math.floor(i / top)] || 'white';
       return {active, bgColor}
     });
   }, [timeSignature]);
 
   return (
-    <div className="SequencerBar">
+    <div className="SequencerBar" data-id={id}>
       {btns.map(({active, bgColor}, i) => (
         <BeatButton
           key={`beat-btn-${i}`}
           initialActive={active}
           bgColor={bgColor}
           onClick={(active) => {
-            const newSequence = [
-              ...sequence.slice(0, i),
-              active,
-              ...sequence.slice(i + 1, sequence.length),
-            ];
-            setSequence(newSequence);
+            onBtnClick(id, i, active);
           }}
         />
       ))}

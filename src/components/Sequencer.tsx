@@ -3,7 +3,7 @@ import * as audio from "../audio";
 import SequencerBar from "./SequencerBar";
 
 export type Sequence = {
-  id: string | number;
+  id: string;
   initialSequence: boolean[];
 };
 
@@ -12,7 +12,7 @@ type Props = {
   onPlayClick: () => void;
   onStopClick: () => void;
   onInit?: () => void;
-  onSequenceChange: (id: string | number, sequence: boolean[]) => void;
+  onSequenceBtnClick: (id: string, sixteenth: number, on: boolean) => void;
 };
 
 export default function Sequencer({
@@ -20,7 +20,7 @@ export default function Sequencer({
   onPlayClick,
   onStopClick,
   onInit = () => {},
-  onSequenceChange,
+  onSequenceBtnClick,
 }: Props) {
   const playing = audio.state() === "playing";
 
@@ -35,11 +35,10 @@ export default function Sequencer({
       {sequences.map(({ id, initialSequence }) => (
         <SequencerBar
           key={`sequencer-bar-${id}`}
+          id={id}
           initialSequence={initialSequence}
           timeSignature={[4, 4]}
-          onSequenceChange={(sequence) => {
-            onSequenceChange("instrument", sequence);
-          }}
+          onBtnClick={onSequenceBtnClick}
         />
       ))}
     </div>

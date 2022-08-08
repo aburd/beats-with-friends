@@ -14,7 +14,7 @@ const songFromServer: Song = {
         instrumentId: 1,
         sequence: [
           // {startTime: [0, 0], length: 0.1},
-          {startTime: [1, 0], length: 0.1},
+          // {startTime: [1, 0], length: 0.1},
           // {startTime: [2, 0], length: 0.1},
           // {startTime: [3, 0], length: 0.1},
           // {startTime: [3, 2], length: 0.1},

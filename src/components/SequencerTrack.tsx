@@ -1,17 +1,18 @@
 import { useMemo, useState, useEffect } from "react";
 import BeatButton from "./BeatButton";
-import "./SequencerBar.css";
+import { TimeSignature } from '@/audio';
+import "./SequencerTrack.css";
 
 type Sequence = boolean[];
 
 interface Props {
   initialSequence: Sequence;
   id: string;
-  timeSignature?: [number, number]; // [ top, buttom ]
+  timeSignature?: TimeSignature;
   onBtnClick: (id: string, sixteenth: number, on: boolean) => void;
 }
 
-export default function SequencerBar({
+export default function SequencerTrack({
   id,
   initialSequence,
   timeSignature = [4, 4],
@@ -31,12 +32,11 @@ export default function SequencerBar({
   }, [timeSignature]);
 
   return (
-    <div className="SequencerBar" data-id={id}>
+    <div className="SequencerTrack" data-id={id}>
       {btns.map(({ active, bgColor }, i) => (
-        <div className="btn-container">
+        <div className="btn-container" key={`beat-btn-${i}`}>
           <span className="btn-label">{i + 1}</span>
           <BeatButton
-            key={`beat-btn-${i}`}
             initialActive={active}
             bgColor={bgColor}
             onClick={(active) => {

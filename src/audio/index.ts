@@ -1,11 +1,12 @@
-import * as Tone from 'tone'
-import {Bar} from './types'
-export * from './types'
+import * as Tone from "tone";
+import { Bar } from "./types";
+export * from "./types";
 
 const osc = new Tone.Oscillator().toDestination();
 
+let cur16th = -1;
+
 export function setPattern(bar: Bar) {
-  Tone.Transport.clear(0);
   bar.sequence.forEach((note, i) => {
     const [beat, sixteenth] = note.startTime;
 
@@ -18,8 +19,9 @@ export function setPattern(bar: Bar) {
 /***
  * Do something every chunk of notes
  */
-export function subscribe(callback: () => void, noteN: number) {
-  Tone.Transport.scheduleRepeat(callback, `${noteN}n`)
+export function subscribe(callback: (cur16th: number) => void) {
+  // @ts-ignore
+  Tone.Transport.on("sixteenthTick", callback);
 }
 
 export function init() {
@@ -36,6 +38,10 @@ export function state(): string {
 }
 
 export function play() {
+  Tone.Transport.scheduleRepeat(function (time) {
+    cur16th = (cur16th + 1) % 16;
+    Tone.Transport.emit("sixteenthTick", cur16th);
+  }, "16n");
   Tone.Transport.start();
 }
 
@@ -44,6 +50,7 @@ export function pause() {
 }
 
 export function stop() {
+  Tone.Transport.clear(0);
+  cur16th = -1;
   Tone.Transport.stop();
 }
-

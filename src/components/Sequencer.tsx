@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import * as audio from "../audio";
-import SequencerBar from "./SequencerBar";
+import SequencerTrack from "./SequencerTrack";
+import SequencerBeatTracker from "./SequencerBeatTracker";
 
 export type Sequence = {
   id: string;
@@ -30,11 +31,12 @@ export default function Sequencer({
 
   return (
     <div className="Sequencer">
+      <SequencerBeatTracker /> 
       <button onClick={onPlayClick}>{playing ? "Pause" : "Play"}</button>
       <button onClick={onStopClick}>Stop</button>
       {sequences.map(({ id, initialSequence }) => (
-        <SequencerBar
-          key={`sequencer-bar-${id}`}
+        <SequencerTrack
+          key={`sequencer-track-${id}`}
           id={id}
           initialSequence={initialSequence}
           timeSignature={[4, 4]}

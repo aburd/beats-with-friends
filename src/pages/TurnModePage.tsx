@@ -8,6 +8,7 @@ type TurnModePageProps = {};
 
 export default function TurnModePage(props: TurnModePageProps) {
   const [song, setSong] = useState<audio.Song | null>(null);
+  const [bpm, setBpm] = useState<number>(120);
   const [patternId, setPatternId] = useState<string | number>("1");
   const [timeSignature, setTimeSignature] = useState<audio.TimeSignature>([
     4, 4,
@@ -16,17 +17,25 @@ export default function TurnModePage(props: TurnModePageProps) {
   useEffect(() => {
     api.song.get("dummy-id").then((song) => {
       setSong(song);
+      audio.setPattern(song.patterns[patternId].bars[0]);
     });
   }, []);
 
+  useEffect(() => {
+    audio.setBpm(bpm);
+  }, [bpm])
+
   function handlePlayClick() {
-    if (audio.state() === "playing") {
+    if (audio.state() === "started") {
       audio.pause();
       return;
     }
-    if (song) {
-      audio.setPattern(song.patterns[patternId].bars[0]);
-      audio.play();
+    audio.play();
+  }
+
+  function handleBpmChange(newBpm: number) {
+    if (newBpm > 0) {
+      setBpm(newBpm);
     }
   }
 
@@ -43,6 +52,10 @@ export default function TurnModePage(props: TurnModePageProps) {
       <h1>Turn Mode</h1>
       <div>{song?.name}</div>
       <div>Pattern: {patternId}</div>
+      <div>
+        <label htmlFor="bpm">BPM</label>
+        <input type="number" value={bpm} onChange={(e) => handleBpmChange(e.target.value)} />
+      </div>
       {initialSequence && (
         <Sequencer
           sequences={[initialSequence]}

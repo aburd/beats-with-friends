@@ -16,10 +16,14 @@ export default function TurnModePage(props: TurnModePageProps) {
   ]);
 
   useEffect(() => {
+    audio.init();
     api.song.get("dummy-id").then((song) => {
       setSong(song);
       audio.setPattern(song.patterns[patternId].bars[0]);
     });
+    return () => {
+      audio.cleanup();
+    }
   }, []);
 
   useEffect(() => {

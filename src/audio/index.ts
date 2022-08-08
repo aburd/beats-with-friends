@@ -5,6 +5,7 @@ export * from './types'
 const osc = new Tone.Oscillator().toDestination();
 
 export function setPattern(bar: Bar) {
+  Tone.Transport.clear(0);
   bar.sequence.forEach((note, i) => {
     const [beat, sixteenth] = note.startTime;
 

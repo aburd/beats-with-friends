@@ -10,14 +10,14 @@ const songFromServer: Song = {
   patterns: {
     1: {
       name: 'foo',
-      bar: [{
+      bars: [{
         instrumentId: 1,
         sequence: [
-          {startTime: [0, 0], length: 0.1},
+          // {startTime: [0, 0], length: 0.1},
           {startTime: [1, 0], length: 0.1},
-          {startTime: [2, 0], length: 0.1},
-          {startTime: [3, 0], length: 0.1},
-          {startTime: [3, 2], length: 0.1},
+          // {startTime: [2, 0], length: 0.1},
+          // {startTime: [3, 0], length: 0.1},
+          // {startTime: [3, 2], length: 0.1},
         ],
       }],
     },

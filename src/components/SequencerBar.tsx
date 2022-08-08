@@ -42,7 +42,7 @@ export default function SequencerBar({
             const newSequence = [
               ...sequence.slice(0, i),
               active,
-              ...sequence.slice(i, sequence.length),
+              ...sequence.slice(i + 1, sequence.length),
             ];
             setSequence(newSequence);
           }}

@@ -1,29 +1,16 @@
 import {useEffect, useState} from 'react'
+import * as Tone from 'tone'
 import Sequencer from './components/Sequencer'
-import {Bar} from './audio/types'
 import api from './api'
+import * as util from './util'
 import * as audio from './audio'
 import './App.css'
 import './audio'
 
-const timeSignature = [4, 4];
-
-function sixteethToBeat(n: number, top: number) {
-  return Math.floor(n / top);
-}
-
-function barToSequence(timeSignature: [number, number], bar: Bar) {
-  const [top, bottom] = timeSignature;
-  const activeSixteenths = bar.map(({startTime}) => (startTime[0] * top) * startTime[1]);
-  return Array(top * bottom).fill(null).map((_, i) => {
-    return activeSixteenths.includes(i);
-  });
-}
-
 function App() {
-  const [song, setSong] = useState<any>(null);
-  const [pattern, setPattern] = useState(null);
-
+  const [song, setSong] = useState<audio.Song | null>(null);
+  const [patternId, setPatternId] = useState<string | number>('1');
+  const [timeSignature, setTimeSignature] = useState<audio.TimeSignature>([4, 4]);
   function fetchSong() {
     api.song
       .get('dummy-id')
@@ -33,13 +20,25 @@ function App() {
   }
 
   useEffect(() => {
-    
-  }, [pattern]);
+    fetchSong();
+  }, []);
 
-  function handlePlayClick(playing: boolean) {
+  function handlePlayClick() {
+    if (audio.state() === 'playing') {
+      audio.pause();
+      return
+    }
     audio.play();
-    if (!playing) audio.pause();
   }
+
+  function handleSequencerInit() {
+    if (song) {
+      console.log(audio.state());
+      audio.setPattern(song.patterns[patternId].bars[0]);
+    }
+  }
+
+  const initialSequence = song ? util.barToSequence(timeSignature, song.patterns[patternId].bars[0]) : null;
 
   return (
     <div className="App">
@@ -47,13 +46,22 @@ function App() {
         Beats With Friends
       </h1>
       <div className="card">
-        Play
+        {song?.name}
       </div>
-      <Sequencer
-        sequences={[]}
-        onPlayClick={handlePlayClick}
-        onStopClick={audio.stop}
-      />
+      <div className="card">
+        Pattern: {patternId}
+      </div>
+      {initialSequence && (
+        <Sequencer
+          sequences={[
+            initialSequence
+          ]}
+          onPlayClick={handlePlayClick}
+          onStopClick={audio.stop}
+          onInit={handleSequencerInit}
+          onSequenceChange={(id, sequence) => console.log({id, sequence})}
+        />
+      )}
     </div>
   )
 }

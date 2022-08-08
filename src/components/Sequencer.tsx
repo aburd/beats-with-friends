@@ -1,40 +1,40 @@
 import {useState, useEffect} from 'react';
+import * as audio from '../audio'
 import SequencerBar from './SequencerBar'
 
+export type Sequence = {
+  id: string | number;
+  initialSequence: boolean[];
+}
+
 type Props = {
-  sequences: {
-    id: string;
-    initialSequence: boolean[];
-  }[],
-  initialPlaying?: boolean;
-  onPlayClick: (playing: boolean) => void;
+  sequences: Sequence[],
+  onPlayClick: () => void;
   onStopClick: () => void;
-  onSequenceChange: (id: string, sequence: boolean[]) => void,
+  onInit: () => void;
+  onSequenceChange: (id: string | number, sequence: boolean[]) => void,
 }
 
 export default function Sequencer({
   sequences,
-  initialPlaying = false,
   onPlayClick,
   onStopClick,
+  onInit,
   onSequenceChange
 }: Props) {
-  const [playing, setPlaying] = useState(initialPlaying)
+  const playing = audio.state() === 'playing';
 
   useEffect(() => {
-    onPlayClick(!playing);
-  }, [playing])
-
-  function handlePlayClick() {
-    setPlaying(!playing);
-  }
+    onInit();
+  }, []);
 
   return (
     <div className="Sequencer">
-      <button onClick={handlePlayClick}>{playing ? 'Pause' : 'Play'}</button>
+      <button onClick={onPlayClick}>{playing ? 'Pause' : 'Play'}</button>
       <button onClick={onStopClick}>Stop</button>
       {sequences.map(({id, initialSequence}) => (
         <SequencerBar
+          key={`sequencer-bar-${id}`}
           initialSequence={initialSequence}
           timeSignature={[4, 4]}
           onSequenceChange={(sequence) => {

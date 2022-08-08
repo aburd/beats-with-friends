@@ -4,6 +4,8 @@
  */
 export type BeatsSixteenths = [number, number];
 
+export type TimeSignature = [number, number];
+
 export interface Sample {
   id: string;
   url: string;
@@ -29,7 +31,7 @@ type PatternId = string | number;
 
 export type Pattern = {
   name: PatternId;
-  bar: Bar[];
+  bars: Bar[];
 }
 
 type Time = [number, number, number];

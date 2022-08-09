@@ -3,13 +3,8 @@ import * as audio from "../audio";
 import SequencerTrack from "./SequencerTrack";
 import SequencerBeatTracker from "./SequencerBeatTracker";
 
-export type Sequence = {
-  id: string;
-  initialSequence: boolean[];
-};
-
 type Props = {
-  sequences: Sequence[];
+  sequences: audio.Sequence[];
   onPlayClick: () => void;
   onStopClick: () => void;
   onInit?: () => void;
@@ -34,11 +29,11 @@ export default function Sequencer({
       <SequencerBeatTracker /> 
       <button onClick={onPlayClick}>{playing ? "Pause" : "Play"}</button>
       <button onClick={onStopClick}>Stop</button>
-      {sequences.map(({ id, initialSequence }) => (
+      {sequences.map(({ id, notes }) => (
         <SequencerTrack
           key={`sequencer-track-${id}`}
           id={id}
-          initialSequence={initialSequence}
+          initialSequence={notes}
           timeSignature={[4, 4]}
           onBtnClick={onSequenceBtnClick}
         />

@@ -1,5 +1,4 @@
-import {TimeSignature, Bar} from './audio/types'
-import {Sequence} from './components/Sequencer'
+import {Sequence, TimeSignature, Bar} from './types'
 
 export function barToSequence(timeSignature: TimeSignature, bar: Bar): Sequence {
   const [top, bottom] = timeSignature;
@@ -9,8 +8,8 @@ export function barToSequence(timeSignature: TimeSignature, bar: Bar): Sequence 
     });
 
   return {
-    id: bar.instrumentId,
-    initialSequence: Array(top * bottom)
+    id: bar.instrumentId.toString(),
+    notes: Array(top * bottom)
       .fill(null)
       .map((_, i) => activeSixteenths.includes(i)),
   }

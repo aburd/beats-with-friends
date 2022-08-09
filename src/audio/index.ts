@@ -1,25 +1,85 @@
 import * as Tone from "tone";
-import { Bar } from "./types";
+import omit from 'lodash/omit';
+import {Sequence, SequenceMap} from "./types";
 export * from "./types";
+export * as util from './util';
 
 const osc = new Tone.Oscillator().toDestination();
 
-const audioState = {
+const clap = new Tone.Sampler({
+  urls: {
+    A1: "clap.wav",
+  },
+  baseUrl: location.origin + '/samples/',
+}).toDestination();
+
+const kick = new Tone.Sampler({
+  urls: {
+    A1: "kick(2).wav",
+  },
+  baseUrl: location.origin + '/samples/',
+}).toDestination();
+
+const samples = {
+  1: 'kick',
+  2: 'clap',
+}
+
+type AudioState = {
+  cur16th: number,
+  eventIds: number[],
+  sequences: SequenceMap,
+}
+
+const audioState: AudioState = {
   cur16th: -1,
-  eventIds: [] as number[],
+  eventIds: [],
+  sequences: {},
 }
 
-export function setPattern(bar: Bar) {
-  bar.sequence.forEach((note, i) => {
-    const [beat, sixteenth] = note.startTime;
+function loop(time: number) {
+  for (const [id, notes] of Object.entries(audioState.sequences)) {
+    notes.map((note, i) => {
+      if (!note) return;
 
-    Tone.Transport.schedule((time) => {
-      osc.start(time).stop(time + note.length);
-    }, `0:${beat}:${sixteenth}`);
-  });
+      // @ts-ignore
+      if (samples[id] === 'kick') {
+        kick.triggerAttackRelease(["A1"], 0.5);
+      }
+      // @ts-ignore
+      if (samples[id] === 'clap') {
+        clap.triggerAttackRelease(["A1"], 0.5);
+      }
+    });
+  }
 }
 
-type AudioEvent = "sixteenthTick";
+export function registerSequence(sequence: Sequence) {
+  const {id, notes} = sequence;
+  audioState.sequences = {
+    ...audioState.sequences,
+    [id]: notes,
+  }
+}
+
+export function unregisterSequence(id: string) {
+  if (!audioState.sequences[id]) return;
+
+  audioState.sequences = omit(audioState.sequences, id);
+}
+
+export function updateSequence(id: string, sixteenth: number, on: boolean) {
+  if (!audioState.sequences[id]) {
+    throw Error(`Sequence [${id}] does not exist. Cannot update.`);
+  }
+  if (!audioState.sequences[id][sixteenth]) {
+    throw Error(`Invalid update to sequence [${id}] of length ${audioState.sequences[id].length} with 16th of ${sixteenth}`);
+  }
+
+  audioState.sequences[id][sixteenth] = on;
+}
+
+type AudioEvent = "sixteenthTick" | "stop" | "start";
 
 /***
  * Do something on some event
@@ -40,13 +100,16 @@ export function init() {
   const evId = Tone.Transport.scheduleRepeat(function (time) {
     audioState.cur16th = (audioState.cur16th + 1) % 16;
     Tone.Transport.emit("sixteenthTick", audioState.cur16th);
+    loop(time);
   }, "16n");
   audioState.eventIds.push(evId);
 }
 
 export function cleanup() {
-  console.log({audioState})
-  audioState.eventIds.forEach((id) => Tone.Transport.clear(id));
+  audioState.eventIds.forEach((id) => {
+    Tone.Transport.clear(id)
+    audioState.eventIds = audioState.eventIds.slice(1);
+  });
 }
 
 export function setBpm(bpm: number) {
@@ -58,7 +121,7 @@ export function state(): string {
 }
 
 export function play() {
-  Tone.Transport.start();
+  Tone.Transport.start(0);
 }
 
 export function pause() {
@@ -66,7 +129,7 @@ export function pause() {
 }
 
 export function stop() {
-  Tone.Transport.clear(0);
-  cur16th = -1;
+  cleanup();
+  audioState.cur16th = -1;
   Tone.Transport.stop();
 }

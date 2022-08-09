@@ -1,11 +1,21 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import Sequencer from "@/components/Sequencer";
 import api from "@/api";
 import useGlobalDOMEvents from "@/hooks/useGlobalDOMEvents";
-import * as util from "@/util";
 import * as audio from "@/audio";
 
 type TurnModePageProps = {};
+
+let setP = false;
+
+function registerSequences(song: audio.Song, timeSignature: audio.TimeSignature) {
+  for (const [patternId, pattern] of Object.entries(song.patterns)) {
+    for (const bar of pattern.bars) {
+      const seq = audio.util.barToSequence(timeSignature, bar)
+      audio.registerSequence(seq)
+    }
+  }
+}
 
 export default function TurnModePage(props: TurnModePageProps) {
   const [song, setSong] = useState<audio.Song | null>(null);
@@ -19,7 +29,10 @@ export default function TurnModePage(props: TurnModePageProps) {
     audio.init();
     api.song.get("dummy-id").then((song) => {
       setSong(song);
-      audio.setPattern(song.patterns[patternId].bars[0]);
+      if (!setP) {
+        registerSequences(song, timeSignature)
+        setP = true;
+      }
     });
     return () => {
       audio.cleanup();
@@ -39,8 +52,8 @@ export default function TurnModePage(props: TurnModePageProps) {
   }
 
   useGlobalDOMEvents({
-    keyup: function(ev) {
-      const { key } = ev as KeyboardEvent;
+    keyup: function (ev) {
+      const {key} = ev as KeyboardEvent;
       if (key === " ") {
         handlePlayClick();
       }
@@ -54,11 +67,15 @@ export default function TurnModePage(props: TurnModePageProps) {
   }
 
   function handleSequenceChange(id: string, sixteenth: number, on: boolean) {
-    console.log({ id, sixteenth, on });
+    console.log({id, sixteenth, on})
+    audio.updateSequence(id, sixteenth, on)
   }
 
   const initialSequence = song
-    ? util.barToSequence(timeSignature, song.patterns[patternId].bars[0])
+    ? audio.util.barToSequence(timeSignature, song.patterns[patternId].bars[0])
+    : null;
+  const clapSequence = song
+    ? audio.util.barToSequence(timeSignature, song.patterns['2'].bars[0])
     : null;
 
   return (
@@ -68,11 +85,11 @@ export default function TurnModePage(props: TurnModePageProps) {
       <div>Pattern: {patternId}</div>
       <div>
         <label htmlFor="bpm">BPM</label>
-        <input type="number" value={bpm} onChange={(e) => handleBpmChange(e.target.value)} />
+        <input type="number" value={bpm} onChange={(e) => handleBpmChange(Number(e.target.value))} />
       </div>
-      {initialSequence && (
+      {initialSequence && clapSequence && (
         <Sequencer
-          sequences={[initialSequence]}
+          sequences={[initialSequence, clapSequence]}
           onPlayClick={handlePlayClick}
           onStopClick={audio.stop}
           onSequenceBtnClick={handleSequenceChange}

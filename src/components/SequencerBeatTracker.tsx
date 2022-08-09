@@ -10,6 +10,13 @@ function handleSixteenthChange(cur16th: number) {
   lightEls[cur16th].classList.add('on');
 }
 
+function handleStop() {
+  const lightEls = document.querySelectorAll('.tracker-light.on');
+  for (const lightEl of lightEls) {
+    lightEl.classList.remove('on');
+  }
+}
+
 interface Props {
   timeSignature?: audio.TimeSignature;
 }
@@ -21,6 +28,7 @@ export default function SequencerBeatTracker({
 
   useEffect(() => {
     audio.subscribe('sixteenthTick', handleSixteenthChange)
+    audio.subscribe('stop', handleStop);
     return () => {
       audio.unsubscribe('sixteenthTick', handleSixteenthChange)
     }

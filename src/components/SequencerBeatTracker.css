@@ -1,0 +1,22 @@
+.SequencerBeatTracker {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.4rem;
+  margin: 1rem 0;
+}
+
+.SequencerBeatTracker .tracker-light-container {
+  display: flex;
+  justify-content: center;
+  width: 3rem;
+}
+
+.SequencerBeatTracker .tracker-light {
+  height: 0.5rem;
+  width: 2rem;
+  background: #006400;
+}
+
+.SequencerBeatTracker .tracker-light.on {
+  background: #7cfc00;
+}

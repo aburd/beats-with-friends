@@ -10,7 +10,7 @@ A kind of instrument. A wav, mp3, etc.
 
 A note is the data containing how to play an instrument. 
 
-## Sequence
+## Bar
 
 A list of notes for an instrument. 
 
@@ -20,7 +20,7 @@ The speed at which the notes in a sequence are played.
 
 ## Pattern
 
-Many sequences of instruments together all with the same length.
+Many bars of instruments together all with the same length.
 
 ### Time Signature
 

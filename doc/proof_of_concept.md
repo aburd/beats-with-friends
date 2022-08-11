@@ -6,7 +6,7 @@ Beatmakers should understand the general concept of beats with friends. Collabor
 
 #### Beat
 
-- [] 808 style drum interface
+- [x] 808 style drum interface
 - [] Samples
   - [] Cut
 - [] Effects

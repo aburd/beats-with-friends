@@ -9,7 +9,7 @@ export function barToSequence(timeSignature: TimeSignature, bar: Bar): Sequence 
 
   return {
     id: bar.instrumentId.toString(),
-    notes: Array(top * bottom)
+    pattern: Array(top * bottom)
       .fill(null)
       .map((_, i) => activeSixteenths.includes(i)),
   }

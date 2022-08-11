@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {createSignal} from 'react'
 import './BeatButton.css'
 
 type Props = {
@@ -13,18 +13,18 @@ export default function BeatButton({
   onClick = () => {},
   ...rest
 }: Props) {
-  const [active, setActive] = useState(initialActive);
+  const [active, setActive] = createSignal(initialActive);
 
   return (
     <button
-      className={`BeatButton ${bgColor}`}
+      class={`BeatButton ${bgColor}`}
       onClick={() => {
         setActive(!active);
         onClick(!active);
       }}
       {...rest}>
-      <div className="BeatButton--led-container">
-        <div className={`BeatButton--led ${active ? 'active' : ''}`} />
+      <div class="BeatButton--led-container">
+        <div class={`BeatButton--led ${active ? 'active' : ''}`} />
       </div>
     </button>
   )

@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, createSignal, createEffect } from "react";
 import BeatButton from "./BeatButton";
 import { TimeSignature } from '@/audio';
 import "./SequencerTrack.css";
@@ -32,10 +32,10 @@ export default function SequencerTrack({
   }, [timeSignature]);
 
   return (
-    <div className="SequencerTrack" data-id={id}>
+    <div class="SequencerTrack" data-id={id}>
       {btns.map(({ active, bgColor }, i) => (
-        <div className="btn-container" key={`beat-btn-${i}`}>
-          <span className="btn-label">{i + 1}</span>
+        <div class="btn-container" key={`beat-btn-${i}`}>
+          <span class="btn-label">{i + 1}</span>
           <BeatButton
             initialActive={active}
             bgColor={bgColor}

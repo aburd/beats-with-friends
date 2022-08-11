@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { createSignal, createEffect, useRef } from "react";
 import * as audio from "../audio";
 import SequencerTrack from "./SequencerTrack";
 import SequencerBeatTracker from "./SequencerBeatTracker";
@@ -20,12 +20,12 @@ export default function Sequencer({
 }: Props) {
   const playing = audio.state() === "playing";
 
-  useEffect(() => {
+  createEffect(() => {
     onInit();
   }, []);
 
   return (
-    <div className="Sequencer">
+    <div class="Sequencer">
       <SequencerBeatTracker /> 
       <button onClick={onPlayClick}>{playing ? "Pause" : "Play"}</button>
       <button onClick={onStopClick}>Stop</button>

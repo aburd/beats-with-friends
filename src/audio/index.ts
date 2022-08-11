@@ -2,8 +2,8 @@ import * as Tone from "tone";
 import * as tracks from "./tracks";
 import * as store from './store';
 
+export * from "./types";
 export * as sequences from './sequences';
-export * as types from "./types";
 export * as util from './util';
 export { tracks, store };
 
@@ -85,4 +85,5 @@ export default {
   subscribe,
   unsubscribe,
   audioStore,
+  state,
 }

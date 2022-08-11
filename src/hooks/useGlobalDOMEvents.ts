@@ -1,11 +1,11 @@
-import {useEffect} from 'react'
+import {createEffect} from 'react'
 
 type Props = {
   [key in keyof WindowEventMap]?: EventListenerOrEventListenerObject
 }
 
 export default function useGlobalDOMEvents(props: Props) {
-  return useEffect(() => {
+  return createEffect(() => {
     for (const [eventKey, fn] of Object.entries(props)) {
       window.addEventListener(eventKey, fn, false);
     }

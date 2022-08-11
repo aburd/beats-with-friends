@@ -1,4 +1,4 @@
-import {useRef, useEffect} from 'react'
+import {useRef, createEffect} from 'react'
 import * as audio from "@/audio";
 import "./SequencerBeatTracker.css";
 
@@ -26,7 +26,7 @@ export default function SequencerBeatTracker({
 }: Props) {
   const [top, bottom] = timeSignature;
 
-  useEffect(() => {
+  createEffect(() => {
     audio.subscribe('sixteenthTick', handleSixteenthChange)
     audio.subscribe('stop', handleStop);
     return () => {
@@ -35,13 +35,13 @@ export default function SequencerBeatTracker({
   }, []);
 
   return (
-    <div className="SequencerBeatTracker">
+    <div class="SequencerBeatTracker">
       {Array(top * bottom)
         .fill(null)
         .map((_, i) => {
           return (
-            <div className="tracker-light-container" key={`light-${i}`}>
-              <div className={`tracker-light`} />
+            <div class="tracker-light-container" key={`light-${i}`}>
+              <div class={`tracker-light`} />
             </div>
           );
         })}

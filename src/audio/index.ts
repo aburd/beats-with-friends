@@ -2,24 +2,14 @@ import * as Tone from "tone";
 import omit from 'lodash/omit';
 import {Note, Sequence} from "./types";
 import * as tracks from "./tracks";
+import * as store from './store';
 export * from "./types";
 export * as util from './util';
 export { tracks };
 
-type AudioEvent = "sixteenthTick" | "stop" | "start";
+const audioStore = store.create();
 
-type AudioStore = {
-  cur16th: number;
-  eventIds: number[];
-  sequences: Record<string, Sequence>;
-  tracks: Record<string, tracks.Track>;
-}
-const audioStore: AudioStore = {
-  cur16th: -1,
-  eventIds: [],
-  sequences: {},
-  tracks: {},
-}
+type AudioEvent = "sixteenthTick" | "stop" | "start";
 
 function loop(time: number) {
   audioStore.cur16th = (audioStore.cur16th + 1) % 16;
@@ -32,44 +22,6 @@ function loop(time: number) {
 
     tracks.play(track, time);
   }
-}
-
-export function registerSequence(sequence: Sequence) {
-  audioStore.sequences = {
-    ...audioStore.sequences,
-    [sequence.id]: sequence,
-  }
-}
-
-export function unregistertrack(id: string) {
-  if (!audioStore.tracks[id]) return;
-
-  audioStore.tracks = omit(audioStore.tracks, id);
-}
-
-export function registerTrack(track: tracks.Track) {
-  audioStore.tracks = {
-    ...audioStore.tracks,
-    [track.id]: track,
-  }
-}
-
-export function unregisterTrack(id: string) {
-  if (!audioStore.sequences[id]) return;
-
-  audioStore.sequences = omit(audioStore.sequences, id);
-}
-
-export function updateSequence(id: string, sixteenth: number, on: boolean) {
-  if (!audioStore.sequences[id]) {
-    throw Error(`Sequence [${id}] does not exist. Cannot update.`);
-  }
-  if (!audioStore.sequences[id].pattern[sixteenth]) {
-    const len = audioStore.sequences[id].pattern.length;
-    throw Error(`Invalid update to sequence [${id}] of length ${len} with 16th of ${sixteenth}`);
-  }
-
-  audioStore.sequences[id].pattern[sixteenth] = on;
 }
 
 /***

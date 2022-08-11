@@ -1,10 +1,10 @@
-import { createSignal, createEffect, useRef } from "react";
-import * as audio from "../audio";
+import {For, createSignal, createEffect} from "solid-js";
+import audio, {sequences} from "../audio";
 import SequencerTrack from "./SequencerTrack";
 import SequencerBeatTracker from "./SequencerBeatTracker";
 
 type Props = {
-  sequences: audio.Sequence[];
+  sequences: sequences.Sequence[];
   onPlayClick: () => void;
   onStopClick: () => void;
   onInit?: () => void;
@@ -26,18 +26,19 @@ export default function Sequencer({
 
   return (
     <div class="Sequencer">
-      <SequencerBeatTracker /> 
+      <SequencerBeatTracker />
       <button onClick={onPlayClick}>{playing ? "Pause" : "Play"}</button>
       <button onClick={onStopClick}>Stop</button>
-      {sequences.map(({ id, notes }) => (
-        <SequencerTrack
-          key={`sequencer-track-${id}`}
-          id={id}
-          initialSequence={notes}
-          timeSignature={[4, 4]}
-          onBtnClick={onSequenceBtnClick}
-        />
-      ))}
+      <For each={sequences}>
+        {({id, pattern}) => (
+          <SequencerTrack
+            id={id}
+            initialSequence={pattern}
+            timeSignature={[4, 4]}
+            onBtnClick={onSequenceBtnClick}
+          />
+        )}
+      </For>
     </div>
   );
 }

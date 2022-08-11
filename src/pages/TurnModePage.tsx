@@ -1,13 +1,13 @@
-import {createEffect, createSignal} from "solid-js";
-// import Sequencer from "@/components/Sequencer";
+import {Show, createEffect, createSignal, createResource} from "solid-js";
+import Sequencer from "@/components/Sequencer";
 import api from "@/api";
 // import createGlobalDOMEvents from "@/hooks/createGlobalDOMEvents";
-import audio, { Song, TimeSignature } from "@/audio";
+import audio, {Song, TimeSignature} from "@/audio";
 
 type TurnModePageProps = {};
 
 export default function TurnModePage(props: TurnModePageProps) {
-  const [song, setSong] = createSignal<Song | null>(null);
+  const [songData, {mutate, refetch}] = createResource<Song | null>(() => api.song.get('placeholder'));
   const [bpm, setBpm] = createSignal<number>(120);
   const [patternId, setPatternId] = createSignal<string | number>("1");
   const [timeSignature, setTimeSignature] = createSignal<TimeSignature>([
@@ -27,12 +27,20 @@ export default function TurnModePage(props: TurnModePageProps) {
   return (
     <div class="TurnModePage">
       <h1>Turn Mode</h1>
-      <div>{song?.name}</div>
-      <div>Pattern: {patternId}</div>
-      <div>
-        <label for="bpm">BPM</label>
-        <input type="number" value={bpm()} onInput={(e) => handleBpmChange(Number(e.currentTarget.value))} />
-      </div>
+      <Show when={!songData.loading} fallback={<div>Loading song...</div>}>
+        <div>{songData()?.name}</div>
+        <div>Pattern: {patternId}</div>
+        <div>
+          <label for="bpm">BPM</label>
+          <input type="number" value={bpm()} onInput={(e) => handleBpmChange(Number(e.currentTarget.value))} />
+        </div>
+        <Sequencer
+          sequences={[]}
+          onPlayClick={() => {}}
+          onStopClick={() => {}}
+          onSequenceBtnClick={() => {}}
+        />
+      </Show>
     </div>
   );
 }

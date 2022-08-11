@@ -1,4 +1,4 @@
-import {createEffect} from 'react'
+import {createEffect} from 'solid-js'
 
 type Props = {
   [key in keyof WindowEventMap]?: EventListenerOrEventListenerObject

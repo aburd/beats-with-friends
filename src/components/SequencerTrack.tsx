@@ -1,6 +1,6 @@
-import { useMemo, createSignal, createEffect } from "react";
+import {For, createMemo, createSignal, createEffect} from "solid-js";
 import BeatButton from "./BeatButton";
-import { TimeSignature } from '@/audio';
+import {TimeSignature} from '@/audio';
 import "./SequencerTrack.css";
 
 type Sequence = boolean[];
@@ -20,31 +20,33 @@ export default function SequencerTrack({
 }: Props) {
   const [top, bottom] = timeSignature;
 
-  const btns = useMemo(() => {
+  const btns = createMemo(() => {
     const btnColors = ["red", "orange", "yellow", "white"];
     return Array(top * bottom)
       .fill(null)
       .map((v, i) => {
         const active = initialSequence[i];
         const bgColor = btnColors[Math.floor(i / top)] || "white";
-        return { active, bgColor };
+        return {active, bgColor};
       });
   }, [timeSignature]);
 
   return (
     <div class="SequencerTrack" data-id={id}>
-      {btns.map(({ active, bgColor }, i) => (
-        <div class="btn-container" key={`beat-btn-${i}`}>
-          <span class="btn-label">{i + 1}</span>
-          <BeatButton
-            initialActive={active}
-            bgColor={bgColor}
-            onClick={(active) => {
-              onBtnClick(id, i, active);
-            }}
-          />
-        </div>
-      ))}
+      <For each={btns()}>
+        {({active, bgColor}, i) => (
+          <div class="btn-container">
+            <span class="btn-label">{i() + 1}</span>
+            <BeatButton
+              initialActive={active}
+              bgColor={bgColor}
+              onClick={(active) => {
+                onBtnClick(id, i(), active);
+              }}
+            />
+          </div>
+        )}
+      </For>
     </div>
   );
 }

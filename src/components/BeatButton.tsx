@@ -1,11 +1,11 @@
-import React, {createSignal} from 'react'
+import {JSX, createSignal} from 'solid-js'
 import './BeatButton.css'
 
 type Props = {
   initialActive: boolean;
   bgColor?: string;
   onClick?: (active: boolean) => void;
-} & Omit<React.HTMLAttributes<HTMLButtonElement>, 'onClick'>;
+} & Omit<JSX.HTMLAttributes<HTMLButtonElement>, 'onClick'>;
 
 export default function BeatButton({
   initialActive = false,
@@ -24,7 +24,7 @@ export default function BeatButton({
       }}
       {...rest}>
       <div class="BeatButton--led-container">
-        <div class={`BeatButton--led ${active ? 'active' : ''}`} />
+        <div class={`BeatButton--led ${active() ? 'active' : undefined}`} />
       </div>
     </button>
   )

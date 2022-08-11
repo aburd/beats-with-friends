@@ -1,12 +1,11 @@
-import * as Tone from "tone";
 import omit from 'lodash/omit';
-import {Sequence} from "./types";
+import * as sequences from './sequences';
 import * as tracks from "./tracks";
 
 type AudioStore = {
   cur16th: number;
   eventIds: number[];
-  sequences: Record<string, Sequence>;
+  sequences: Record<string, sequences.Sequence>;
   tracks: Record<string, tracks.Track>;
 }
 
@@ -19,11 +18,15 @@ export function create(): AudioStore {
   }
 }
 
-export function registerSequence(store: AudioStore, sequence: Sequence) {
+/**
+ * @return {string} The ID of the sequence
+ */
+export function registerSequence(store: AudioStore, sequence: sequences.Sequence): string {
   store.sequences = {
     ...store.sequences,
     [sequence.id]: sequence,
   }
+  return sequence.id;
 }
 
 export function unregisterSequence(store: AudioStore, id: string) {
@@ -36,18 +39,18 @@ export function updateSequence(store: AudioStore, id: string, sixteenth: number,
   if (!store.sequences[id]) {
     throw Error(`Sequence [${id}] does not exist. Cannot update.`);
   }
-  if (!store.sequences[id].pattern[sixteenth]) {
-    const len = store.sequences[id].pattern.length;
-    throw Error(`Invalid update to sequence [${id}] of length ${len} with 16th of ${sixteenth}`);
-  }
-  store.sequences[id].pattern[sixteenth] = on;
+  sequences.updatePattern(store.sequences[id], sixteenth, on)
 }
 
+/**
+ * @return {string} The ID of the track
+ */
 export function registerTrack(store: AudioStore, track: tracks.Track) {
   store.tracks = {
     ...store.tracks,
     [track.id]: track,
   }
+  return track.id;
 }
 
 export function unregisterTrack(store: AudioStore, id: string) {

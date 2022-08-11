@@ -1,5 +1,4 @@
 import * as Tone from "tone";
-import {Note} from './types';
 import {v4 as uuidv4} from 'uuid';
 import * as util from './util';
 
@@ -35,6 +34,7 @@ export function create(opts: {
   }
 
   let sampler, synth;
+  const id = uuidv4();
   const meter = new Tone.Meter();
 
   if (opts.samplerUrl) {
@@ -45,7 +45,7 @@ export function create(opts: {
   }
 
   return {
-    id: uuidv4(),
+    id,
     name: opts.name || 'New Track',
     meter,
     sampler,

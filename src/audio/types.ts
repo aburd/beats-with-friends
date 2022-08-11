@@ -27,11 +27,6 @@ export type Bar = {
   sequence: Note[]
 }
 
-export type Sequence = {
-  id: string;
-  pattern: boolean[];
-};
-
 type PatternId = string | number;
 
 export type Pattern = {

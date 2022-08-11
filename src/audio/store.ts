@@ -15,7 +15,7 @@ export type AudioStore = {
 export function create(): AudioStore {
   return {
     cur16th: -1,
-    curPattern: null,
+    curPattern: '1',
     eventIds: [],
     instrumentMap: {},
     trackMap: {},

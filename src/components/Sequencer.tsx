@@ -1,10 +1,11 @@
 import {For, createSignal, createEffect} from "solid-js";
-import audio, {sequences} from "../audio";
 import SequencerTrack from "./SequencerTrack";
 import SequencerBeatTracker from "./SequencerBeatTracker";
+import audio from "../audio";
+import {ClientTrack} from "../audio/tracks";
 
 type Props = {
-  sequences: sequences.Sequence[];
+  initialTracks: ClientTrack[];
   onPlayClick: () => void;
   onStopClick: () => void;
   onInit?: () => void;
@@ -12,13 +13,14 @@ type Props = {
 };
 
 export default function Sequencer({
-  sequences,
+  initialTracks,
   onPlayClick,
   onStopClick,
   onInit = () => {},
   onSequenceBtnClick,
 }: Props) {
-  const playing = audio.state() === "playing";
+  console.log('tracks', tracks);
+  const playing = audio.state() === "started";
 
   createEffect(() => {
     onInit();
@@ -29,11 +31,11 @@ export default function Sequencer({
       <SequencerBeatTracker />
       <button onClick={onPlayClick}>{playing ? "Pause" : "Play"}</button>
       <button onClick={onStopClick}>Stop</button>
-      <For each={sequences}>
-        {({id, pattern}) => (
+      <For each={tracks}>
+        {({id, sequence}) => (
           <SequencerTrack
             id={id}
-            initialSequence={pattern}
+            initialSequence={sequence}
             timeSignature={[4, 4]}
             onBtnClick={onSequenceBtnClick}
           />

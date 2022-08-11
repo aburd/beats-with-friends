@@ -1,8 +1,8 @@
 import {Show, onMount, createEffect, createSignal, createResource} from "solid-js";
-import Sequencer from "@/components/Sequencer";
-import api from "@/api";
+import Sequencer from "../components/Sequencer";
+import api from "../api";
 // import createGlobalDOMEvents from "@/hooks/createGlobalDOMEvents";
-import audio, {Song, TimeSignature} from "@/audio";
+import audio, {Song, TimeSignature} from "../audio";
 
 type TurnModePageProps = {};
 
@@ -21,17 +21,15 @@ export default function TurnModePage(props: TurnModePageProps) {
   createEffect(() => {
     if (!songData.loading) {
       console.log(songData());
-      const patternMap = songData()?.patternMap;
-      if (!patternMap) {
-        console.log(`No patterns found in song.`);
-        return;
-      }
+
       // Hooray patterns, lets add them to our audio context
-      Object.entries(patternMap).forEach(([patternId, pattern]) => {
-        util.
-        audio  
-      });
+      audio.util.importSongToAudioStore(songData() as Song, audio.audioStore);
+      console.log('audioStore', audio.audioStore);
     }
+  });
+
+  createEffect(() => {
+    audio.setBpm(bpm());
   });
 
   function handleBpmChange(newBpm: number) {
@@ -42,6 +40,17 @@ export default function TurnModePage(props: TurnModePageProps) {
 
   function handleSequenceChange(id: string, sixteenth: number, on: boolean) {
     console.log({id, sixteenth, on})
+  }
+  function handlePlayClick() {
+    if (audio.state() === "started") {
+      audio.pause();
+      return;
+    }
+    audio.play();
+  }
+
+  function handleStopClick() {
+    audio.stop();
   }
 
   return (
@@ -55,10 +64,10 @@ export default function TurnModePage(props: TurnModePageProps) {
           <input type="number" value={bpm()} onInput={(e) => handleBpmChange(Number(e.currentTarget.value))} />
         </div>
         <Sequencer
-          sequences={[]}
-          onPlayClick={() => {}}
-          onStopClick={() => {}}
-          onSequenceBtnClick={() => {}}
+          initialequences={[]}
+          onPlayClick={handlePlayClick}
+          onStopClick={handleStopClick}
+          onSequenceBtnClick={handleSequenceChange}
         />
       </Show>
     </div>

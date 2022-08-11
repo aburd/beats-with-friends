@@ -8,9 +8,11 @@ export function importSongToAudioStore(song: Song, store: stores.AudioStore) {
     const clientIns = instruments.instrumentToClientInstrument(ins); 
     stores.registerInstrument(store, clientIns);
   });
+
   song.patterns.forEach(pat => {
     const [clientPat, clientTracks] = patterns.patternToClientPattern(pat, song.timeSignature)  
     stores.registerPattern(store, clientPat);
+
     clientTracks.forEach(t => {
       stores.registerTrack(store, t)
     });

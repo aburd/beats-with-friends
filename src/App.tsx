@@ -1,7 +1,7 @@
 import type { Component } from "solid-js";
 import "./App.css";
 import "./audio";
-import TurnModePage from "@/pages/TurnModePage";
+import TurnModePage from "./pages/TurnModePage";
 
 const App: Component = () => {
   return (

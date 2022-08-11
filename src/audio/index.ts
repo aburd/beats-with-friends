@@ -1,141 +1,88 @@
 import * as Tone from "tone";
-import omit from "lodash/omit";
-import { Sequence, SequenceMap } from "./types";
-export * from "./types";
-export * as util from "./util";
+import * as tracks from "./tracks";
+import * as store from './store';
 
-const osc = new Tone.Oscillator().toDestination();
+export * as sequences from './sequences';
+export * as types from "./types";
+export * as util from './util';
+export { tracks, store };
 
-const clap = new Tone.Sampler({
-  urls: {
-    A1: "snare.wav",
-  },
-  baseUrl: location.origin + "/samples/",
-}).toDestination();
-
-const kick = new Tone.Sampler({
-  urls: {
-    A1: "kick(2).wav",
-  },
-  baseUrl: location.origin + "/samples/",
-}).toDestination();
-
-const samples = {
-  "1": "kick",
-  "2": "clap",
-};
-
-type AudioState = {
-  cur16th: number;
-  eventIds: number[];
-  sequences: SequenceMap;
-};
-
-const audioState: AudioState = {
-  cur16th: -1,
-  eventIds: [],
-  sequences: {},
-};
-
-function loop(time: number) {
-  audioState.cur16th = (audioState.cur16th + 1) % 16;
-  Tone.Transport.emit("sixteenthTick", audioState.cur16th);
-  console.log('16:', audioState.cur16th);
-
-  const ids = Object.keys(audioState.sequences);
-  for (const id of ids) {
-    const notes = audioState.sequences[id];
-    const note = notes[audioState.cur16th];
-    if (!note) return;
-
-    // @ts-ignore
-    if (samples[id] === "kick") {
-      kick.triggerAttackRelease(["A1"], 0.5);
-    }
-    // @ts-ignore
-    if (samples[id] === "clap") {
-      clap.triggerAttackRelease(["A1"], 0.5);
-    }
-  }
-}
-
-export function registerSequence(sequence: Sequence) {
-  const { id, notes } = sequence;
-  audioState.sequences = {
-    ...audioState.sequences,
-    [id]: notes,
-  };
-}
-
-export function unregisterSequence(id: string) {
-  if (!audioState.sequences[id]) return;
-
-  audioState.sequences = omit(audioState.sequences, id);
-}
-
-export function updateSequence(id: string, sixteenth: number, on: boolean) {
-  if (!audioState.sequences[id]) {
-    throw Error(`Sequence [${id}] does not exist. Cannot update.`);
-  }
-  if (audioState.sequences[id].length - 1 < sixteenth) {
-    throw Error(
-      `Invalid update to sequence [${id}] of length ${audioState.sequences[id].length} with 16th of ${sixteenth}`
-    );
-  }
-
-  audioState.sequences[id][sixteenth] = on;
-}
+export const audioStore = store.create();
 
 type AudioEvent = "sixteenthTick" | "stop" | "start";
 
-/***
- * Do something on some event
- */
-export function subscribe(name: AudioEvent, callback: Function) {
+function loop(time: number) {
+  audioStore.cur16th = (audioStore.cur16th + 1) % 16;
+  Tone.Transport.emit("sixteenthTick", audioStore.cur16th);
+
+  for (const id of Object.keys(audioStore.tracks)) {
+    const track = audioStore.tracks[id];
+    const sequence = audioStore.sequences[id];
+    if (!sequence) continue;
+
+    const isActive = sequence.pattern[audioStore.cur16th];
+    if (!isActive) continue;
+
+    tracks.play(track, time);
+  }
+}
+
+function init() {
+  console.log('Setting up audio environment');
+  Tone.Transport.setLoopPoints("0:0:0", "1:0:0");
+  Tone.Transport.loop = true;
+  const evId = Tone.Transport.scheduleRepeat(loop, "16n");
+  audioStore.eventIds.push(evId);
+  Tone.setContext(new Tone.Context({latencyHint: "playback"}))
+}
+
+function subscribe(name: AudioEvent, callback: Function) {
   // @ts-ignore
   Tone.Transport.on(name, callback);
 }
 
-export function unsubscribe(name: AudioEvent, callback: Function) {
+function unsubscribe(name: AudioEvent, callback: Function) {
   // @ts-ignore
   Tone.Transport.off(name, callback);
 }
 
-export function init() {
-  console.log('initting...')
-  Tone.Transport.setLoopPoints("0:0:0", "1:0:0");
-  // Tone.Transport.loop = true;
-  // Tone.setContext(new Tone.Context({ latencyHint: "playback" }));
-  const evId = Tone.Transport.scheduleRepeat(loop, "16n");
-  audioState.eventIds.push(evId);
-}
-
 export function cleanup() {
-  audioState.eventIds.forEach((id) => {
-    Tone.Transport.clear(id);
-    audioState.eventIds = audioState.eventIds.slice(1);
+  audioStore.eventIds.forEach((id) => {
+    Tone.Transport.clear(id)
+    audioStore.eventIds = audioStore.eventIds.slice(1);
   });
 }
 
-export function setBpm(bpm: number) {
+function setBpm(bpm: number) {
   Tone.Transport.bpm.value = bpm;
 }
 
-export function state(): string {
+function state(): string {
   return Tone.Transport.state;
 }
 
-export function play() {
-  console.log("Playing");
-  Tone.Transport.start();
+function play() {
+  Tone.Transport.start(0);
 }
 
-export function pause() {
-  console.log("Pausing");
+function pause() {
   Tone.Transport.pause();
 }
 
-export function stop() {
-  audioState.cur16th = -1;
+function stop() {
+  cleanup();
+  audioStore.cur16th = -1;
   Tone.Transport.stop();
+}
+
+export default {
+  init,
+  play,
+  stop,
+  pause,
+  setBpm,
+  cleanup,
+  subscribe,
+  unsubscribe,
+  audioStore,
 }

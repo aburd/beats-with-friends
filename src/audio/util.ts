@@ -9,7 +9,7 @@ export function barToSequence(timeSignature: TimeSignature, bar: Bar): Sequence 
 
   return {
     id: bar.instrumentId.toString(),
-    notes: Array(top * bottom)
+    pattern: Array(top * bottom)
       .fill(null)
       .map((_, i) => activeSixteenths.includes(i)),
   }
@@ -17,4 +17,8 @@ export function barToSequence(timeSignature: TimeSignature, bar: Bar): Sequence 
 
 export function sixteethToBeat(n: number, top: number) {
   return Math.floor(n / top);
+}
+
+export function sampleBaseUrl(): string {
+  return `${location.origin}/samples/`; 
 }

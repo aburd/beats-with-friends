@@ -29,10 +29,8 @@ export type Bar = {
 
 export type Sequence = {
   id: string;
-  notes: boolean[];
+  pattern: boolean[];
 };
-
-export type SequenceMap = Record<string, boolean[]>;
 
 type PatternId = string | number;
 

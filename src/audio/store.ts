@@ -17,6 +17,7 @@ export type AudioStore = {
   timeSignature: TimeSignature | null;
   bpm: number;
   eventIds: number[];
+  songName: string;
   instrumentMap: Record<string, instruments.ClientInstrument>;
   trackMap: Record<string, tracks.ClientTrack>;
   patternMap: Record<string, patterns.ClientPattern>;
@@ -30,6 +31,7 @@ function initialStore(): AudioStore {
     timeSignature: [4, 4],
     bpm: 120,
     eventIds: [],
+    songName: "",
     instrumentMap: {},
     trackMap: {},
     patternMap: {},

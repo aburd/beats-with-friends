@@ -1,8 +1,10 @@
 .BeatButton {
   display: inline-flex;
   position: relative;
-  width: 3rem;
-  height: 5rem;
+  min-width: 2rem;
+  min-height: 3rem;
+  width: 100%;
+  height: 100%;
   border: 2px solid black;
   border-radius: 3px;
   box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.4);

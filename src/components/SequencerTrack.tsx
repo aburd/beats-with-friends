@@ -1,6 +1,6 @@
 import {For, createMemo, createSignal, createEffect} from "solid-js";
 import BeatButton from "./BeatButton";
-import {TimeSignature} from '@/audio';
+import {TimeSignature} from '../audio';
 import "./SequencerTrack.css";
 
 type Sequence = boolean[];

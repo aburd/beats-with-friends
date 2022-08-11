@@ -1,0 +1,50 @@
+.Sequencer {
+  display: grid;
+  grid-template-areas: 
+    "info"
+    "tracks"
+    "controls";
+  border-radius: 5px;
+  box-shadow: 1rem 1rem 2rem rgba(0, 0, 0, 0.5);
+  background: #333; 
+  padding: 1rem 2rem;
+  width: calc(100% - 4rem);
+  height: calc(100% - 2rem);
+}
+
+.Sequencer-window {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.Sequencer-window span {
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+.Sequencer-window span::after {
+  content: ": ";
+}
+.Sequencer-window div,
+.Sequencer-window select,
+.Sequencer-window input {
+  display: flex;
+  align-items: center;
+  border: none;
+  background: green;
+  padding: 4px;
+  min-height: 1.5rem;
+  border-radius: 3px;
+  font-family: lcd;
+}
+
+.Sequencer-info {
+  grid-area: info;
+  display: flex;
+  gap: 1.5rem; 
+}
+.Sequencer-tracks {
+  grid-area: tracks;
+}
+.Sequencer-controls {
+  grid-area: controls;
+}

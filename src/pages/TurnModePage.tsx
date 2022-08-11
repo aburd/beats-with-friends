@@ -2,6 +2,7 @@ import {Show, onMount, onCleanup, createEffect, createSignal, createResource} fr
 import Sequencer from "../components/Sequencer";
 import api from "../api";
 import audio, {Song, TimeSignature} from "../audio";
+import "./TurnModePage.css";
 
 type TurnModePageProps = {};
 
@@ -13,20 +14,24 @@ export default function TurnModePage(props: TurnModePageProps) {
       console.log(songData());
       // Hooray patterns, lets add them to our audio context
       audio.importSongToAudioStore(songData() as Song);
-      audio.setStore({ timeSignature: songData()?.timeSignature as TimeSignature });
-      audio.setStore({ curPattern: songData()?.patterns[0].id as string });
+      audio.setStore({
+        timeSignature: songData()?.timeSignature as TimeSignature,
+        curPattern: songData()?.patterns[0].id as string,
+        songName: songData()?.name,
+      })
     }
   });
 
   return (
-    <div class="TurnModePage">
-      <h1>Turn Mode</h1>
-      <Show when={!songData.loading} fallback={<div>Loading song...</div>}>
-        <div>{songData()?.name}</div>
-        <div>
+    <div class="TurnModePage page">
+      <div class="title">
+        Turn Mode
+      </div>
+      <div class="body">
+        <Show when={!songData.loading} fallback={<div>Loading song...</div>}>
           <Sequencer />
-        </div>
-      </Show>
+        </Show>
+      </div>
     </div>
   );
 }

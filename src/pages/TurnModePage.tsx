@@ -1,100 +1,37 @@
-import {useEffect, useState} from "react";
-import Sequencer from "@/components/Sequencer";
-import api from "@/api";
-import useGlobalDOMEvents from "@/hooks/useGlobalDOMEvents";
-import * as audio from "@/audio";
+import {Show, onMount, onCleanup, createEffect, createSignal, createResource} from "solid-js";
+import Sequencer from "../components/Sequencer";
+import api from "../api";
+import audio, {Song, TimeSignature} from "../audio";
+import "./TurnModePage.css";
 
 type TurnModePageProps = {};
 
-let setP = false;
-
-function registerSequences(song: audio.Song, timeSignature: audio.TimeSignature) {
-  for (const [patternId, pattern] of Object.entries(song.patterns)) {
-    for (const bar of pattern.bars) {
-      const seq = audio.util.barToSequence(timeSignature, bar)
-      audio.registerSequence(seq)
-    }
-  }
-}
-
 export default function TurnModePage(props: TurnModePageProps) {
-  const [song, setSong] = useState<audio.Song | null>(null);
-  const [bpm, setBpm] = useState<number>(120);
-  const [patternId, setPatternId] = useState<string | number>("1");
-  const [timeSignature, setTimeSignature] = useState<audio.TimeSignature>([
-    4, 4,
-  ]);
+  const [songData, {mutate, refetch}] = createResource<Song | null>(() => api.song.get('placeholder'));
 
-  useEffect(() => {
-    audio.init();
-    api.song.get("dummy-id").then((song) => {
-      setSong(song);
-      if (!setP) {
-        registerSequences(song, timeSignature)
-        setP = true;
-      }
-    });
-    return () => {
-      audio.cleanup();
-    }
-  }, []);
-
-  useEffect(() => {
-    audio.setBpm(bpm);
-  }, [bpm])
-
-  function handlePlayClick() {
-    if (audio.state() === "started") {
-      audio.pause();
-      return;
-    }
-    audio.play();
-  }
-
-  useGlobalDOMEvents({
-    keyup: function (ev) {
-      const {key} = ev as KeyboardEvent;
-      if (key === " ") {
-        handlePlayClick();
-      }
+  createEffect(() => {
+    if (!songData.loading) {
+      console.log(songData());
+      // Hooray patterns, lets add them to our audio context
+      audio.importSongToAudioStore(songData() as Song);
+      audio.setStore({
+        timeSignature: songData()?.timeSignature as TimeSignature,
+        curPattern: songData()?.patterns[0].id as string,
+        songName: songData()?.name,
+      })
     }
   });
 
-  function handleBpmChange(newBpm: number) {
-    if (newBpm > 0) {
-      setBpm(newBpm);
-    }
-  }
-
-  function handleSequenceChange(id: string, sixteenth: number, on: boolean) {
-    console.log({id, sixteenth, on})
-    audio.updateSequence(id, sixteenth, on)
-  }
-
-  const initialSequence = song
-    ? audio.util.barToSequence(timeSignature, song.patterns[patternId].bars[0])
-    : null;
-  const clapSequence = song
-    ? audio.util.barToSequence(timeSignature, song.patterns['2'].bars[0])
-    : null;
-
   return (
-    <div className="TurnModePage">
-      <h1>Turn Mode</h1>
-      <div>{song?.name}</div>
-      <div>Pattern: {patternId}</div>
-      <div>
-        <label htmlFor="bpm">BPM</label>
-        <input type="number" value={bpm} onChange={(e) => handleBpmChange(Number(e.target.value))} />
+    <div class="TurnModePage page">
+      <div class="title">
+        Turn Mode
       </div>
-      {initialSequence && clapSequence && (
-        <Sequencer
-          sequences={[initialSequence, clapSequence]}
-          onPlayClick={handlePlayClick}
-          onStopClick={audio.stop}
-          onSequenceBtnClick={handleSequenceChange}
-        />
-      )}
+      <div class="body">
+        <Show when={!songData.loading} fallback={<div>Loading song...</div>}>
+          <Sequencer />
+        </Show>
+      </div>
     </div>
   );
 }

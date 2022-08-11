@@ -1,61 +1,61 @@
-import omit from 'lodash/omit';
-import * as sequences from './sequences';
-import * as tracks from "./tracks";
+import * as Tone from 'tone';
+import { createEffect } from 'solid-js';
+import * as patterns from './patterns';
+import * as tracks from './tracks';
+import * as instruments from "./instruments";
+import {Song} from './types';
+import {TimeSignature} from './types';
+import {createStore} from "solid-js/store";
+import flatten from 'lodash/flatten';
+import zipObject from 'lodash/zipObject';
 
-type AudioStore = {
+export const [audioStore, setStore] = createStore(initialStore(), {name: 'audio-store'});
+
+export type AudioStore = {
   cur16th: number;
+  curPattern: string | null;
+  timeSignature: TimeSignature | null;
+  bpm: number;
   eventIds: number[];
-  sequences: Record<string, sequences.Sequence>;
-  tracks: Record<string, tracks.Track>;
+  songName: string;
+  instrumentMap: Record<string, instruments.ClientInstrument>;
+  trackMap: Record<string, tracks.ClientTrack>;
+  patternMap: Record<string, patterns.ClientPattern>;
+  playState: "started" | "stopped" | "paused";
 }
 
-export function create(): AudioStore {
+function initialStore(): AudioStore {
   return {
     cur16th: -1,
+    curPattern: '1',
+    timeSignature: [4, 4],
+    bpm: 120,
     eventIds: [],
-    sequences: {},
-    tracks: {},
+    songName: "",
+    instrumentMap: {},
+    trackMap: {},
+    patternMap: {},
+    playState: "stopped",
   }
 }
 
-/**
- * @return {string} The ID of the sequence
- */
-export function registerSequence(store: AudioStore, sequence: sequences.Sequence): string {
-  store.sequences = {
-    ...store.sequences,
-    [sequence.id]: sequence,
-  }
-  return sequence.id;
+export function importSongToAudioStore(song: Song) {
+  const clientPatternArr = song.patterns.map((pat) => patterns.patternToClientPattern(pat, song.timeSignature));
+  const cTracksArr = clientPatternArr.map(([_, cTracks]) => cTracks);
+
+  const cIns = song.instruments.map(instruments.instrumentToClientInstrument);
+  const cPatterns = clientPatternArr.map(([cPattern]) => cPattern);
+  const cTracks = flatten(cTracksArr);
+
+  const instrumentMap = zipObject(cIns.map(c => c.id), cIns);
+  const patternMap = zipObject(cPatterns.map(p => p.id), cPatterns);
+  const trackMap = zipObject(cTracks.map(t => t.id), cTracks);
+
+  setStore({
+    instrumentMap,
+    patternMap,
+    trackMap,
+  });
 }
 
-export function unregisterSequence(store: AudioStore, id: string) {
-  if (!store.sequences[id]) return;
-
-  store.sequences = omit(store.sequences, id);
-}
-
-export function updateSequence(store: AudioStore, id: string, sixteenth: number, on: boolean) {
-  if (!store.sequences[id]) {
-    throw Error(`Sequence [${id}] does not exist. Cannot update.`);
-  }
-  sequences.updatePattern(store.sequences[id], sixteenth, on)
-}
-
-/**
- * @return {string} The ID of the track
- */
-export function registerTrack(store: AudioStore, track: tracks.Track) {
-  store.tracks = {
-    ...store.tracks,
-    [track.id]: track,
-  }
-  return track.id;
-}
-
-export function unregisterTrack(store: AudioStore, id: string) {
-  if (!store.sequences[id]) return;
-
-  store.sequences = omit(store.sequences, id);
-}
-
+createEffect(() => Tone.Transport.bpm.value = audioStore.bpm);

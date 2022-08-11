@@ -1,14 +1,14 @@
+import type { Component } from "solid-js";
 import "./App.css";
 import "./audio";
-import TurnModePage from '@/pages/TurnModePage';
+import TurnModePage from "./pages/TurnModePage";
 
-function App() {
-
+const App: Component = () => {
   return (
-    <div className="App">
+    <div class="App">
       <TurnModePage />
     </div>
   );
-}
+};
 
 export default App;

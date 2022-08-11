@@ -3,7 +3,7 @@ import * as patterns from './patterns';
 import * as tracks from './tracks';
 import * as instruments from "./instruments";
 
-type AudioStore = {
+export type AudioStore = {
   cur16th: number;
   curPattern: string | null;
   eventIds: number[];

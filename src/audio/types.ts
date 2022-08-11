@@ -23,7 +23,7 @@ export type Track = {
   sequence: Note[]
 }
 
-type PatternId = string | number;
+type PatternId = string;
 
 export type Pattern = {
   id: PatternId;

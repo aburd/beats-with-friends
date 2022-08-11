@@ -1,5 +1,5 @@
 import * as Tone from "tone";
-import {v4 as uuidv4} from 'uuid';
+import { Instrument } from './types';
 import * as util from './util';
 
 export interface ClientInstrument {
@@ -21,11 +21,14 @@ const DEFAULT_INSTRUMENT_DECIBEL = -15;
  * @param {OscType} oscType - "square8" 
  * @param {string?} name - The name of the instrument. Defaults to 'New Instrument'
  */
-export function create(opts: {
+export function create(
+  id: string,
+  opts: {
   samplerUrl?: string,
   oscType?: OscType,
   name?: string,
-}): ClientInstrument {
+}
+): ClientInstrument {
   if (opts.samplerUrl && opts.oscType) {
     throw TypeError(`Cannot create instrument that is both samples [${opts.samplerUrl}] and synth [${opts.oscType}]`);
   }
@@ -34,7 +37,6 @@ export function create(opts: {
   }
 
   let sampler, synth;
-  const id = uuidv4();
   const meter = new Tone.Meter();
 
   if (opts.samplerUrl) {
@@ -50,6 +52,13 @@ export function create(opts: {
     meter,
     sampler,
   }
+}
+
+export function instrumentToClientInstrument(ins: Instrument): ClientInstrument {
+  if (ins.url) {
+    return create(ins.id, { samplerUrl: ins.url, name: ins.name });
+  }
+  return create(ins.id, { name: ins.name });
 }
 
 export function play(instrument: ClientInstrument, time: number, note?: string, duration?: string): void {

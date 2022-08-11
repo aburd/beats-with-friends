@@ -1,19 +1,20 @@
-import {TimeSignature, Bar} from './types'
-import { Sequence } from './sequences';
+import {Song} from './types'
+import * as stores from './store'; 
+import * as instruments from './instruments'; 
+import * as patterns from './patterns'; 
 
-export function barToSequence(timeSignature: TimeSignature, bar: Bar): Sequence {
-  const [top, bottom] = timeSignature;
-  const activeSixteenths = bar.sequence
-    .map(({startTime}) => {
-      return (startTime[0] * top) + startTime[1]
+export function importSongToAudioStore(song: Song, store: stores.AudioStore) {
+  song.instruments.forEach(ins => {
+    const clientIns = instruments.instrumentToClientInstrument(ins); 
+    stores.registerInstrument(store, clientIns);
+  });
+  song.patterns.forEach(pat => {
+    const [clientPat, clientTracks] = patterns.patternToClientPattern(pat, song.timeSignature)  
+    stores.registerPattern(store, clientPat);
+    clientTracks.forEach(t => {
+      stores.registerTrack(store, t)
     });
-
-  return {
-    id: bar.instrumentId.toString(),
-    pattern: Array(top * bottom)
-      .fill(null)
-      .map((_, i) => activeSixteenths.includes(i)),
-  }
+  });
 }
 
 export function sixteethToBeat(n: number, top: number) {

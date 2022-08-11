@@ -1,7 +1,7 @@
-import {useEffect, useState} from "react";
+import {createEffect, createSignal} from "solid-js";
 import Sequencer from "@/components/Sequencer";
 import api from "@/api";
-import useGlobalDOMEvents from "@/hooks/useGlobalDOMEvents";
+// import createGlobalDOMEvents from "@/hooks/createGlobalDOMEvents";
 import * as audio from "@/audio";
 
 type TurnModePageProps = {};
@@ -18,19 +18,19 @@ function registerSequences(song: audio.Song, timeSignature: audio.TimeSignature)
 }
 
 export default function TurnModePage(props: TurnModePageProps) {
-  const [song, setSong] = useState<audio.Song | null>(null);
-  const [bpm, setBpm] = useState<number>(120);
-  const [patternId, setPatternId] = useState<string | number>("1");
-  const [timeSignature, setTimeSignature] = useState<audio.TimeSignature>([
+  const [song, setSong] = createSignal<audio.Song | null>(null);
+  const [bpm, setBpm] = createSignal<number>(120);
+  const [patternId, setPatternId] = createSignal<string | number>("1");
+  const [timeSignature, setTimeSignature] = createSignal<audio.TimeSignature>([
     4, 4,
   ]);
 
-  useEffect(() => {
+  createEffect(() => {
     audio.init();
     api.song.get("dummy-id").then((song) => {
       setSong(song);
       if (!setP) {
-        registerSequences(song, timeSignature)
+        registerSequences(song, timeSignature())
         setP = true;
       }
     });
@@ -39,19 +39,19 @@ export default function TurnModePage(props: TurnModePageProps) {
     }
   }, []);
 
-  useEffect(() => {
-    audio.setBpm(bpm);
+  createEffect(() => {
+    audio.setBpm(bpm());
   }, [bpm])
 
   function handlePlayClick() {
     if (audio.state() === "started") {
-      audio.pause();
+      audio.pacreate();
       return;
     }
     audio.play();
   }
 
-  useGlobalDOMEvents({
+  createGlobalDOMEvents({
     keyup: function (ev) {
       const {key} = ev as KeyboardEvent;
       if (key === " ") {

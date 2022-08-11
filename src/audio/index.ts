@@ -53,8 +53,8 @@ function unsubscribe(name: AudioEvent, callback: Function) {
 export function cleanup() {
   audioStore.eventIds.forEach((id) => {
     Tone.Transport.clear(id)
-    audioStore.eventIds = audioStore.eventIds.slice(1);
   });
+  setStore({ eventIds: [] });
 }
 
 function play() {

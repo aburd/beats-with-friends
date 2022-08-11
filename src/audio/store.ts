@@ -1,61 +1,75 @@
 import omit from 'lodash/omit';
-import * as sequences from './sequences';
-import * as tracks from "./tracks";
+import * as patterns from './patterns';
+import * as tracks from './tracks';
+import * as instruments from "./instruments";
 
 type AudioStore = {
   cur16th: number;
+  curPattern: string | null;
   eventIds: number[];
-  sequences: Record<string, sequences.Sequence>;
-  tracks: Record<string, tracks.Track>;
+  instrumentMap: Record<string, instruments.ClientInstrument>;
+  trackMap: Record<string, tracks.ClientTrack>;
+  patternMap: Record<string, patterns.ClientPattern>;
 }
 
 export function create(): AudioStore {
   return {
     cur16th: -1,
+    curPattern: null,
     eventIds: [],
-    sequences: {},
-    tracks: {},
+    instrumentMap: {},
+    trackMap: {},
+    patternMap: {},
   }
 }
 
 /**
- * @return {string} The ID of the sequence
+ * @return {string} The ID of the pattern
  */
-export function registerSequence(store: AudioStore, sequence: sequences.Sequence): string {
-  store.sequences = {
-    ...store.sequences,
-    [sequence.id]: sequence,
+export function registerPattern(store: AudioStore, pattern: patterns.ClientPattern): string {
+  store.patternMap = {
+    ...store.patternMap,
+    [pattern.id]: pattern,
   }
-  return sequence.id;
+  return pattern.id;
 }
 
-export function unregisterSequence(store: AudioStore, id: string) {
-  if (!store.sequences[id]) return;
+export function unregisterPattern(store: AudioStore, id: string) {
+  if (!store.patternMap[id]) return;
 
-  store.sequences = omit(store.sequences, id);
+  store.patternMap = omit(store.patternMap, id);
 }
 
-export function updateSequence(store: AudioStore, id: string, sixteenth: number, on: boolean) {
-  if (!store.sequences[id]) {
-    throw Error(`Sequence [${id}] does not exist. Cannot update.`);
+/**
+ * @return {string} The ID of the instrument
+ */
+export function registerInstrument(store: AudioStore, instrument: instruments.ClientInstrument) {
+  store.instrumentMap = {
+    ...store.instrumentMap,
+    [instrument.id]: instrument,
   }
-  sequences.updatePattern(store.sequences[id], sixteenth, on)
+  return instrument.id;
+}
+
+export function unregisterInstrument(store: AudioStore, id: string) {
+  if (!store.instrumentMap[id]) return;
+
+  store.instrumentMap = omit(store.instrumentMap, id);
 }
 
 /**
  * @return {string} The ID of the track
  */
-export function registerTrack(store: AudioStore, track: tracks.Track) {
-  store.tracks = {
-    ...store.tracks,
+export function registerTrack(store: AudioStore, track: tracks.ClientTrack) {
+  store.trackMap = {
+    ...store.trackMap,
     [track.id]: track,
   }
   return track.id;
 }
 
 export function unregisterTrack(store: AudioStore, id: string) {
-  if (!store.sequences[id]) return;
+  if (!store.trackMap[id]) return;
 
-  store.sequences = omit(store.sequences, id);
+  store.trackMap = omit(store.trackMap, id);
 }
-

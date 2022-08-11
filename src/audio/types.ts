@@ -6,23 +6,19 @@ export type BeatsSixteenths = [number, number];
 
 export type TimeSignature = [number, number];
 
-export interface Sample {
-  id: string;
-  url: string;
-}
-
 export type Note = {
   startTime: BeatsSixteenths;
   length: number, // in seconds
 }
 
-type InstrumentId = string | number;
+export type InstrumentId = string;
 export type Instrument = {
+  id: InstrumentId;
   name: string;
+  url?: string;
 }
 
-// Bars will be ordered, its index will maintain order
-export type Bar = {
+export type Track = {
   instrumentId: InstrumentId,
   sequence: Note[]
 }
@@ -30,16 +26,18 @@ export type Bar = {
 type PatternId = string | number;
 
 export type Pattern = {
-  name: PatternId;
-  bars: Bar[];
+  id: PatternId;
+  name?: string;
+  tracks: Track[];
 }
 
 type Time = [number, number, number];
 
 export type Song = {
   name: string;
-  instruments: Record<InstrumentId, Instrument>,
-  patterns: Record<PatternId, Pattern>;
+  timeSignature: TimeSignature;
+  instruments: Instrument[], 
+  patterns: Pattern[], 
   sheet: Record<PatternId, Time[]>;
 }
 

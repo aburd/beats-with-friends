@@ -1,29 +1,36 @@
 import * as Tone from "tone";
-import * as tracks from "./tracks";
 import * as store from './store';
+import * as tracks from "./tracks";
+import * as patterns from "./patterns";
+import * as instruments from "./instruments";
+import * as util from './util';
 
 export * from "./types";
-export * as sequences from './sequences';
-export * as util from './util';
-export { tracks, store };
 
 export const audioStore = store.create();
 
 type AudioEvent = "sixteenthTick" | "stop" | "start";
 
 function loop(time: number) {
+  // Update the current 16th
   audioStore.cur16th = (audioStore.cur16th + 1) % 16;
   Tone.Transport.emit("sixteenthTick", audioStore.cur16th);
 
-  for (const id of Object.keys(audioStore.tracks)) {
-    const track = audioStore.tracks[id];
-    const sequence = audioStore.sequences[id];
-    if (!sequence) continue;
+  if (!audioStore.curPattern) return;
 
-    const isActive = sequence.pattern[audioStore.cur16th];
+  // Find the current pattern to play
+  const pattern = audioStore.patternMap[audioStore.curPattern];
+
+  for (const trackId of pattern.trackIds) {
+    const track = audioStore.trackMap[trackId];
+    if (!track) continue;
+
+    const instrument = audioStore.instrumentMap[track.instrumentId];
+
+    const isActive = track.sequence[audioStore.cur16th];
     if (!isActive) continue;
 
-    tracks.play(track, time);
+    instruments.play(instrument, time);
   }
 }
 
@@ -57,7 +64,7 @@ function setBpm(bpm: number) {
   Tone.Transport.bpm.value = bpm;
 }
 
-function state(): string {
+function state(): "started" | "stopped" | "paused" {
   return Tone.Transport.state;
 }
 
@@ -76,6 +83,7 @@ function stop() {
 }
 
 export default {
+  // General fns
   init,
   play,
   stop,
@@ -84,6 +92,12 @@ export default {
   cleanup,
   subscribe,
   unsubscribe,
-  audioStore,
   state,
+  audioStore,
+  // modules
+  store,
+  instruments,
+  tracks,
+  patterns,
+  util,
 }

@@ -1,4 +1,5 @@
-import {Sequence, TimeSignature, Bar} from './types'
+import {TimeSignature, Bar} from './types'
+import { Sequence } from './sequences';
 
 export function barToSequence(timeSignature: TimeSignature, bar: Bar): Sequence {
   const [top, bottom] = timeSignature;

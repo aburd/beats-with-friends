@@ -1,4 +1,4 @@
-import {Show, createEffect, createSignal, createResource} from "solid-js";
+import {Show, onMount, createEffect, createSignal, createResource} from "solid-js";
 import Sequencer from "@/components/Sequencer";
 import api from "@/api";
 // import createGlobalDOMEvents from "@/hooks/createGlobalDOMEvents";
@@ -13,6 +13,26 @@ export default function TurnModePage(props: TurnModePageProps) {
   const [timeSignature, setTimeSignature] = createSignal<TimeSignature>([
     4, 4,
   ]);
+
+  onMount(() => {
+    audio.init();
+  });
+
+  createEffect(() => {
+    if (!songData.loading) {
+      console.log(songData());
+      const patternMap = songData()?.patternMap;
+      if (!patternMap) {
+        console.log(`No patterns found in song.`);
+        return;
+      }
+      // Hooray patterns, lets add them to our audio context
+      Object.entries(patternMap).forEach(([patternId, pattern]) => {
+        util.
+        audio  
+      });
+    }
+  });
 
   function handleBpmChange(newBpm: number) {
     if (newBpm > 0) {

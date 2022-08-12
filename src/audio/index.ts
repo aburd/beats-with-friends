@@ -69,7 +69,7 @@ function pause() {
 
 function stop() {
   cleanup();
-  audioStore.cur16th = -1;
+  setStore({ cur16th: -1 });
   Tone.Transport.stop();
   setStore({ playState: "stopped" });
 }

@@ -1,5 +1,5 @@
 import * as Tone from 'tone';
-import { createEffect } from 'solid-js';
+import {createEffect} from 'solid-js';
 import * as patterns from './patterns';
 import * as tracks from './tracks';
 import * as instruments from "./instruments";
@@ -39,11 +39,11 @@ function initialStore(): AudioStore {
   }
 }
 
-export function importSongToAudioStore(song: Song) {
+export async function importSongToAudioStore(song: Song) {
   const clientPatternArr = song.patterns.map((pat) => patterns.patternToClientPattern(pat, song.timeSignature));
   const cTracksArr = clientPatternArr.map(([_, cTracks]) => cTracks);
 
-  const cIns = song.instruments.map(instruments.instrumentToClientInstrument);
+  const cIns = await Promise.all(song.instruments.map(instruments.instrumentToClientInstrument));
   const cPatterns = clientPatternArr.map(([cPattern]) => cPattern);
   const cTracks = flatten(cTracksArr);
 

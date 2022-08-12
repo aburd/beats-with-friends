@@ -1,5 +1,5 @@
 import * as Tone from "tone";
-import { Instrument } from './types';
+import {Instrument} from './types';
 import * as util from './util';
 
 export interface ClientInstrument {
@@ -21,14 +21,14 @@ const DEFAULT_INSTRUMENT_DECIBEL = -15;
  * @param {OscType} oscType - "square8" 
  * @param {string?} name - The name of the instrument. Defaults to 'New Instrument'
  */
-export function create(
+export async function create(
   id: string,
   opts: {
-  samplerUrl?: string,
-  oscType?: OscType,
-  name?: string,
-}
-): ClientInstrument {
+    samplerUrl?: string,
+    oscType?: OscType,
+    name?: string,
+  }
+): Promise<ClientInstrument> {
   if (opts.samplerUrl && opts.oscType) {
     throw TypeError(`Cannot create instrument that is both samples [${opts.samplerUrl}] and synth [${opts.oscType}]`);
   }
@@ -40,7 +40,7 @@ export function create(
   const meter = new Tone.Meter();
 
   if (opts.samplerUrl) {
-    sampler = createSampler(opts.samplerUrl, meter);
+    sampler = await createSampler(opts.samplerUrl, meter);
   }
   if (opts.oscType) {
     synth = createSynth(opts.oscType, meter);
@@ -54,11 +54,11 @@ export function create(
   }
 }
 
-export function instrumentToClientInstrument(ins: Instrument): ClientInstrument {
+export async function instrumentToClientInstrument(ins: Instrument): Promise<ClientInstrument> {
   if (ins.url) {
-    return create(ins.id, { samplerUrl: ins.url, name: ins.name });
+    return await create(ins.id, {samplerUrl: ins.url, name: ins.name});
   }
-  return create(ins.id, { name: ins.name });
+  return await create(ins.id, {name: ins.name});
 }
 
 export function play(instrument: ClientInstrument, time: number, note?: string, duration?: string): void {
@@ -74,16 +74,20 @@ export function meterValue(instrument: ClientInstrument): number | number[] {
   return instrument.meter.getValue();
 }
 
-function createSampler(samplerUrl: string, meter: Tone.Meter): Tone.Sampler {
-  return new Tone.Sampler({
-    urls: {
-      A1: samplerUrl,
-    },
-    baseUrl: util.sampleBaseUrl(),
-    volume: DEFAULT_INSTRUMENT_DECIBEL,
-  })
-    .connect(meter)
-    .toDestination();
+function createSampler(samplerUrl: string, meter: Tone.Meter): Promise<Tone.Sampler> {
+  return new Promise((res, rej) => {
+    const sampler = new Tone.Sampler({
+      urls: {
+        A1: samplerUrl,
+      },
+      baseUrl: util.sampleBaseUrl(),
+      volume: DEFAULT_INSTRUMENT_DECIBEL,
+      onload: () => res(sampler),
+      onerror: (e) => rej(e.message),
+    })
+      .connect(meter)
+      .toDestination();
+  });
 }
 
 function createSynth(oscType: "square8", meter: Tone.Meter): Tone.Synth {

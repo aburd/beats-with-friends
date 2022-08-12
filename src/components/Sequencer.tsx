@@ -67,7 +67,10 @@ export default function Sequencer({}: SequencerProps) {
         </div>
       </section>
       <section class="Sequencer-tracks">
-        <SequencerBeatTracker />
+        <SequencerBeatTracker
+          timeSignature={audio.audioStore.timeSignature || undefined}
+          cur16th={audio.audioStore.cur16th}
+        />
         <For each={Object.values(audio.audioStore.trackMap)}>
           {({id, sequence}) => (
             <SequencerTrack

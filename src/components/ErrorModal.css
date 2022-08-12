@@ -1,0 +1,22 @@
+.ErrorModal {
+  width: 100vw;
+  height: 100vh;
+}
+.ErrorModal-window {
+  display: grid;
+  grid-template-rows: 2rem 1fr;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "controls"
+    "body";
+}
+.ErrorModal-controls {
+  grid-area: controls;
+  display: flex;
+  justify-content: right; 
+}
+.ErrorModal-body {
+  grid-area: body;
+  display: flex;
+  align-items: center;
+}

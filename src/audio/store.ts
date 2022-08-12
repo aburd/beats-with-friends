@@ -1,5 +1,5 @@
 import * as Tone from 'tone';
-import { createEffect } from 'solid-js';
+import {createEffect} from 'solid-js';
 import * as patterns from './patterns';
 import * as tracks from './tracks';
 import * as instruments from "./instruments";
@@ -39,11 +39,11 @@ function initialStore(): AudioStore {
   }
 }
 
-export function importSongToAudioStore(song: Song) {
+export async function importSongToAudioStore(song: Song) {
   const clientPatternArr = song.patterns.map((pat) => patterns.patternToClientPattern(pat, song.timeSignature));
   const cTracksArr = clientPatternArr.map(([_, cTracks]) => cTracks);
 
-  const cIns = song.instruments.map(instruments.instrumentToClientInstrument);
+  const cIns = await Promise.all(song.instruments.map(instruments.instrumentToClientInstrument));
   const cPatterns = clientPatternArr.map(([cPattern]) => cPattern);
   const cTracks = flatten(cTracksArr);
 
@@ -56,6 +56,20 @@ export function importSongToAudioStore(song: Song) {
     patternMap,
     trackMap,
   });
+}
+
+export function updateTrackSequence(id: string, sixteenth: number, on: boolean) {
+  const track = audioStore.trackMap[id];
+  if (!track) {
+    throw Error(`Invalid update to a track with id [${id}]. Are you sure that track exists?`);
+  }
+  if ((track.sequence.length - 1) < sixteenth) {
+    throw Error(`Invalid update to track with sequence length of [${track.sequence.length}].`);
+  }
+  const newSequence = [...track.sequence];
+  newSequence[sixteenth] = on;
+  console.log('sequence', newSequence);
+  setStore("trackMap", id, "sequence", newSequence);
 }
 
 createEffect(() => Tone.Transport.bpm.value = audioStore.bpm);

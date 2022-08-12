@@ -34,6 +34,7 @@ export type Pattern = {
 type Time = [number, number, number];
 
 export type Song = {
+  id: string,
   name: string;
   timeSignature: TimeSignature;
   instruments: Instrument[], 

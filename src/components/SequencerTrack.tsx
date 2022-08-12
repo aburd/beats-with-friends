@@ -12,36 +12,29 @@ interface Props {
   onBtnClick: (id: string, sixteenth: number, on: boolean) => void;
 }
 
-export default function SequencerTrack({
-  id,
-  initialSequence,
-  timeSignature = [4, 4],
-  onBtnClick = () => {},
-}: Props) {
-  const [top, bottom] = timeSignature;
+export default function SequencerTrack(props: Props) {
+  const [top, bottom] = props.timeSignature || [4, 4];
 
-  const btns = createMemo(() => {
-    const btnColors = ["red", "orange", "yellow", "white"];
-    return Array(top * bottom)
-      .fill(null)
-      .map((v, i) => {
-        const active = initialSequence[i];
-        const bgColor = btnColors[Math.floor(i / top)] || "white";
-        return {active, bgColor};
-      });
-  }, [timeSignature]);
+  const btnColors = ["red", "orange", "yellow", "white"];
+  const btns = Array(top * bottom)
+    .fill(null)
+    .map((v, i) => {
+      const active = props.initialSequence[i];
+      const bgColor = btnColors[Math.floor(i / top)] || "white";
+      return {active, bgColor};
+    });
 
   return (
-    <div class="SequencerTrack" data-id={id}>
-      <For each={btns()}>
-        {({active, bgColor}, i) => (
+    <div class="SequencerTrack" data-id={props.id}>
+      <For each={btns}>
+        {(item, i) => (
           <div class="btn-container">
             <span class="btn-label">{i() + 1}</span>
             <BeatButton
-              initialActive={active}
-              bgColor={bgColor}
+              initialActive={item.active}
+              bgColor={item.bgColor}
               onClick={(active) => {
-                onBtnClick(id, i(), active);
+                props.onBtnClick(props.id, i(), !active);
               }}
             />
           </div>

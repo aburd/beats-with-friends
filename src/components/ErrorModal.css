@@ -1,0 +1,40 @@
+.ErrorModal {
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  color: var(--main-bg-color);
+}
+.ErrorModal button {
+  color: var(--main-bg-color);
+  height: 3rem;
+  width: 3rem;
+  font-size: 1.2rem;
+}
+.ErrorModal-window {
+  display: grid;
+  grid-template-rows: 2rem 1fr;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "controls"
+    "body";
+  width: 80vw;
+  height: 80vh;
+  padding: 1rem; 
+  border-radius: 6px;
+  margin: auto;
+  background: white; 
+}
+.ErrorModal-controls {
+  grid-area: controls;
+  display: flex;
+  justify-content: right; 
+  color: black;
+}
+.ErrorModal-body {
+  grid-area: body;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

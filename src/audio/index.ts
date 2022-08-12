@@ -3,7 +3,8 @@ import * as tracks from "./tracks";
 import * as patterns from "./patterns";
 import * as instruments from "./instruments";
 import * as util from './util';
-import {importSongToAudioStore, audioStore, setStore} from "./store";
+// TODO: I hate this import export make export make more sense
+import {updateTrackSequence, importSongToAudioStore, audioStore, setStore} from "./store";
 export * from "./types";
 
 type AudioEvent = "sixteenthTick" | "stop" | "start";
@@ -54,24 +55,24 @@ export function cleanup() {
   audioStore.eventIds.forEach((id) => {
     Tone.Transport.clear(id)
   });
-  setStore({ eventIds: [] });
+  setStore({eventIds: []});
 }
 
 function play() {
   Tone.Transport.start();
-  setStore({ playState: "started" });
+  setStore({playState: "started"});
 }
 
 function pause() {
   Tone.Transport.pause();
-  setStore({ playState: "paused" });
+  setStore({playState: "paused"});
 }
 
 function stop() {
   cleanup();
-  audioStore.cur16th = -1;
+  setStore({cur16th: -1});
   Tone.Transport.stop();
-  setStore({ playState: "stopped" });
+  setStore({playState: "stopped"});
 }
 
 export default {
@@ -86,6 +87,7 @@ export default {
   audioStore,
   setStore,
   importSongToAudioStore,
+  updateTrackSequence,
   // modules
   instruments,
   tracks,

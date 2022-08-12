@@ -26,6 +26,7 @@ export default function Sequencer({}: SequencerProps) {
 
   function handleSequenceChange(id: string, sixteenth: number, on: boolean) {
     console.log({id, sixteenth, on})
+    audio.updateTrackSequence(id, sixteenth, on);
   }
 
   function handlePlayClick() {
@@ -72,11 +73,11 @@ export default function Sequencer({}: SequencerProps) {
           cur16th={audio.audioStore.cur16th}
         />
         <For each={Object.values(audio.audioStore.trackMap)}>
-          {({id, sequence}) => (
+          {(item) => (
             <SequencerTrack
-              id={id}
-              initialSequence={sequence}
-              timeSignature={[4, 4]}
+              id={item.id}
+              initialSequence={item.sequence}
+              timeSignature={audio.audioStore.timeSignature || [4, 4]}
               onBtnClick={handleSequenceChange}
             />
           )}

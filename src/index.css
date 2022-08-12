@@ -29,22 +29,3 @@ body {
   min-height: 100vh;
 }
 
-@font-face {
-  font-family: lcd;
-  src: url(LCD.ttf);
-}
-
-.btn-icon {
-  border: none;
-  padding: 0;
-  margin: 0;
-  background: none;
-}
-
-#app-portal-modal {
-  width: 100vw;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  bottom: 0;
-}

@@ -7,22 +7,19 @@ type Props = {
   onClick?: (active: boolean) => void;
 } & Omit<JSX.HTMLAttributes<HTMLButtonElement>, 'onClick'>;
 
-export default function BeatButton({
-  initialActive = false,
-  bgColor = 'white',
-  onClick = () => {},
-  ...rest
-}: Props) {
-  const [active, setActive] = createSignal(initialActive);
+export default function BeatButton(props: Props) {
+  const [active, setActive] = createSignal(props.initialActive);
 
   return (
     <button
-      class={`BeatButton ${bgColor}`}
-      onClick={() => {
-        setActive(!active);
-        onClick(!active);
+      class={`BeatButton ${props.bgColor}`}
+      onClick={(_e) => {
+        setActive(!active());
+        if (props.onClick) {
+          props.onClick(!active());
+        }
       }}
-      {...rest}>
+    >
       <div class="BeatButton--led-container">
         <div class={`BeatButton--led ${active() ? 'active' : undefined}`} />
       </div>

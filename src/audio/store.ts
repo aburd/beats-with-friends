@@ -58,4 +58,18 @@ export async function importSongToAudioStore(song: Song) {
   });
 }
 
+export function updateTrackSequence(id: string, sixteenth: number, on: boolean) {
+  const track = audioStore.trackMap[id];
+  if (!track) {
+    throw Error(`Invalid update to a track with id [${id}]. Are you sure that track exists?`);
+  }
+  if ((track.sequence.length - 1) < sixteenth) {
+    throw Error(`Invalid update to track with sequence length of [${track.sequence.length}].`);
+  }
+  const newSequence = [...track.sequence];
+  newSequence[sixteenth] = on;
+  console.log('sequence', newSequence);
+  setStore("trackMap", id, "sequence", newSequence);
+}
+
 createEffect(() => Tone.Transport.bpm.value = audioStore.bpm);

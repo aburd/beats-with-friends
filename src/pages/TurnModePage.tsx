@@ -30,7 +30,7 @@ export default function TurnModePage(props: TurnModePageProps) {
         Turn Mode
       </div>
       <div class="body">
-        <Show when={!(initializing())} fallback={<Loader loading={initializing()} error={String(songData.error)} />}>
+        <Show when={!initializing()} fallback={<Loader loading={initializing()} error={songData.error} />}>
           <Sequencer />
         </Show>
       </div>

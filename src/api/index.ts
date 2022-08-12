@@ -46,8 +46,7 @@ const songFromServer: Song = {
 
 const song = {
   get(songId: string) {
-    return Promise.reject('boo');
-    // return Promise.resolve(songFromServer);
+    return Promise.resolve(songFromServer);
   }
 }
 

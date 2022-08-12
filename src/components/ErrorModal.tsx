@@ -12,7 +12,7 @@ export default function ErrorModal(props: ErrorModalProps) {
     <Portal mount={document.getElementById('app-portal-modal') as HTMLDivElement}>
       <div class="ErrorModal">
         <div class="ErrorModal-window">
-          <div class="ErrorModal-controls"><button class="btn-icon">&#10006;</button></div>
+          <div class="ErrorModal-controls"><button class="btn-icon" onClick={props.onClose}>&#10006;</button></div>
           <div class="ErrorModal-body">
             {props.children}
           </div>

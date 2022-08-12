@@ -29,3 +29,8 @@ body {
   min-height: 100vh;
 }
 
+@font-face {
+  font-family: lcd;
+  src: url(LCD.ttf);
+}
+

@@ -49,7 +49,7 @@ export default function Sequencer({}: SequencerProps) {
       <section class="Sequencer-info">
         <div class="Sequencer-window">
           <span>SONG</span>
-          <div>{audio.audioStore.songName}</div>
+          <div>{audio.audioStore.songName || "NO SONG LOADED"}</div>
         </div>
         <div class="Sequencer-window">
           <span>PATTERN</span>{}

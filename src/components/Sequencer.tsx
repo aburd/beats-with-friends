@@ -26,7 +26,7 @@ export default function Sequencer({}: SequencerProps) {
   }
 
   function handleSequenceChange(id: string, sixteenth: number, on: boolean) {
-    log.trace({id, sixteenth, on})
+    log.debug({id, sixteenth, on})
     audio.updateTrackSequence(id, sixteenth, on);
   }
 

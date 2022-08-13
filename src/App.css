@@ -3,6 +3,55 @@
   height: 100vh;
 }
 
+.App-btn-menu {
+  position: fixed;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+.Nav {
+  position: fixed;
+  top: 0;
+  right: -80%;
+  width: calc(80% - 2rem);
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 5rem;
+  grid-template-areas: 
+    "top"
+    "bottom";
+  transition: all 0.5s ease 0s;
+  overflow: hidden;
+  background-color: var(--secondary-bg-color); 
+  height: 100%;
+  z-index: 1;
+  padding: 1rem;
+  box-shadow: none;
+}
+.App.nav-expanded .Nav {
+  right: 0;
+  box-shadow: -10px 10px 10px rgba(0, 0, 0, 0.5);
+}
+.Nav-btn-container .btn-icon {
+  font-size: 2rem;
+}
+.Nav .Nav-btn-container {
+  text-align: right;
+}
+.Nav nav a {
+  display: block;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid white;
+  font-size: 2rem;
+  height: 2rem;
+} 
+.Nav-top {
+  grid-area: top;
+}
+.Nav-bottom {
+  grid-area: bottom;
+}
+
+
 button {
   border-radius: 4px;
 }
@@ -30,6 +79,7 @@ label[for="password"]:before {
   content: "\1F511";
 }
 
+/* General */
 button {
   position: relative;
   padding: 0.7rem 1.4rem;
@@ -62,7 +112,7 @@ button.secondary {
 button.warning {
   background-color: var(--808-red);
   border-bottom-color: var(--808-red-dark);
-  color: var(--main-bg-color);
+  color: var(--808-white);
 }
 
 .page {
@@ -70,10 +120,6 @@ button.warning {
   height: 100vh;
 }
 
-@font-face {
-  font-family: lcd;
-  src: url(LCD.ttf);
-}
 
 .btn-icon {
   border: none;
@@ -91,11 +137,15 @@ button.warning {
 }
 
 #app-portal-modal {
-  /* width: 100vw; */
-  /* height: 100vh; */
   position: fixed;
   top: 0;
   bottom: 0;
+}
+
+/* Fonts */
+@font-face {
+  font-family: lcd;
+  src: url(LCD.ttf);
 }
 
 /* Animations */

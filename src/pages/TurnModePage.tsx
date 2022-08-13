@@ -22,7 +22,7 @@ export default function TurnModePage(props: TurnModePageProps) {
   const [initErr, setInitErr] = createSignal<string | null>(null);
   const [appState] = useContext(AppContextContext);
 
-  log.trace(appState);
+  log.debug(appState);
 
   onMount(async () => {
     try {

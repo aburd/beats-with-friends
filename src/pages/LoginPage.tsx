@@ -1,4 +1,4 @@
-import {Show, onMount, onCleanup, createSignal, createResource, useContext} from "solid-js";
+import {Show, onMount, onCleanup, createSignal, createResource, useContext, createEffect} from "solid-js";
 import log from "loglevel";
 import {AppContextContext} from "../AppContextProvider";
 import Loader from "../components/Loader";
@@ -18,7 +18,7 @@ export default function LoginPage(props: LoginPageProps) {
   const [formState, setFormState] = createSignal<FormState>({email: "", password: ""});
   let emailRef: HTMLInputElement;
 
-  log.trace(appState);
+  log.debug(appState);
 
   onMount(async () => {
     if (!emailRef) {
@@ -29,13 +29,16 @@ export default function LoginPage(props: LoginPageProps) {
   });
 
   function handleFormUpdate(key: string, value: string) {
-    setFormState({...formState, [key]: value} as FormState);
+    setFormState({...formState(), [key]: value} as FormState);
   }
   function handleOauthClick() {
-    log.trace("Logging in with Oauth");
+    log.debug("Logging in with Oauth");
+    api.auth.signInGoogle();
   }
-  function handleFormSubmit() {
-    log.trace("Submitting form with state:", JSON.stringify(formState));
+
+  async function handleFormSubmit(e: SubmitEvent) {
+    e.preventDefault();
+    const user = await api.auth.signIn(formState().email, formState().password);
   }
 
   return (
@@ -46,15 +49,15 @@ export default function LoginPage(props: LoginPageProps) {
       <section class="Login-body">
         <div class="Login-body--inner">
           <h2>Login</h2>
-          <form>
+          <form onSubmit={handleFormSubmit}>
             <div class="form-group">
               <label for="email">E-mail</label>
               {/* @ts-ignore */}
-              <input ref={emailRef} type="text" name="email" value={formState().email} placeholder="beatmaker@beats-with-friends.com" />
+              <input ref={emailRef} type="text" name="email" value={formState().email} placeholder="beatmaker@beats-with-friends.com" onKeyUp={(e) => handleFormUpdate("email", e.currentTarget.value)}/>
             </div>
             <div class="form-group">
               <label for="password">Password</label>
-              <input type="password" name="password" value={formState().password} placeholder="password" />
+              <input type="password" name="password" value={formState().password} placeholder="password" onKeyUp={(e) => handleFormUpdate("password", e.currentTarget.value)} />
             </div>
             <button type="submit" class="primary">Login</button>
           </form>

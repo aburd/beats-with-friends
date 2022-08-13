@@ -1,4 +1,6 @@
-import {Show, onMount, onCleanup, createSignal, createResource} from "solid-js";
+import {Show, onMount, onCleanup, createSignal, createResource, useContext} from "solid-js";
+import log from "loglevel";
+import {AppContextContext} from "../AppContextProvider";
 import Sequencer from "../components/Sequencer";
 import Loader from "../components/Loader";
 import ErrorModal from "../components/ErrorModal";
@@ -18,6 +20,7 @@ export default function TurnModePage(props: TurnModePageProps) {
   const [turnModeState, setTurnMode] = createSignal<TurnModeState | null>(null);
   const [song, setSong] = createSignal<Song | null>(null);
   const [initErr, setInitErr] = createSignal<string | null>(null);
+  const [appState] = useContext(AppContextContext);
 
   onMount(async () => {
     try {
@@ -37,9 +40,8 @@ export default function TurnModePage(props: TurnModePageProps) {
         songName: song.name,
       });
     } catch (e) {
-      console.error(e);
+      log.error(e);
       setInitErr('There was an error loading turn mode');
-      console.log(initErr());
     } finally {
       setInitializing(false);
     }

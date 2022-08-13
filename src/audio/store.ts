@@ -68,7 +68,6 @@ export function updateTrackSequence(id: string, sixteenth: number, on: boolean) 
   }
   const newSequence = [...track.sequence];
   newSequence[sixteenth] = on;
-  console.log('sequence', newSequence);
   setStore("trackMap", id, "sequence", newSequence);
 }
 

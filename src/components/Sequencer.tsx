@@ -1,4 +1,5 @@
 import {For, onMount, onCleanup, createSignal, createEffect} from "solid-js";
+import log from "loglevel";
 import SequencerTrack from "./SequencerTrack";
 import SequencerBeatTracker from "./SequencerBeatTracker";
 import audio from "../audio";
@@ -25,7 +26,7 @@ export default function Sequencer({}: SequencerProps) {
   }
 
   function handleSequenceChange(id: string, sixteenth: number, on: boolean) {
-    console.log({id, sixteenth, on})
+    log.trace({id, sixteenth, on})
     audio.updateTrackSequence(id, sixteenth, on);
   }
 

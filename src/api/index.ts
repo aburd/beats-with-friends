@@ -1,9 +1,11 @@
-import song from './song';
+import auth from './auth';
 import group from './group';
+import song from './song';
 import user from './user';
 
 export {
-  song,
+  auth,
   group,
+  song,
   user,
 }

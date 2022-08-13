@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@solidjs/router": "^0.4.2",
     "firebase": "^9.9.2",
     "lodash": "^4.17.21",
     "loglevel": "^1.8.0",

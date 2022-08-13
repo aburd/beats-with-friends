@@ -1,9 +1,7 @@
-import type { Component } from "solid-js";
-import "./App.css";
-import "./audio";
 import TurnModePage from "./pages/TurnModePage";
+import "./App.css";
 
-const App: Component = () => {
+export default function App() {
   return (
     <div class="App">
       <TurnModePage />
@@ -11,4 +9,3 @@ const App: Component = () => {
   );
 };
 
-export default App;

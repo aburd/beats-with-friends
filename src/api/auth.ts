@@ -1,32 +1,39 @@
-import {getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword} from "firebase/auth";
+import {getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, User} from "firebase/auth";
+import log from "loglevel";
 
 export default {
-  signIn(email: string, password: string) {
+  signIn(email: string, password: string): Promise<User> {
     const auth = getAuth();
     return signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in 
-        const user = userCredential.user;
-        // ...
-        return user
+        return userCredential.user;
       })
       .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
+        log.error("Firebase error:", error);
+        throw Error(`Error trying to sign in`);
       });
   },
-  create(email: string, password: string) {
+  signOut(): Promise<void> {
     const auth = getAuth();
-    createUserWithEmailAndPassword(auth, email, password)
+    return signOut(auth)
+      .catch((error) => {
+        log.error("Firebase error:", error);
+        throw Error(`Error trying to sign out`);
+      });
+  },
+  create(email: string, password: string): Promise<User> {
+    const auth = getAuth();
+    return createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in 
         const user = userCredential.user;
         log.trace('user', user);
+        return user;
       })
       .catch((error) => {
-        console.error(error);
-        const errorCode = error.code;
-        const errorMessage = error.message;
+        log.error("Firebase error:", error);
+        throw Error(`Error trying to create a user`);
       });
   }
 }

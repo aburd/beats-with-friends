@@ -1,3 +1,70 @@
+.App {
+  width: 100vw;
+  height: 100vh;
+}
+
+button {
+  border-radius: 4px;
+}
+form button[type="submit"] {
+  margin-top: 0.5rem;
+}
+
+.form-group {
+  margin-bottom: 0.5rem;
+}
+.form-group label, .form-group input {
+  display: block;
+  width: 100%;
+}
+.form-group label {
+  font-size: 0.9rem;
+}
+.form-group input {
+  height: 2rem;
+}
+label[for="email"]:before {
+  content: "\1F4E7"; 
+}
+label[for="password"]:before {
+  content: "\1F511";
+}
+
+button {
+  position: relative;
+  padding: 0.7rem 1.4rem;
+  font-weight: bold;
+  border: none;
+  border-bottom-width: 3px;
+  border-bottom-style: solid;
+  top: 0;
+  transition: all 0.15s ease 0s;
+}
+button img {
+  display: inline-block;
+  height: 0.75rem;
+  margin-right: 2px;
+}
+button:active {
+  top: 2px;
+  border-bottom-width: 1px!important;
+}
+button.primary {
+  background-color: var(--808-white);
+  border-bottom-color: var(--808-white-dark);
+  color: var(--main-bg-color);
+}
+button.secondary {
+  background-color: var(--808-orange);
+  border-bottom-color: var(--808-orange-dark);
+  color: var(--808-white);
+}
+button.warning {
+  background-color: var(--808-red);
+  border-bottom-color: var(--808-red-dark);
+  color: var(--main-bg-color);
+}
+
 .page {
   width: 100vw;
   height: 100vh;
@@ -17,6 +84,10 @@
 }
 .btn-icon:active {
   border: 1px solid rgba(0, 0, 0, 0.5);
+}
+.icon {
+  height: 100%;
+  width: auto;
 }
 
 #app-portal-modal {

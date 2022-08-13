@@ -1,5 +1,6 @@
 /* @refresh reload */
 import {render} from 'solid-js/web'
+import {Router} from "@solidjs/router"
 import log from "loglevel";
 import AppContextProvider from "./AppContextProvider"
 import App from './App'
@@ -28,7 +29,9 @@ render(
       fbAuth={null}
       fbUser={null}
     >
+      <Router>
       <App />
+</Router>
     </AppContextProvider>
   ),
   document.getElementById('root') as HTMLElement

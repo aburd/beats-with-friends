@@ -6,9 +6,6 @@
     "header"
     "body"
     "footer";
-  width: 85%;
-  height: 100%;
-  margin: auto;
 }
 .Login-header {
   grid-area: header;

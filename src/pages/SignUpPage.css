@@ -1,0 +1,32 @@
+.SignUpPage {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 4rem 1fr;
+  grid-template-areas: 
+    "header"
+    "body";
+}
+.SignUp-header {
+  grid-area: header;
+}
+.SignUp-body {
+  grid-area: body;
+}
+.SignUp-footer {
+  grid-area: footer;
+}
+
+.SignUp-body h2 {
+  margin-bottom: 0.5rem;
+}
+.SignUp-body form {
+  margin-bottom: 2rem;
+}
+
+.SignUp-signup {
+  margin-top: 2rem;
+}
+.SignUp-signup button {
+  margin-left: 0.5rem;
+}
+

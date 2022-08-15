@@ -14,4 +14,5 @@ export type Group = {
 export type User = {
   id: string;
   name: string;
+  groupIds: string[],
 }

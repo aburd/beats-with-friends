@@ -7,8 +7,10 @@ export type AuthErrorCode =
   "invalid_email_or_password" |
   "reset_password_failure" |
   "user_creation_failure" |
+  "beat_user_creation_failure" |
   "sign_out_failure" |
-  "google_signin_error";
+  "google_signin_error" |
+  "unknown";
 
 export interface AuthError {
   description: string;
@@ -69,8 +71,8 @@ export default {
           log.trace();
           return null;
         }
+        // const token = credential.accessToken;
 
-        const token = credential.accessToken;
         // The signed-in user info.
         return result.user;
       })
@@ -98,8 +100,7 @@ export default {
     return createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in 
-        const user = userCredential.user;
-        return user;
+        return userCredential.user;
       })
       .catch((error) => {
         log.debug(JSON.stringify(error));

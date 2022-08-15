@@ -1,4 +1,4 @@
-.ErrorModal {
+.Modal {
   width: 100vw;
   height: 100vh;
   background: rgba(255, 255, 255, 0.5);
@@ -6,11 +6,11 @@
   align-items: center;
   color: var(--main-bg-color);
 }
-.ErrorModal button.icon {
+.Modal button.icon {
   height: 2rem;
   width: 2rem;
 }
-.ErrorModal-window {
+.Modal-window {
   display: grid;
   grid-template-rows: 2rem 1fr;
   grid-template-columns: 1fr;
@@ -24,13 +24,13 @@
   margin: auto;
   background: white; 
 }
-.ErrorModal-controls {
+.Modal-controls {
   grid-area: controls;
   display: flex;
   justify-content: right; 
   color: black;
 }
-.ErrorModal-body {
+.Modal-body {
   grid-area: body;
   display: flex;
   justify-content: center;

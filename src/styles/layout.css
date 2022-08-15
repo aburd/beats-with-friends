@@ -18,7 +18,7 @@
   grid-template-areas: 
     "top"
     "bottom";
-  transition: all 0.5s ease 0s;
+  transition: all 0.2s ease 0s;
   overflow: hidden;
   background-color: var(--secondary-bg-color); 
   height: 100%;
@@ -51,7 +51,8 @@
 }
 
 .page {
-  width: 100vw;
-  height: 100vh;
+  width: 85%;
+  height: 100%;
+  margin: auto;
 }
 

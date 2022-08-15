@@ -1,24 +1,5 @@
 
 
 
-#app-portal-modal {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-}
 
-/* Fonts */
-@font-face {
-  font-family: lcd;
-  src: url(LCD.ttf);
-}
 
-/* Animations */
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}

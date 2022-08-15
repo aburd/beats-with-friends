@@ -4,24 +4,17 @@ import log from "loglevel";
 import {initializeApp} from "firebase/app";
 import {getAuth, onAuthStateChanged} from "firebase/auth";
 import {AppContextContext} from "./AppContextProvider"
+import {AppRoutes} from "./routes";
 import * as api from "./api";
 import "./styles";
 
 const LoginPage = lazy(() => import("./pages/LoginPage"));
+const SignUpPage = lazy(() => import("./pages/SignUpPage"));
+const UserSetupPage = lazy(() => import("./pages/UserSetupPage"));
 const GroupsPage = lazy(() => import("./pages/GroupsPage"));
 const GroupPage = lazy(() => import("./pages/GroupPage"));
 const TurnModePage = lazy(() => import("./pages/TurnModePage"));
 const ProfilePage = lazy(() => import("./pages/ProfilePage"));
-
-export const AppRoutes = {
-  login: () => "/login",
-  groups: {
-    index: () => `/groups`,
-    show: (id: string) => `/groups/${id}`,
-  },
-  turnMode: (groupId: string) => `${AppRoutes.groups.show(groupId)}/turn-mode`,
-  profile: () => "/profile",
-}
 
 function bootstrapApp(setAppContext: Function, navigate: Function, setNavExpanded: Function) {
   if (!setAppContext) {
@@ -50,21 +43,30 @@ function bootstrapApp(setAppContext: Function, navigate: Function, setNavExpande
     fbApp: app,
     fbAuth: auth,
   });
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      log.info("User is signed in");
-      // User is signed in, see docs for a list of available properties
-      // https://firebase.google.com/docs/reference/js/firebase.User
-      // const uid = user.uid;
-      // ...
-      setAppContext({fbUser: user});
-      navigate(AppRoutes.profile(), {replace: true});
-    } else {
+  onAuthStateChanged(auth, async (fbUser) => {
+    if (!fbUser) {
       // User is signed out
       log.info("User is signed out, rerouting to login");
       setNavExpanded(false);
       navigate(AppRoutes.login(), {replace: true});
+      return;
     }
+
+    log.info("User is signed in");
+    // User is signed in, see docs for a list of available properties
+    // https://firebase.google.com/docs/reference/js/firebase.User
+    // const uid = fbUser.uid;
+    // ...
+    setAppContext({fbUser});
+    const user = await api.user.get(fbUser.uid);
+    if (user) {
+      log.debug("User", user);
+      setAppContext({ user });
+      navigate(AppRoutes.profile(), {replace: true});
+      return;
+    } 
+    // There is no matching user, we should set that up
+    navigate(AppRoutes.userSetup(), {replace: true});
   });
 }
 
@@ -78,7 +80,9 @@ export default function App() {
       <div class="Nav">
         <div class="Nav-top">
           <div class="Nav-btn-container">
-            <button class="icon x-circle-close-delete" onClick={() => setNavExpanded(false)} />
+            <button class="icon x-circle-close-delete" onClick={() => setNavExpanded(false)}>
+              <i class="icon x-circle-close-delete" />
+            </button>
           </div>
           <nav>
             <NavLink href={AppRoutes.groups.index()}>Groups</NavLink>
@@ -113,6 +117,8 @@ export default function App() {
       <div class="App-body">
         <Routes>
           <Route path={AppRoutes.login()} component={LoginPage} />
+          <Route path={AppRoutes.signUp()} component={SignUpPage} />
+          <Route path={AppRoutes.userSetup()} component={UserSetupPage} />
           <Route path={AppRoutes.groups.index()} component={wrapWithMenu(GroupsPage)} />
           <Route path={AppRoutes.groups.show(":groupId")} component={wrapWithMenu(GroupPage)} />
           <Route path={AppRoutes.turnMode(":groupId")} component={wrapWithMenu(TurnModePage)} />

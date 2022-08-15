@@ -1,7 +1,8 @@
 import {Show, onMount, onCleanup, createSignal, createResource, useContext, createEffect} from "solid-js";
+import {useNavigate} from "@solidjs/router";
 import log from "loglevel";
 import {AppContextContext} from "../AppContextProvider";
-import Loader from "../components/Loader";
+import {AppRoutes} from "../routes";
 import ErrorModal from "../components/ErrorModal";
 import * as api from "../api";
 import {AuthError} from "../api/auth";
@@ -18,6 +19,8 @@ export default function LoginPage(props: LoginPageProps) {
   const [appState] = useContext(AppContextContext);
   const [formState, setFormState] = createSignal<FormState>({email: "", password: ""});
   const [loginErr, setLoginErr] = createSignal<null | AuthError>(null);
+  const [signingIn, setSigningIn] = createSignal<boolean>(false);
+  const navigate = useNavigate();
   let emailRef: HTMLInputElement;
 
   log.debug(appState);
@@ -41,8 +44,10 @@ export default function LoginPage(props: LoginPageProps) {
 
   async function handleFormSubmit(e: SubmitEvent) {
     e.preventDefault();
-    const user = await api.auth.signIn(formState().email, formState().password)
+    setSigningIn(true);
+    await api.auth.signIn(formState().email, formState().password)
       .catch((e: AuthError) => setLoginErr(e));
+    setSigningIn(false);
   }
 
   return (
@@ -66,7 +71,12 @@ export default function LoginPage(props: LoginPageProps) {
               <label for="password">Password</label>
               <input type="password" name="password" value={formState().password} placeholder="password" onKeyUp={(e) => handleFormUpdate("password", e.currentTarget.value)} />
             </div>
-            <button type="submit" class="primary">Login</button>
+            <button
+              type="submit"
+              class={signingIn() ? "warning" : "primary"}
+              disabled={signingIn()}>
+              {signingIn() ? "Signing in..." : "Login"}
+            </button>
           </form>
           <div class="o-auth">
             <button class="primary" onClick={handleOauthClick}>
@@ -76,7 +86,7 @@ export default function LoginPage(props: LoginPageProps) {
           </div>
           <div class="Login-signup">
             <span>{"Don't have an account yet?"}</span>
-            <button class="secondary">Sign Up</button>
+            <button class="secondary" onClick={() => navigate(AppRoutes.signUp())}>Sign Up</button>
           </div>
         </div>
       </section>

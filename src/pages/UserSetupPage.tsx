@@ -33,7 +33,7 @@ export default function UserSetupPage(_props: UserSetupPageProps) {
       return;
     }
     try {
-      const user = await api.user.createWithId(appState.fbUser.uid, formData().alias, [])
+      const user = await api.user.createWithId(appState.fbUser.uid, appState.fbUser.email || "", formData().alias, [])
       if (!setAppContext) {
         log.warn(`No app context detected`);
         return;
@@ -41,6 +41,7 @@ export default function UserSetupPage(_props: UserSetupPageProps) {
       setAppContext({user});
       navigate(AppRoutes.profile());
     } catch (e) {
+      log.debug(e);
       setSubmitErr(e as UserApiError);
     } finally {
       setSubmitting(false);

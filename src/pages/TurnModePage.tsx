@@ -3,6 +3,7 @@ import log from "loglevel";
 import {AppContextContext} from "../AppContextProvider";
 import Sequencer from "../components/Sequencer";
 import Loader from "../components/Loader";
+import MenuButton from "../components/MenuButton";
 import ErrorModal from "../components/ErrorModal";
 import * as api from "../api";
 import audio, {Song, TimeSignature} from "../audio";
@@ -55,6 +56,7 @@ export default function TurnModePage(props: TurnModePageProps) {
 
   return (
     <div class="TurnModePage page">
+      <MenuButton />
       <Show when={initErr()}>
         <ErrorModal onClose={handleModalClose}>{initErr()}</ErrorModal>
       </Show>

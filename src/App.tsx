@@ -1,4 +1,4 @@
-import {Show, onMount, createEffect, useContext, lazy, createSignal, Component} from "solid-js";
+import {Show, JSX, onMount, createEffect, useContext, lazy, createSignal} from "solid-js";
 import {Routes, Route, NavLink, useNavigate, useLocation} from "@solidjs/router";
 import log from "loglevel";
 import {initializeApp} from "firebase/app";
@@ -7,6 +7,7 @@ import Loader from "./components/Loader";
 import {AppContextContext} from "./AppContextProvider"
 import {AppRoutes} from "./routes";
 import * as api from "./api";
+import * as util from "./util";
 import "./styles";
 
 const LoginPage = lazy(() => import("./pages/LoginPage"));
@@ -17,7 +18,7 @@ const GroupPage = lazy(() => import("./pages/GroupPage"));
 const TurnModePage = lazy(() => import("./pages/TurnModePage"));
 const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 
-function bootstrapApp(setAppContext: Function, navigate: Function, setNavExpanded: Function, pathname: string) {
+function bootstrapApp(setAppContext: Function, navigate: Function, pathname: string) {
   if (!setAppContext) {
     log.warn("No firebase app context detected");
     return;
@@ -49,7 +50,7 @@ function bootstrapApp(setAppContext: Function, navigate: Function, setNavExpande
     if (!fbUser) {
       // User is signed out
       log.info("User is signed out, rerouting to login");
-      setNavExpanded(false);
+      util.setNavExpanded(false);
       navigate(AppRoutes.login(), {replace: true});
       return;
     }
@@ -69,7 +70,6 @@ function bootstrapApp(setAppContext: Function, navigate: Function, setNavExpande
 }
 
 export default function App() {
-  const [navExpanded, setNavExpanded] = createSignal(false);
   const [appState, setAppContext] = useContext(AppContextContext);
   const navigate = useNavigate();
   const location = useLocation();
@@ -79,7 +79,7 @@ export default function App() {
       <div class="Nav">
         <div class="Nav-top">
           <div class="Nav-btn-container">
-            <button class="icon x-circle-close-delete" onClick={() => setNavExpanded(false)}>
+            <button class="icon x-circle-close-delete" onClick={() => util.setNavExpanded(false)}>
               <i class="icon x-circle-close-delete" />
             </button>
           </div>
@@ -95,27 +95,14 @@ export default function App() {
     );
   }
 
-  function wrapWithMenu(component: Component) {
-    return () => {
-      return <>
-        <div class="App-btn-menu">
-          <button onClick={() => setNavExpanded(true)}>Menu</button>
-        </div>
-        {component}
-      </>
-    }
-  }
-
   onMount(() => {
-    bootstrapApp(setAppContext as Function, navigate, setNavExpanded, location.pathname)
+    bootstrapApp(setAppContext as Function, navigate, location.pathname)
   });
 
-  createEffect(() => {
-    log.debug(appState.bootstrapped);
-  });
+  log.debug(AppRoutes.groups.show(":groupId"));
 
   return (
-    <div class={`App ${navExpanded() ? "nav-expanded" : ""}`}>
+    <div class={`App`}>
       <Show when={appState?.bootstrapped} fallback={<Loader loading={!appState?.bootstrapped} />}>
         <Nav />
         <div class="App-body">
@@ -123,10 +110,10 @@ export default function App() {
             <Route path={AppRoutes.login()} component={LoginPage} />
             <Route path={AppRoutes.signUp()} component={SignUpPage} />
             <Route path={AppRoutes.userSetup()} component={UserSetupPage} />
-            <Route path={AppRoutes.groups.index()} component={wrapWithMenu(GroupsPage)} />
-            <Route path={AppRoutes.groups.show(":groupId")} component={wrapWithMenu(GroupPage)} />
-            <Route path={AppRoutes.turnMode(":groupId")} component={wrapWithMenu(TurnModePage)} />
-            <Route path={AppRoutes.profile()} component={wrapWithMenu(ProfilePage)} />
+            <Route path={AppRoutes.groups.show(":groupId")} component={GroupPage} />
+            <Route path={AppRoutes.turnMode(":groupId")} component={TurnModePage} />
+            <Route path={AppRoutes.groups.index()} component={GroupsPage} />
+            <Route path={AppRoutes.profile()} component={ProfilePage} />
           </Routes>
         </div>
       </Show>

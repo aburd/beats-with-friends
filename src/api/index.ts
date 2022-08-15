@@ -1,5 +1,5 @@
 import auth, { AuthErrorCode } from './auth';
-import group from './group';
+import group, { GroupApiErrorCode } from './group';
 import song from './song';
 import user, { UserApiErrorCode } from './user';
 
@@ -11,6 +11,7 @@ export type BaseApiError = {
 export type ErrorCode = 
   BaseApiErrorCode | 
   AuthErrorCode | 
+  GroupApiErrorCode | 
   UserApiErrorCode;
 
 export {

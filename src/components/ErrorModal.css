@@ -6,11 +6,9 @@
   align-items: center;
   color: var(--main-bg-color);
 }
-.ErrorModal button {
-  color: var(--main-bg-color);
-  height: 3rem;
-  width: 3rem;
-  font-size: 1.2rem;
+.ErrorModal button.icon {
+  height: 2rem;
+  width: 2rem;
 }
 .ErrorModal-window {
   display: grid;
@@ -20,7 +18,7 @@
     "controls"
     "body";
   width: 80vw;
-  height: 80vh;
+  min-height: 30vh;
   padding: 1rem; 
   border-radius: 6px;
   margin: auto;

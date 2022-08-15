@@ -1,13 +1,14 @@
-import {For, onMount, onCleanup, createSignal, createEffect} from "solid-js";
+import {For, onMount, onCleanup, createSignal, createEffect, useContext} from "solid-js";
 import log from "loglevel";
 import SequencerTrack from "./SequencerTrack";
 import SequencerBeatTracker from "./SequencerBeatTracker";
-import audio from "../audio";
+import audio, {Song} from "../audio";
 import "./Sequencer.css"
 
-type SequencerProps = {};
+type SequencerProps = {
+};
 
-export default function Sequencer({}: SequencerProps) {
+export default function Sequencer(props: SequencerProps) {
   onMount(() => {
     audio.init();
     window.addEventListener("keyup", function (e) {

@@ -1,8 +1,13 @@
-import {orderByValue, getDatabase, ref, set, update, push, child, get} from "firebase/database";
+import {onValue, getDatabase, ref, set, update, push, child, get} from "firebase/database";
 import log from "loglevel";
 import {TurnModeState} from "../types";
-import {Song, Note, BeatsSixteenths} from '../audio/types';
+import {Song, Note, BeatsSixteenths, TimeSignature} from '../audio/types';
 import * as util from "./util";
+import {AudioStore} from "../audio/store";
+import {ClientInstrument} from "audio/instruments";
+import {zipObject} from "lodash";
+import {ClientPattern} from "audio/patterns";
+import {ClientTrack} from "audio/tracks";
 
 export type SongApiErrorCode =
   "unknown";
@@ -44,6 +49,67 @@ export type DbSong = {
   patterns: Record<string, DbPattern>,
   sheet: Record<string, boolean>,
 };
+
+function sequenceToNote(sixteenth: number, top: number): DbNote {
+  return {
+    startTime: {
+      beat: Math.floor(sixteenth / top),
+      sixteenth: sixteenth % top,
+    },
+    length: 0.1,
+  }
+}
+
+function instrumentMapToDbInstruments(instrumentMap: Record<string, ClientInstrument>): Record<string, DbInstrument> {
+  const ids = Object.keys(instrumentMap);
+  const cInstruments = Object.values(instrumentMap);
+  const dbInstruments = cInstruments.map((cInstrument): DbInstrument => ({
+    name: cInstrument.name,
+    url: cInstrument.url,
+  }));
+  return zipObject(ids, dbInstruments)
+}
+
+function patternMapToDbPatterns(timeSignature: TimeSignature, trackMap: Record<string, ClientTrack>, patternMap: Record<string, ClientPattern>): Record<string, DbPattern> {
+  const ids = Object.keys(patternMap);
+  const cPatterns = Object.values(patternMap);
+  const dbPatterns = cPatterns.map((cPattern): DbPattern => {
+    const dbTracks = cPattern.trackIds.map((id): DbTrack => {
+      const dbNotes = trackMap[id].sequence
+        .map((on, sixteenth) => {
+          return {on, sixteenth};
+        })
+        .filter(({on}) => on)
+        .map((item) => sequenceToNote(item.sixteenth, timeSignature[0]));
+      const noteIds = Array(dbNotes.length).fill(null).map((_, i) => i);
+      return {
+        instrumentId: trackMap[id].instrumentId,
+        notes: zipObject(noteIds, dbNotes),
+      }
+    });
+    const tracks = zipObject(cPattern.trackIds, dbTracks);
+    return {
+      name: cPattern.name,
+      tracks,
+    }
+  });
+  return zipObject(ids, dbPatterns)
+}
+
+function audioStoreToDbSong(store: AudioStore): DbSong {
+  if (!store.timeSignature) throw Error("No timesignature");
+
+  return {
+    name: store.songName,
+    instruments: instrumentMapToDbInstruments(store.instrumentMap),
+    timeSignature: {
+      top: store.timeSignature[0],
+      bottom: store?.timeSignature[1],
+    },
+    patterns: patternMapToDbPatterns(store.timeSignature, store.trackMap, store.patternMap),
+    sheet: {},
+  }
+}
 
 const defaultDbSong: DbSong = {
   name: "New Song",
@@ -192,15 +258,39 @@ export default {
         };
         throw e;
       });
-    return dbSongToSong(defaultDbSong, newSongKey); 
+    return dbSongToSong(defaultDbSong, newSongKey);
   },
-  update(song: Song): Promise<void> {
-    log.warn("Not implemented!");
-    songFromServer = song;
-    if (song.id === '1') {
-      return Promise.resolve();
-    }
-    return Promise.reject();
+  // TODO: Make this more generic
+  async update(store: AudioStore, songId: string, nextUserId: string, groupId: string): Promise<Song> {
+    const db = getDatabase();
+
+    const turnMode: TurnModeState = {
+      activeUserId: nextUserId,
+      songId,
+    };
+
+    const updates = {} as Record<string, any>;
+    updates[`/songs/${songId}`] = audioStoreToDbSong(store);
+    updates[`/groups/${groupId}/turnMode`] = turnMode;
+
+    await update(ref(db), updates)
+      .catch(fbErr => {
+        log.error(fbErr);
+        const e: SongApiError = {
+          description: "Error with Firebase",
+          code: "unknown",
+        };
+        throw e;
+      });
+    return dbSongToSong(defaultDbSong, songId);
+  },
+  subscribeToSongUpdate(songId: string, callback: (song: Song) => void): void {
+    const db = getDatabase();
+    const songRef = ref(db, `songs/${songId}`);
+    onValue(songRef, (snapshot) => {
+      const dbSong = snapshot.val() as DbSong;
+      callback(dbSongToSong(dbSong, songId));
+    });
   },
   addInstrument(songId: string, instrumentId: string): Promise<void> {
     log.warn("Not implemented!");

@@ -4,10 +4,9 @@ import log from "loglevel";
 export type AuthErrorCode =
   "wrong_password" |
   "invalid_email" |
+  "email_in_use" |
   "invalid_email_or_password" |
   "reset_password_failure" |
-  "user_creation_failure" |
-  "beat_user_creation_failure" |
   "sign_out_failure" |
   "google_signin_error" |
   "unknown";
@@ -29,6 +28,12 @@ function firebaseCodeToAuthError(code: string): AuthError {
       return {
         description: "Error signing in",
         code: "invalid_email",
+      }
+    }
+    case "auth/email-already-in-use": {
+      return {
+        description: "Error signing in",
+        code: "email_in_use",
       }
     }
     case "auth/internal-error": {
@@ -104,8 +109,7 @@ export default {
       })
       .catch((error) => {
         log.debug(JSON.stringify(error));
-        const e: AuthError = {code: "user_creation_failure", description: "Could not create user"};
-        throw e;
+        throw firebaseCodeToAuthError(error.code);
       });
   },
   update(email: string): Promise<void> {

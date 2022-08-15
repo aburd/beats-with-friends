@@ -7,6 +7,7 @@ export type AuthErrorCode =
   "invalid_email_or_password" |
   "reset_password_failure" |
   "user_creation_failure" |
+  "beat_user_creation_failure" |
   "sign_out_failure" |
   "google_signin_error" |
   "unknown";

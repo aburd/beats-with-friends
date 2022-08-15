@@ -123,6 +123,14 @@ const defaultDbSong: DbSong = {
       name: 'clap',
       url: 'clap.wav',
     },
+    '3': {
+      name: 'snare',
+      url: 'snare.wav',
+    },
+    '4': {
+      name: 'tom',
+      url: 'tom.wav',
+    },
   },
   patterns: {
     '1': {
@@ -140,8 +148,44 @@ const defaultDbSong: DbSong = {
             }
           },
         },
+        '2': {
+          instrumentId: '2',
+          notes: {
+            '1': {
+              startTime: {
+                beat: 1,
+                sixteenth: 0,
+              },
+              length: 0.1,
+            }
+          },
+        },
+        '3': {
+          instrumentId: '3',
+          notes: {
+            '1': {
+              startTime: {
+                beat: 0,
+                sixteenth: 2,
+              },
+              length: 0.1,
+            }
+          },
+        },
+        '4': {
+          instrumentId: '4',
+          notes: {
+            '1': {
+              startTime: {
+                beat: 3,
+                sixteenth: 2,
+              },
+              length: 0.1,
+            }
+          },
+        },
       },
-    }
+    },
   },
   sheet: {},
 }

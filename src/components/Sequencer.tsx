@@ -76,12 +76,15 @@ export default function Sequencer(props: SequencerProps) {
         />
         <For each={Object.values(audio.audioStore.trackMap)}>
           {(item) => (
-            <SequencerTrack
-              id={item.id}
-              initialSequence={item.sequence}
-              timeSignature={audio.audioStore.timeSignature || [4, 4]}
-              onBtnClick={handleSequenceChange}
-            />
+            <>
+              <div>{audio.audioStore.instrumentMap[item.instrumentId].name}</div>
+              <SequencerTrack
+                id={item.id}
+                initialSequence={item.sequence}
+                timeSignature={audio.audioStore.timeSignature || [4, 4]}
+                onBtnClick={handleSequenceChange}
+              />
+            </>
           )}
         </For>
       </section>

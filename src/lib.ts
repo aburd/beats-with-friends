@@ -10,6 +10,7 @@ const knownErrorMsgs: Record<ErrorCode, string> = {
   invalid_email_or_password: "Please check your e-mail address or password used to sign in.",
   reset_password_failure: "There was an error resetting your password. Please contact aaron.burdick@protonmail.com",
   user_creation_failure: "There was an error creating your user, are you sure your e-mail address is valid?",
+  beats_user_creation_failure: "There was an error creating your user. Maybe try checking the fields of your new user?",
   unknown: "An unknown error occured. Sorry beat maker...",
 };
 

@@ -39,10 +39,8 @@ export default function SignUpPage(_props: SignUpPageProps) {
     api.user.create(
       formState().email,
       formState().password,
-      {
-        name: formState().name,
-        groupIds: [],
-      }
+      formState().name,
+      [],
     )
       .catch(e => setSignUpErr(e as UserApiError));
     setSigningIn(false);

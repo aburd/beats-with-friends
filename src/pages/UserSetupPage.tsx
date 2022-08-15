@@ -1,9 +1,11 @@
-import {AppContextContext} from "../AppContextProvider";
-import {useContext, createSignal} from "solid-js";
+import {Show, useContext, createSignal} from "solid-js";
 import {useNavigate} from "@solidjs/router";
-import {AppRoutes} from "../routes";
 import log from "loglevel";
+import {AppContextContext} from "../AppContextProvider";
+import ErrorModal from "../components/ErrorModal";
+import {AppRoutes} from "../routes";
 import * as api from "../api";
+import {UserApiError} from "../api/user";
 
 type SetupFormData = {
   alias: string;
@@ -15,6 +17,7 @@ export default function UserSetupPage(_props: UserSetupPageProps) {
   const [appState, setAppContext] = useContext(AppContextContext);
   const [formData, setFormData] = createSignal<SetupFormData>({alias: ""});
   const [submitting, setSubmitting] = createSignal<boolean>(false);
+  const [submitErr, setSubmitErr] = createSignal<null | UserApiError>(null);
   const navigate = useNavigate();
 
   function handleFormUpdate(key: keyof SetupFormData, value: SetupFormData[keyof SetupFormData]) {
@@ -29,20 +32,27 @@ export default function UserSetupPage(_props: UserSetupPageProps) {
       log.error(`No user in database.`);
       return;
     }
-    const user = await api.user.createWithId(appState.fbUser.uid, formData().alias, ['1']);
-    if (!setAppContext) {
-      log.warn(`No app context detected`);
-      return;
+    try {
+      const user = await api.user.createWithId(appState.fbUser.uid, formData().alias, [])
+      if (!setAppContext) {
+        log.warn(`No app context detected`);
+        return;
+      }
+      setAppContext({user});
+      navigate(AppRoutes.profile());
+    } catch (e) {
+      setSubmitErr(e as UserApiError);
+    } finally {
+      setSubmitting(false);
     }
-    setAppContext({user});
-    navigate(AppRoutes.profile());
-
-    setSubmitting(false);
   }
 
   return (
     <div class="UserSetupPage page">
       <h1>User Setup Page</h1>
+      <Show when={submitErr()}>
+        <ErrorModal errorCode={submitErr()?.code} onClose={() => setSubmitErr(null)} />
+      </Show>
       <form onSubmit={handleFormSubmit}>
         <div class="form-group">
           <label for="alias">Alias</label>

@@ -1,4 +1,5 @@
 import {User} from "../types";
+import log from "loglevel";
 
 const userFromServer: User = {
   id: '1',
@@ -7,6 +8,7 @@ const userFromServer: User = {
 
 export default {
   get(userId: string): Promise<User> {
+    log.warn("Not implemented!");
     if (userId === '1') {
       return Promise.resolve(userFromServer);
     }

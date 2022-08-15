@@ -58,5 +58,13 @@ export default {
         log.error("Firebase error:", error);
         throw Error(`Error trying to create a user`);
       });
+  },
+  update(email: string): Promise<void> {
+    log.warn("Not implemented!");
+    return Promise.resolve();
+  },
+  delete(email: string, password: string): Promise<void> {
+    log.warn("Auth delete not implemented!");
+    return Promise.resolve();
   }
 }

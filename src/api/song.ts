@@ -1,6 +1,7 @@
 import {Song} from '../audio/types';
+import log from "loglevel";
 
-const songFromServer: Song = {
+export let songFromServer: Song = {
   id: '1',
   name: 'Beat 1',
   timeSignature: [4, 4],
@@ -46,8 +47,17 @@ const songFromServer: Song = {
 
 export default {
   get(songId: string): Promise<Song> {
-    if ('1') {
+    log.warn("Not implemented!");
+    if (songId === '1') {
       return Promise.resolve(songFromServer);
+    }
+    return Promise.reject();
+  },
+  update(song: Song): Promise<void> {
+    log.warn("Not implemented!");
+    songFromServer = song;
+    if (song.id === '1') {
+      return Promise.resolve();
     }
     return Promise.reject();
   }

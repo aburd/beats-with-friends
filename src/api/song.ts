@@ -1,9 +1,10 @@
-import {Song} from '../audio/types';
+import {Song, Note} from '../audio/types';
 import log from "loglevel";
 
 export let songFromServer: Song = {
   id: '1',
   name: 'Beat 1',
+  // TODO: should probably move this to patterns to allow each pattern to have its own timeSignature 
   timeSignature: [4, 4],
   instruments: [
     {
@@ -23,6 +24,7 @@ export let songFromServer: Song = {
       name: 'drums',
       tracks: [
         {
+          id: '1',
           instrumentId: '1',
           sequence: [
             {startTime: [0, 0], length: 0.1},
@@ -33,6 +35,7 @@ export let songFromServer: Song = {
           ],
         },
         {
+          id: '2',
           instrumentId: '2',
           sequence: [
             {startTime: [1, 0], length: 0.1},
@@ -60,6 +63,23 @@ export default {
       return Promise.resolve();
     }
     return Promise.reject();
-  }
+  },
+  addInstrument(songId: string, instrumentId: string): Promise<void> {
+    log.warn("Not implemented!");
+    return Promise.resolve();
+  },
+  addSample(name: string, file: File): Promise<void> {
+    log.warn("Not implemented!");
+    if (!(file.name && file.size)) {
+      log.error(`Not a valid file. Name: ${file.name}, Size: ${file.size}.`);
+      return Promise.reject();
+    }
+    
+    return Promise.resolve();
+  },
+  updateSequence(songId: string, patternId: string, instrumentId: string, note: Note): Promise<void> {
+    log.warn("Not implemented!");
+    return Promise.resolve();
+  },
 }
 

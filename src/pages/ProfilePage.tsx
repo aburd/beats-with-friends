@@ -1,4 +1,4 @@
-import {Show, onMount, onCleanup, createSignal, createResource, useContext, createEffect} from "solid-js";
+import {Show, onMount, useContext} from "solid-js";
 import log from "loglevel";
 import {AppContextContext} from "../AppContextProvider";
 import Loader from "../components/Loader";
@@ -15,9 +15,11 @@ export default function ProfilePage(props: ProfilePageProps) {
 
   return (
     <div class="ProfilePage page">
+      <Show when={appState?.fbUser} >
       <h1>Profile Page</h1>
       <div>Email: {appState?.fbUser?.email}</div>
       <div><img src={appState?.fbUser?.photoURL || ""} /></div>
+    </Show>
     </div>
   );
 }

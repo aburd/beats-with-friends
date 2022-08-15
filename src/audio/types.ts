@@ -19,6 +19,7 @@ export type Instrument = {
 }
 
 export type Track = {
+  id: string,
   instrumentId: InstrumentId,
   sequence: Note[]
 }

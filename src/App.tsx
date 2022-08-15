@@ -58,7 +58,7 @@ function bootstrapApp(setAppContext: Function, navigate: Function, setNavExpande
       // const uid = user.uid;
       // ...
       setAppContext({fbUser: user});
-      navigate(AppRoutes.groups.index(), {replace: true});
+      navigate(AppRoutes.profile(), {replace: true});
     } else {
       // User is signed out
       log.info("User is signed out, rerouting to login");

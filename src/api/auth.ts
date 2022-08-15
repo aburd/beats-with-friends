@@ -1,19 +1,38 @@
-import {getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, User, signInWithPopup, GoogleAuthProvider} from "firebase/auth";
+import {getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, User, signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail} from "firebase/auth";
 import log from "loglevel";
 
-export type AuthErrorCode = "invalid_email" | "unknown"; 
+export type AuthErrorCode =
+  "wrong_password" |
+  "invalid_email" |
+  "invalid_email_or_password" |
+  "reset_password_failure" |
+  "user_creation_failure" |
+  "sign_out_failure" |
+  "google_signin_error";
 
 export interface AuthError {
   description: string;
-  code: AuthErrorCode; 
+  code: AuthErrorCode;
 };
 
 function firebaseCodeToAuthError(code: string): AuthError {
-  switch(code) {
+  switch (code) {
+    case "auth/wrong-password": {
+      return {
+        description: "Error signing in",
+        code: "wrong_password",
+      }
+    }
     case "auth/invalid-email": {
       return {
         description: "Error signing in",
         code: "invalid_email",
+      }
+    }
+    case "auth/internal-error": {
+      return {
+        description: "Error signing in",
+        code: "invalid_email_or_password",
       }
     }
     default: {
@@ -34,7 +53,6 @@ export default {
         return userCredential.user;
       })
       .catch((error) => {
-        // log.error("Firebase error:", error);
         log.debug(JSON.stringify(error));
         throw firebaseCodeToAuthError(error.code);
       });
@@ -55,20 +73,24 @@ export default {
         const token = credential.accessToken;
         // The signed-in user info.
         return result.user;
-      }).catch((error) => {
-        log.error(error);
+      })
+      .catch((error) => {
+        log.debug('Google error', JSON.stringify(error));
         // The AuthCredential type that was used.
         const credential = GoogleAuthProvider.credentialFromError(error);
-        log.error(credential);
-        throw Error(`Error logging with google.`);
+        log.debug(credential);
+        log.debug('Google credential', JSON.stringify(credential));
+        const e: AuthError = {code: "google_signin_error", description: "Could not reset user's password"};
+        throw e;
       });
   },
   signOut(): Promise<void> {
     const auth = getAuth();
     return signOut(auth)
       .catch((error) => {
-        log.error("Firebase error:", error);
-        throw Error(`Error trying to sign out`);
+        log.debug(JSON.stringify(error));
+        const e: AuthError = {code: "sign_out_failure", description: "Could not reset user's password"};
+        throw e;
       });
   },
   create(email: string, password: string): Promise<User> {
@@ -80,8 +102,9 @@ export default {
         return user;
       })
       .catch((error) => {
-        log.error("Firebase error:", error);
-        throw Error(`Error trying to create a user`);
+        log.debug(JSON.stringify(error));
+        const e: AuthError = {code: "user_creation_failure", description: "Could not create user"};
+        throw e;
       });
   },
   update(email: string): Promise<void> {
@@ -91,5 +114,14 @@ export default {
   delete(email: string, password: string): Promise<void> {
     log.warn("Auth delete not implemented!");
     return Promise.resolve();
-  }
+  },
+  resetPassword(email: string): Promise<void> {
+    const auth = getAuth();
+    return sendPasswordResetEmail(auth, email)
+      .catch((error) => {
+        log.debug(JSON.stringify(error));
+        const e: AuthError = {code: "reset_password_failure", description: "Could not reset user's password"};
+        throw e;
+      });
+  },
 }

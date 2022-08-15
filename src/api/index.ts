@@ -3,7 +3,7 @@ import group from './group';
 import song from './song';
 import user from './user';
 
-export type ErrorCode = AuthErrorCode;
+export type ErrorCode = AuthErrorCode | "unknown";
 
 export {
   auth,

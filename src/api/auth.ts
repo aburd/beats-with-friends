@@ -15,7 +15,7 @@ export type AuthErrorCode =
 export interface AuthError {
   description: string;
   code: AuthErrorCode;
-};
+}
 
 function firebaseCodeToAuthError(code: string): AuthError {
   switch (code) {

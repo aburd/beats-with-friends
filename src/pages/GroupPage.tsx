@@ -11,9 +11,7 @@ import {GroupApiError} from "../api/group";
 import "./GroupPage.css";
 import {AppRoutes} from "../routes";
 
-type GroupPageProps = {};
-
-export default function GroupPage(props: GroupPageProps) {
+export default function GroupPage() {
   const [appState] = useContext(AppContextContext);
   const [email, setEmail] = createSignal("");
   const [creating, setCreating] = createSignal<boolean>(false);

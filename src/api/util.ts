@@ -5,7 +5,7 @@ export function idArrToFbMap(idArr: string[]) {
   return zipObject(idArr, vals);
 }
 
-export function fbMapToIdArr<T extends {}>(fbMap: Record<string, T>) {
+export function fbMapToIdArr(fbMap: Record<string, unknown>) {
   return Object.entries(fbMap).map(([id, item]) => {
     return {
       id,

@@ -1,15 +1,10 @@
 import {Show, onMount, useContext} from "solid-js";
 import log from "loglevel";
 import {AppContextContext} from "../AppContextProvider";
-import Loader from "../components/Loader";
-import ErrorModal from "../components/ErrorModal";
 import MenuButton from "../components/MenuButton";
-import * as api from "../api";
 import "./ProfilePage.css";
 
-type ProfilePageProps = {};
-
-export default function ProfilePage(props: ProfilePageProps) {
+export default function ProfilePage() {
   const [appState] = useContext(AppContextContext);
 
   log.debug(appState);

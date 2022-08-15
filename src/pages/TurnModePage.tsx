@@ -11,9 +11,7 @@ import audio, {Song, TimeSignature} from "../audio";
 import {Group, TurnModeState} from "../types";
 import "./TurnModePage.css";
 
-type TurnModePageProps = {};
-
-export default function TurnModePage(props: TurnModePageProps) {
+export default function TurnModePage() {
   const params = useParams();
   const [initializing, setInitializing] = createSignal(true);
   const [turnModeState, setTurnMode] = createSignal<TurnModeState | null>(null);
@@ -29,8 +27,7 @@ export default function TurnModePage(props: TurnModePageProps) {
   createEffect(() => {
     if (!group()?.turnMode) return;
 
-    // @ts-ignore
-    setOwnTurn(group().turnMode?.activeUserId === appState?.fbUser.uid);
+    setOwnTurn((group() as Group).turnMode?.activeUserId === appState?.fbUser?.uid);
   })
 
   async function fetchSong(group: Group): Promise<Song | null> {

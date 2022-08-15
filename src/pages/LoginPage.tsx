@@ -81,7 +81,9 @@ export default function LoginPage(props: LoginPageProps) {
         </div>
       </section>
       <footer class="Login-footer">
-        App by <a href="http://aburd/me" target="_blan">Aaron</a>. Piano icon by <a href="https://www.favicon.cc/?action=icon&file_id=121615" target="_blank">I am Garreth</a>.
+        <div class="Login-footer-content">
+          App by <a href="http://aburd/me" target="_blan">Aaron</a>. Piano icon by <a href="https://www.favicon.cc/?action=icon&file_id=121615" target="_blank">I am Garreth</a>. Other icons from <a href="https://basicons.xyz/">BasicIcon</a>.
+        </div>
       </footer>
     </div>
   );

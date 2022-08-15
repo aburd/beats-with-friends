@@ -7,24 +7,24 @@ Beatmakers should understand the general concept of beats with friends. Collabor
 #### Beat
 
 - [x] 808 style drum interface
-- [] Samples
-  - [] Cut
-- [] Effects
-  - [] Cut
-- [] Sample Upload
+- [x] Samples
+  - [ ] Cut
+- [ ] Effects
+  - [ ] Cut
+- [ ] Sample Upload
 
 #### App
 
-- [] Basic auth
-- [] Group
+- [x] Basic auth
+- [x] Group
 
 #### User
 
-- [] Alias
-- [] Avatar
-  - [] Upload
-  - [] Default
+- [x] Alias
+- [x] Avatar
+  - [ ] Upload
+  - [x] Default
 
 #### Collaboration
 
-- [] Turn Mode - Easier to implement than Performance Mode which may require more testing
+- [x] Turn Mode - Easier to implement than Performance Mode which may require more testing

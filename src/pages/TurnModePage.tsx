@@ -66,10 +66,15 @@ export default function TurnModePage() {
 
   createEffect(() => {
     if (!song()) return;
+    if (!group()) return;
     if (!subscribedToSong()) {
       api.song.subscribeToSongUpdate((song() as Song).id, (song) => {
         log.debug("The song has been updated!");
         setSong(song);
+      });
+      api.group.subscribe((group() as Group).id, (group) => {
+        log.debug("The group has been updated!");
+        groupActions.mutate(group);
       });
       setSubscribedToSong(true);
     }
@@ -93,7 +98,7 @@ export default function TurnModePage() {
     log.debug("Song", song());
     await api.song.update(audio.audioStore, (song() as Song).id, nextUserId, (group() as Group).id);
 
-    await groupActions.refetch();
+    // await groupActions.refetch();
   }
 
   return (

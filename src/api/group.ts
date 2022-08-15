@@ -1,8 +1,6 @@
-import {orderByValue, getDatabase, ref, set, update, push, child, get} from "firebase/database";
+import {onValue, getDatabase, ref, set, update, push, child, get} from "firebase/database";
 import log from "loglevel";
 import {GroupSimple, Group, TurnModeState, User} from '../types';
-import {Song} from '../audio';
-import {songFromServer} from './song';
 import usersApi from "./user";
 import * as util from "./util";
 
@@ -33,10 +31,14 @@ const groupFromServer: Group = {
   users: [{id: '1', email: 'hey@you.com', name: 'Richard D. James', groupIds: ['1']}, {id: '2', email: 'foo@bar.com', name: 'Tom Jenkinson', groupIds: ['1']}],
 };
 
-const turnModeFromServer: TurnModeState = {
-  activeUserId: '1',
-  songId: '1',
-};
+function dbGroupToGroup(dbGroup: DbGroup, groupId: string, users: User[]): Group {
+  return {
+    id: groupId,
+    name: dbGroup.name,
+    users,
+    turnMode: dbGroup.turnMode,
+  }
+}
 
 export default {
   async get(groupId: string): Promise<Group | null> {
@@ -56,6 +58,17 @@ export default {
       users: users as User[],
       turnMode: val.turnMode,
     }
+  },
+  async subscribe(groupId: string, callback: (group: Group) => void): Promise<void> {
+    const db = getDatabase();
+    const groupRef = ref(db, `groups/${groupId}`);
+    onValue(groupRef, async (snapshot) => {
+      const dbGroup = snapshot.val() as DbGroup;
+      const userIds = Object.keys(dbGroup.userIds);
+      const users = await Promise.all(userIds.map(id => usersApi.get(id)));
+
+      callback(dbGroupToGroup(dbGroup, groupId, users as User[]));
+    });
   },
   async create(userIds: string[], name: string): Promise<GroupSimple> {
     const db = getDatabase();
@@ -144,10 +157,10 @@ export default {
         throw e;
       });
 
-      return {
-        ...group,
-        users: [...group.users, user],
-      }
+    return {
+      ...group,
+      users: [...group.users, user],
+    }
   },
   removeUser(groupId: string, userId: string): Promise<Group> {
     log.warn("Not implemented!");

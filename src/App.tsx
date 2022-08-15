@@ -1,5 +1,5 @@
 import {Show, JSX, onMount, createEffect, useContext, lazy, createSignal} from "solid-js";
-import {Routes, Route, NavLink, useNavigate, useLocation} from "@solidjs/router";
+import {Routes, Route, NavLink, useNavigate, useLocation, Navigate} from "@solidjs/router";
 import log from "loglevel";
 import {initializeApp} from "firebase/app";
 import {getAuth, onAuthStateChanged} from "firebase/auth";
@@ -66,6 +66,7 @@ function bootstrapApp() {
     // https://firebase.google.com/docs/reference/js/firebase.User
     setAppContext({fbUser});
     const user = await api.user.get(fbUser.uid);
+    log.debug({ user });
     if (user) {
       setAppContext({user});
       return;
@@ -115,6 +116,7 @@ function bootstrapApp() {
             <Route path={AppRoutes.turnMode(":groupId")} component={TurnModePage} />
             <Route path={AppRoutes.groups.index()} component={GroupsPage} />
             <Route path={AppRoutes.profile()} component={ProfilePage} />
+            <Route path={"/"} element={<Navigate href={AppRoutes.login()} />} />
           </Routes>
         </div>
       </Show>

@@ -1,0 +1,23 @@
+i.icon {
+  min-height: 32px;
+  min-width: 32px;
+  background-repeat: no-repeat;
+  background-size: auto;
+}
+button.icon {
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: none;
+  border-radius: 6px;
+}
+button.icon:active {
+  border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+i.icon.alert-error {
+  background-image: url(/public/icons/svg/alert-error.svg); 
+}
+i.icon.x-circle-close-delete {
+  background-image: url(/public/icons/svg/x-circle-close-delete.svg); 
+}

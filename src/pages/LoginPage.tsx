@@ -4,6 +4,7 @@ import {AppContextContext} from "../AppContextProvider";
 import Loader from "../components/Loader";
 import ErrorModal from "../components/ErrorModal";
 import * as api from "../api";
+import {AuthError} from "../api/auth";
 import "./LoginPage.css";
 
 type FormState = {
@@ -16,6 +17,7 @@ type LoginPageProps = {};
 export default function LoginPage(props: LoginPageProps) {
   const [appState] = useContext(AppContextContext);
   const [formState, setFormState] = createSignal<FormState>({email: "", password: ""});
+  const [loginErr, setLoginErr] = createSignal<null | AuthError>(null);
   let emailRef: HTMLInputElement;
 
   log.debug(appState);
@@ -31,6 +33,7 @@ export default function LoginPage(props: LoginPageProps) {
   function handleFormUpdate(key: string, value: string) {
     setFormState({...formState(), [key]: value} as FormState);
   }
+
   function handleOauthClick() {
     log.debug("Logging in with Oauth");
     api.auth.signInGoogle();
@@ -38,11 +41,15 @@ export default function LoginPage(props: LoginPageProps) {
 
   async function handleFormSubmit(e: SubmitEvent) {
     e.preventDefault();
-    const user = await api.auth.signIn(formState().email, formState().password);
+    const user = await api.auth.signIn(formState().email, formState().password)
+      .catch((e: AuthError) => setLoginErr(e));
   }
 
   return (
     <div class="LoginPage page">
+      <Show when={loginErr()}>
+        <ErrorModal onClose={() => setLoginErr(null)} errorCode={loginErr()?.code} />
+      </Show>
       <header class="Login-header">
         <h1><img src="/piano-favicon.ico" class="icon" />Beats with Friends</h1>
       </header>
@@ -53,7 +60,7 @@ export default function LoginPage(props: LoginPageProps) {
             <div class="form-group">
               <label for="email">E-mail</label>
               {/* @ts-ignore */}
-              <input ref={emailRef} type="text" name="email" value={formState().email} placeholder="beatmaker@beats-with-friends.com" onKeyUp={(e) => handleFormUpdate("email", e.currentTarget.value)}/>
+              <input ref={emailRef} type="text" name="email" value={formState().email} placeholder="beatmaker@beats-with-friends.com" onKeyUp={(e) => handleFormUpdate("email", e.currentTarget.value)} />
             </div>
             <div class="form-group">
               <label for="password">Password</label>

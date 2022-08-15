@@ -5,7 +5,7 @@ import {initializeApp} from "firebase/app";
 import {getAuth, onAuthStateChanged} from "firebase/auth";
 import {AppContextContext} from "./AppContextProvider"
 import * as api from "./api";
-import "./App.css";
+import "./styles";
 
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const GroupsPage = lazy(() => import("./pages/GroupsPage"));
@@ -78,7 +78,7 @@ export default function App() {
       <div class="Nav">
         <div class="Nav-top">
           <div class="Nav-btn-container">
-            <button class="btn-icon" onClick={() => setNavExpanded(false)}>&#10006;</button>
+            <button class="icon x-circle-close-delete" onClick={() => setNavExpanded(false)} />
           </div>
           <nav>
             <NavLink href={AppRoutes.groups.index()}>Groups</NavLink>

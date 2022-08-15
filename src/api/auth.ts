@@ -1,6 +1,30 @@
 import {getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, User, signInWithPopup, GoogleAuthProvider} from "firebase/auth";
 import log from "loglevel";
 
+export type AuthErrorCode = "invalid_email" | "unknown"; 
+
+export interface AuthError {
+  description: string;
+  code: AuthErrorCode; 
+};
+
+function firebaseCodeToAuthError(code: string): AuthError {
+  switch(code) {
+    case "auth/invalid-email": {
+      return {
+        description: "Error signing in",
+        code: "invalid_email",
+      }
+    }
+    default: {
+      return {
+        description: "Error in authorization",
+        code: "unknown",
+      }
+    }
+  }
+}
+
 export default {
   signIn(email: string, password: string): Promise<User> {
     const auth = getAuth();
@@ -10,8 +34,9 @@ export default {
         return userCredential.user;
       })
       .catch((error) => {
-        log.error("Firebase error:", error);
-        throw Error(`Error trying to sign in`);
+        // log.error("Firebase error:", error);
+        log.debug(JSON.stringify(error));
+        throw firebaseCodeToAuthError(error.code);
       });
   },
   signInGoogle(): Promise<User | null> {

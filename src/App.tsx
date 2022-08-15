@@ -18,7 +18,13 @@ const GroupPage = lazy(() => import("./pages/GroupPage"));
 const TurnModePage = lazy(() => import("./pages/TurnModePage"));
 const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 
-function bootstrapApp(setAppContext: Function, navigate: Function, pathname: string) {
+
+export default function App() {
+  const [appState, setAppContext] = useContext(AppContextContext);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+function bootstrapApp() {
   if (!setAppContext) {
     log.warn("No firebase app context detected");
     return;
@@ -69,11 +75,6 @@ function bootstrapApp(setAppContext: Function, navigate: Function, pathname: str
   });
 }
 
-export default function App() {
-  const [appState, setAppContext] = useContext(AppContextContext);
-  const navigate = useNavigate();
-  const location = useLocation();
-
   function Nav() {
     return (
       <div class="Nav">
@@ -96,7 +97,7 @@ export default function App() {
   }
 
   onMount(() => {
-    bootstrapApp(setAppContext as Function, navigate, location.pathname)
+    bootstrapApp();
   });
 
   log.debug(AppRoutes.groups.show(":groupId"));
@@ -119,5 +120,5 @@ export default function App() {
       </Show>
     </div>
   );
-};
+}
 

@@ -42,16 +42,6 @@ function init() {
   Tone.setContext(new Tone.Context({latencyHint: "playback"}))
 }
 
-function subscribe(name: AudioEvent, callback: Function) {
-  // @ts-ignore
-  Tone.Transport.on(name, callback);
-}
-
-function unsubscribe(name: AudioEvent, callback: Function) {
-  // @ts-ignore
-  Tone.Transport.off(name, callback);
-}
-
 export function cleanup() {
   // audioStore.eventIds.forEach((id) => {
   //   Tone.Transport.clear(id)
@@ -85,8 +75,6 @@ export default {
   stop,
   pause,
   cleanup,
-  subscribe,
-  unsubscribe,
   audioStore,
   setStore,
   importSongToAudioStore,

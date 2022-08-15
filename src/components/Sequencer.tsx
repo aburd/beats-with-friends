@@ -2,13 +2,10 @@ import {For, onMount, onCleanup, createSignal, createEffect, useContext} from "s
 import log from "loglevel";
 import SequencerTrack from "./SequencerTrack";
 import SequencerBeatTracker from "./SequencerBeatTracker";
-import audio, {Song} from "../audio";
+import audio from "../audio";
 import "./Sequencer.css"
 
-type SequencerProps = {
-};
-
-export default function Sequencer(props: SequencerProps) {
+export default function Sequencer() {
   onMount(() => {
     audio.init();
     window.addEventListener("keyup", function (e) {

@@ -190,7 +190,7 @@ const defaultDbSong: DbSong = {
   sheet: {},
 }
 
-export let songFromServer: Song = {
+export const songFromServer: Song = {
   id: '1',
   name: 'Beat 1',
   // TODO: should probably move this to patterns to allow each pattern to have its own timeSignature 

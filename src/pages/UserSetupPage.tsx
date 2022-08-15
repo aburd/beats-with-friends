@@ -11,9 +11,7 @@ type SetupFormData = {
   alias: string;
 };
 
-export type UserSetupPageProps = {};
-
-export default function UserSetupPage(_props: UserSetupPageProps) {
+export default function UserSetupPage() {
   const [appState, setAppContext] = useContext(AppContextContext);
   const [formData, setFormData] = createSignal<SetupFormData>({alias: ""});
   const [submitting, setSubmitting] = createSignal<boolean>(false);

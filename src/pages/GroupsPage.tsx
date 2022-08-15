@@ -23,9 +23,7 @@ function GroupCard(props: GroupCardProps) {
   );
 }
 
-type GroupsPageProps = {};
-
-export default function GroupsPage(props: GroupsPageProps) {
+export default function GroupsPage() {
   const [appState] = useContext(AppContextContext);
   const [groups, groupsActions] = createResource<null | GroupSimple[]>(() => {
     return api.group.index(appState?.fbUser?.uid || "")

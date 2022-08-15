@@ -13,20 +13,18 @@ type FormState = {
   name: string;
 }
 
-type SignUpPageProps = {};
-
-export default function SignUpPage(_props: SignUpPageProps) {
+export default function SignUpPage() {
   const [formState, setFormState] = createSignal<FormState>({email: "", password: "", name: ""});
   const [signUpErr, setSignUpErr] = createSignal<null | UserApiError>(null);
   const [signingUp, setSigningIn] = createSignal<boolean>(false);
-  let aliasRef: HTMLInputElement;
+  const aliasRef: HTMLInputElement | undefined = undefined;
 
   onMount(async () => {
     if (!aliasRef) {
       log.warn("Could not find email input");
       return;
     }
-    aliasRef.focus();
+    (aliasRef as HTMLInputElement).focus();
   });
 
   function handleFormUpdate(key: string, value: string) {
@@ -66,7 +64,6 @@ export default function SignUpPage(_props: SignUpPageProps) {
             <div class="form-group">
               <label for="alias">Alias</label>
               <input
-                // @ts-ignore
                 ref={aliasRef}
                 type="text"
                 name="alias"

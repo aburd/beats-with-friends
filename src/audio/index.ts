@@ -53,9 +53,11 @@ function unsubscribe(name: AudioEvent, callback: Function) {
 }
 
 export function cleanup() {
-  audioStore.eventIds.forEach((id) => {
-    Tone.Transport.clear(id)
-  });
+  // audioStore.eventIds.forEach((id) => {
+  //   Tone.Transport.clear(id)
+  // });
+  Tone.Transport.cancel(0);
+  Tone.Transport.pause(0);
   setStore({eventIds: []});
 }
 
@@ -70,7 +72,7 @@ function pause() {
 }
 
 function stop() {
-  cleanup();
+  // cleanup();
   setStore({cur16th: -1});
   Tone.Transport.stop();
   setStore({playState: "stopped"});

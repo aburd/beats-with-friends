@@ -18,7 +18,10 @@ export default function Sequencer(props: SequencerProps) {
     });
   });
 
-  onCleanup(() => audio.cleanup());
+  onCleanup(() => {
+    audio.stop();
+    audio.cleanup();
+  });
 
   function handleBpmChange(newBpm: number) {
     if (newBpm > 0) {
@@ -77,7 +80,7 @@ export default function Sequencer(props: SequencerProps) {
         <For each={Object.values(audio.audioStore.trackMap)}>
           {(item) => (
             <>
-              <div>{audio.audioStore.instrumentMap[item.instrumentId].name}</div>
+              <div style={{'text-align': 'center'}}>{audio.audioStore.instrumentMap[item.instrumentId].name}</div>
               <SequencerTrack
                 id={item.id}
                 initialSequence={item.sequence}

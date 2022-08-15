@@ -83,7 +83,7 @@ export default function GroupsPage(props: GroupsPageProps) {
       </section>
       <section class="GroupsPage-list">
         <Show when={groups()} fallback={<Loader loading={groups.loading} />}>
-          {() => groups().length ? (
+          {() => groups()?.length ? (
             <For each={groups()}>
               {(group) => (
                 <GroupCard {...group} onClick={handleGroupClick} />

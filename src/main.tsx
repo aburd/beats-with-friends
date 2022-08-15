@@ -28,6 +28,8 @@ render(
       fbApp={null}
       fbAuth={null}
       fbUser={null}
+    user={null}
+      bootstrapped={false} 
     >
       <Router>
       <App />

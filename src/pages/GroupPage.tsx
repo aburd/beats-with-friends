@@ -81,7 +81,7 @@ export default function GroupPage(props: GroupPageProps) {
         <Show when={!!group()?.turnMode}>
           <h3>Current Song</h3>
           <div>{group()?.turnMode?.songId}</div>
-          <button onClick={() => navigate(AppRoutes.turnMode(group()?.id))}>View Song</button>
+          <button onClick={() => navigate(AppRoutes.turnMode(group()?.id as string))}>View Song</button>
         </Show>
       </section>
       <section class="GroupPage-invite">

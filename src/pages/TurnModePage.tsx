@@ -29,12 +29,13 @@ export default function TurnModePage(props: TurnModePageProps) {
   createEffect(() => {
     if (!group()?.turnMode) return;
 
+    // @ts-ignore
     setOwnTurn(group().turnMode?.activeUserId === appState?.fbUser.uid);
   })
 
-  async function fetchSong(group: Group): Promise<Song> {
+  async function fetchSong(group: Group): Promise<Song | null> {
     log.debug({group});
-    if (!group?.turnMode) return;
+    if (!group?.turnMode) return null;
 
     try {
       // This probably should be retrieved in the bootstrap process somehow
@@ -69,7 +70,7 @@ export default function TurnModePage(props: TurnModePageProps) {
   createEffect(() => {
     if (!song()) return;
     if (!subscribedToSong()) {
-      api.song.subscribeToSongUpdate(song().id, (song) => {
+      api.song.subscribeToSongUpdate((song() as Song).id, (song) => {
         log.debug("The song has been updated!");
         setSong(song);
       });
@@ -88,12 +89,12 @@ export default function TurnModePage(props: TurnModePageProps) {
   async function handlePassTurn() {
     if (!group()) throw Error('Need a group to pass turn.');
 
-    const nextUsers = group().users?.filter(u => u.id !== appState?.user?.id)
+    const nextUsers = (group() as Group).users?.filter(u => u.id !== appState?.user?.id)
     if (!nextUsers.length) throw Error('No next user to pass to!');
 
     const nextUserId = nextUsers[0].id;
     log.debug("Song", song());
-    await api.song.update(audio.audioStore, song().id, nextUserId, group().id);
+    await api.song.update(audio.audioStore, (song() as Song).id, nextUserId, (group() as Group).id);
 
     await groupActions.refetch();
   }

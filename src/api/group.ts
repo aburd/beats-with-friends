@@ -157,7 +157,4 @@ export default {
     newGroup.users = newGroup.users.filter(u => u.email === userId);
     return Promise.resolve(newGroup);
   },
-  createBeat(group: Group): Promise<[Group, Song]> {
-     l 
-  }
 }

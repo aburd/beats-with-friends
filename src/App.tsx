@@ -1,8 +1,9 @@
-import {onMount, useContext, lazy, createSignal, Component} from "solid-js";
-import {Routes, Route, NavLink, useNavigate} from "@solidjs/router";
+import {Show, onMount, createEffect, useContext, lazy, createSignal, Component} from "solid-js";
+import {Routes, Route, NavLink, useNavigate, useLocation} from "@solidjs/router";
 import log from "loglevel";
 import {initializeApp} from "firebase/app";
 import {getAuth, onAuthStateChanged} from "firebase/auth";
+import Loader from "./components/Loader";
 import {AppContextContext} from "./AppContextProvider"
 import {AppRoutes} from "./routes";
 import * as api from "./api";
@@ -16,7 +17,7 @@ const GroupPage = lazy(() => import("./pages/GroupPage"));
 const TurnModePage = lazy(() => import("./pages/TurnModePage"));
 const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 
-function bootstrapApp(setAppContext: Function, navigate: Function, setNavExpanded: Function) {
+function bootstrapApp(setAppContext: Function, navigate: Function, setNavExpanded: Function, pathname: string) {
   if (!setAppContext) {
     log.warn("No firebase app context detected");
     return;
@@ -44,6 +45,7 @@ function bootstrapApp(setAppContext: Function, navigate: Function, setNavExpande
     fbAuth: auth,
   });
   onAuthStateChanged(auth, async (fbUser) => {
+    setAppContext({bootstrapped: true});
     if (!fbUser) {
       // User is signed out
       log.info("User is signed out, rerouting to login");
@@ -55,16 +57,12 @@ function bootstrapApp(setAppContext: Function, navigate: Function, setNavExpande
     log.info("User is signed in");
     // User is signed in, see docs for a list of available properties
     // https://firebase.google.com/docs/reference/js/firebase.User
-    // const uid = fbUser.uid;
-    // ...
     setAppContext({fbUser});
     const user = await api.user.get(fbUser.uid);
     if (user) {
-      log.debug("User", user);
-      setAppContext({ user });
-      navigate(AppRoutes.profile(), {replace: true});
+      setAppContext({user});
       return;
-    } 
+    }
     // There is no matching user, we should set that up
     navigate(AppRoutes.userSetup(), {replace: true});
   });
@@ -72,8 +70,9 @@ function bootstrapApp(setAppContext: Function, navigate: Function, setNavExpande
 
 export default function App() {
   const [navExpanded, setNavExpanded] = createSignal(false);
-  const [, setAppContext] = useContext(AppContextContext);
+  const [appState, setAppContext] = useContext(AppContextContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
   function Nav() {
     return (
@@ -108,23 +107,29 @@ export default function App() {
   }
 
   onMount(() => {
-    bootstrapApp(setAppContext as Function, navigate, setNavExpanded)
+    bootstrapApp(setAppContext as Function, navigate, setNavExpanded, location.pathname)
+  });
+
+  createEffect(() => {
+    log.debug(appState.bootstrapped);
   });
 
   return (
     <div class={`App ${navExpanded() ? "nav-expanded" : ""}`}>
-      <Nav />
-      <div class="App-body">
-        <Routes>
-          <Route path={AppRoutes.login()} component={LoginPage} />
-          <Route path={AppRoutes.signUp()} component={SignUpPage} />
-          <Route path={AppRoutes.userSetup()} component={UserSetupPage} />
-          <Route path={AppRoutes.groups.index()} component={wrapWithMenu(GroupsPage)} />
-          <Route path={AppRoutes.groups.show(":groupId")} component={wrapWithMenu(GroupPage)} />
-          <Route path={AppRoutes.turnMode(":groupId")} component={wrapWithMenu(TurnModePage)} />
-          <Route path={AppRoutes.profile()} component={wrapWithMenu(ProfilePage)} />
-        </Routes>
-      </div>
+      <Show when={appState?.bootstrapped} fallback={<Loader loading={!appState?.bootstrapped} />}>
+        <Nav />
+        <div class="App-body">
+          <Routes>
+            <Route path={AppRoutes.login()} component={LoginPage} />
+            <Route path={AppRoutes.signUp()} component={SignUpPage} />
+            <Route path={AppRoutes.userSetup()} component={UserSetupPage} />
+            <Route path={AppRoutes.groups.index()} component={wrapWithMenu(GroupsPage)} />
+            <Route path={AppRoutes.groups.show(":groupId")} component={wrapWithMenu(GroupPage)} />
+            <Route path={AppRoutes.turnMode(":groupId")} component={wrapWithMenu(TurnModePage)} />
+            <Route path={AppRoutes.profile()} component={wrapWithMenu(ProfilePage)} />
+          </Routes>
+        </div>
+      </Show>
     </div>
   );
 };

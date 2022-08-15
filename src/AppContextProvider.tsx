@@ -10,6 +10,7 @@ type AppStore = {
   fbAuth: Auth | null;
   fbUser: FbUser | null;
   user: User | null;
+  bootstrapped: boolean; 
 }
 
 type AppContext = [AppStore, SetStoreFunction<AppStore>?];
@@ -23,6 +24,7 @@ export const AppContextContext = createContext<AppContext>([{
   fbAuth: null,
   fbUser: null,
   user: null,
+  bootstrapped: false,
 }]);
 
 export default function AppContextProvider(props: AppContextProviderProps) {
@@ -32,6 +34,7 @@ export default function AppContextProvider(props: AppContextProviderProps) {
       fbAuth: props.fbAuth,
       fbUser: props.fbUser,
       user: props.user,
+      bootstrapped: false,
     },
     {name: "app-context"}
   );

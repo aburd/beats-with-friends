@@ -37,9 +37,10 @@ export default function LoginPage(props: LoginPageProps) {
     setFormState({...formState(), [key]: value} as FormState);
   }
 
-  function handleOauthClick() {
+  async function handleOauthClick() {
     log.debug("Logging in with Oauth");
-    api.auth.signInGoogle();
+    await api.auth.signInGoogle();
+    navigate(AppRoutes.profile(), {replace: true});
   }
 
   async function handleFormSubmit(e: SubmitEvent) {
@@ -48,6 +49,7 @@ export default function LoginPage(props: LoginPageProps) {
     await api.auth.signIn(formState().email, formState().password)
       .catch((e: AuthError) => setLoginErr(e));
     setSigningIn(false);
+    navigate(AppRoutes.profile(), {replace: true});
   }
 
   return (

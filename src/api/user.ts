@@ -15,12 +15,6 @@ type DbUser = {
   groupIds: Record<string, boolean>;
 }
 
-const userFromServer: User = {
-  id: '1',
-  name: 'Richard D. James',
-  groupIds: [],
-}
-
 function idArrToFbMap(idArr: string[]) {
   const vals = idArr.map(() => true);
   return zipObject(idArr, vals);
@@ -31,7 +25,7 @@ const api = {
     const db = getDatabase();
     const userRef = ref(db, `users/${userId}`);
     const snapshot = await get(userRef);
-    const val = snapshot.val();
+    const val = snapshot.val() as DbUser;
     if (!val) {
       return null;
     }
@@ -54,7 +48,7 @@ const api = {
       groupIds: idArrToFbMap(groupIds),
     };
     await update(ref(db), {[`/users/${id}`]: dbUser})
-      .catch(e => {
+      .catch(_e => {
         const err: UserApiError = {
           description: "Error writing to DB",
           code: "beats_user_creation_failure",

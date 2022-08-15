@@ -6,12 +6,10 @@ import log from "loglevel";
 const groupFromServer: Group = {
   id: '1',
   name: 'Beat Boyz',
-  users: [{id: '1', name: 'Richard D. James'}, {id: '2', name: 'Tom Jenkinson'}],
-  songIds: ['1'],
+  users: [{id: '1', name: 'Richard D. James', groupIds: ['1']}, {id: '2', name: 'Tom Jenkinson', groupIds: ['1']}],
 };
 
 const turnModeFromServer: TurnModeState = {
-  group: groupFromServer,
   activeUserId: '1',
   songId: '1',
 };
@@ -21,6 +19,9 @@ export default {
     log.warn("Not implemented!");
     if (groupId !== '1') Promise.reject('Group does not exist');
     return Promise.resolve(groupFromServer);
+  },
+  index(userId: string): Promise<Group[]> {
+    return Promise.resolve([groupFromServer]);
   },
   getTurnMode(groupId: string): Promise<TurnModeState> {
     const url = `/v1/api/groups/${groupId}/turn`;
@@ -34,7 +35,7 @@ export default {
     if (groupId !== '1') Promise.reject('Group does not exist');
     
     const newGroup = { ...groupFromServer };
-    newGroup.users.push({ id: userId, name: 'New User' });
+    newGroup.users.push({ id: userId, name: 'New User', groupIds: [groupId] });
     return Promise.resolve(newGroup);
   },
   removeUser(groupId: string, userId: string): Promise<Group> {

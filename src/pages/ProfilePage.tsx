@@ -15,12 +15,10 @@ export default function ProfilePage(props: ProfilePageProps) {
 
   return (
     <div class="ProfilePage page">
-      <Show when={appState?.fbUser} >
       <h1>Profile Page</h1>
       <div>Alias: {appState?.user?.name}</div>
       <div>Email: {appState?.fbUser?.email}</div>
       <div><img src={appState?.fbUser?.photoURL || ""} /></div>
-    </Show>
     </div>
   );
 }

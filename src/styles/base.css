@@ -1,4 +1,8 @@
 /* General */
+input {
+  padding: 0;
+}
+
 button {
   border-radius: 4px;
   position: relative;
@@ -43,13 +47,15 @@ form button[type="submit"] {
 }
 .form-group label, .form-group input {
   display: block;
-  width: 100%;
 }
 .form-group label {
+  width: 100%;
   font-size: 0.9rem;
 }
 .form-group input {
   height: 2rem;
+  padding: 0 0.5rem;
+  width: calc(100% - 1rem - 4px);
 }
 label[for="email"]:before {
   content: "\1F4E7"; 
@@ -62,4 +68,18 @@ label[for="password"]:before {
   position: fixed;
   top: 0;
   bottom: 0;
+}
+
+.card {
+  background-color: var(--secondary-bg-color);
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--808-white);
+  border-radius: 10px;
+  font-weight: bold;
+  opacity: 0.8;
+  transition: all 0.2s ease 0s;
+}
+.card:hover, .card:active {
+  opacity: 1.0;
 }

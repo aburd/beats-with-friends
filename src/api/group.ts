@@ -9,7 +9,9 @@ import * as util from "./util";
 export type GroupApiErrorCode =
   "group_create_failure" |
   "group_add_failure_no_user" |
+  "group_add_user_failure_no_group" |
   "group_index_failure_no_user" |
+  "group_db_failure" |
   "unknown";
 export interface GroupApiError {
   description: string;
@@ -19,6 +21,10 @@ export interface GroupApiError {
 type DbGroup = {
   name: string;
   userIds: Record<string, boolean>;
+  turnMode?: {
+    activeUserId: string,
+    songId: string,
+  },
 };
 
 const groupFromServer: Group = {
@@ -48,6 +54,7 @@ export default {
       id: groupId,
       name: val.name,
       users: users as User[],
+      turnMode: val.turnMode,
     }
   },
   async create(userIds: string[], name: string): Promise<GroupSimple> {
@@ -68,15 +75,12 @@ export default {
     const updates = {} as Record<string, any>;
     updates['/groups/' + newGroupKey] = groupData;
     for (const userId of userIds) {
-      updates[`/users/${userId}/groupIds/${userId}`] = true;
+      updates[`/users/${userId}/groupIds/${newGroupKey}`] = true;
     }
-
-    log.debug('updates', JSON.stringify(updates, null, 2));
 
     await update(ref(db), updates)
       .catch(fbErr => {
         log.error(fbErr);
-        log.debug(JSON.stringify(fbErr));
         const e: GroupApiError = {
           description: "Error with Firebase",
           code: "group_create_failure",
@@ -87,11 +91,6 @@ export default {
       id: newGroupKey,
       name: name,
     }
-  },
-  async subscribeToGroup(groupId: string, callback: Function): Promise<Group> {
-    log.warn("Not implemented!");
-    if (groupId !== '1') Promise.reject('Group does not exist');
-    return Promise.resolve(groupFromServer);
   },
   async index(userId: string): Promise<GroupSimple[]> {
     const user = await usersApi.get(userId);
@@ -104,33 +103,24 @@ export default {
     }
 
     const db = getDatabase();
-    const promises = user.groupIds.map(async (groupId) => {
+    const groups = await Promise.all(user.groupIds.map(async (groupId) => {
       const groupRef = ref(db, `groups/${groupId}`);
       const snapshot = await get(groupRef);
       const val = snapshot.val() as DbGroup;
       if (!val) {
+        log.warn(`Something is wrong with the DB, you shouldn't have falsy values here.`);
         return null;
       }
       return {
         id: groupId,
         name: val.name,
       }
-    });
+    }));
 
-    const groups = await Promise.all(promises);
     return groups.filter(Boolean) as GroupSimple[];
   },
-  getTurnMode(groupId: string): Promise<TurnModeState> {
-    const url = `/v1/api/groups/${groupId}/turn`;
-    if (groupId === '1') {
-      return Promise.resolve(turnModeFromServer);
-    }
-    return Promise.reject();
-  },
-  async addUser(groupId: string, email: string): Promise<Group> {
-    log.warn("Not implemented!");
-
-    const user = await usersApi.get(email);
+  async addUser(group: Group, email: string): Promise<Group> {
+    const user = await usersApi.getByEmail(email);
     if (!user) {
       const e: GroupApiError = {
         description: "No user to add",
@@ -139,9 +129,25 @@ export default {
       throw e;
     }
 
-    const newGroup = {...groupFromServer};
-    newGroup.users.push(user);
-    return Promise.resolve(newGroup);
+    const db = getDatabase();
+    const updates = {} as Record<string, any>;
+    updates[`/groups/${group.id}/userIds/${user.id}`] = true;
+    updates[`/users/${user.id}/groupIds/${group.id}`] = true;
+
+    await update(ref(db), updates)
+      .catch(fbErr => {
+        log.error(fbErr);
+        const e: GroupApiError = {
+          description: "Error with Firebase",
+          code: "group_db_failure",
+        };
+        throw e;
+      });
+
+      return {
+        ...group,
+        users: [...group.users, user],
+      }
   },
   removeUser(groupId: string, userId: string): Promise<Group> {
     log.warn("Not implemented!");
@@ -151,10 +157,7 @@ export default {
     newGroup.users = newGroup.users.filter(u => u.email === userId);
     return Promise.resolve(newGroup);
   },
-  createBeat(groupId: string): Promise<[Group, Song]> {
-    log.warn("Not implemented!");
-    if (groupId !== '1') Promise.reject('Group does not exist');
-
-    return Promise.resolve([groupFromServer, songFromServer]);
+  createBeat(group: Group): Promise<[Group, Song]> {
+     l 
   }
 }

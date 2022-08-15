@@ -67,11 +67,11 @@ export default function LoginPage(props: LoginPageProps) {
             <div class="form-group">
               <label for="email">E-mail</label>
               {/* @ts-ignore */}
-              <input ref={emailRef} type="text" name="email" value={formState().email} placeholder="beatmaker@beats-with-friends.com" onKeyUp={(e) => handleFormUpdate("email", e.currentTarget.value)} />
+              <input ref={emailRef} type="text" name="email" value={formState().email} placeholder="beatmaker@beats-with-friends.com" onChange={(e) => handleFormUpdate("email", e.currentTarget.value)} />
             </div>
             <div class="form-group">
               <label for="password">Password</label>
-              <input type="password" name="password" value={formState().password} placeholder="password" onKeyUp={(e) => handleFormUpdate("password", e.currentTarget.value)} />
+              <input type="password" name="password" value={formState().password} placeholder="password" onChange={(e) => handleFormUpdate("password", e.currentTarget.value)} />
             </div>
             <button
               type="submit"

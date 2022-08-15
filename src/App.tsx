@@ -84,8 +84,8 @@ export default function App() {
             </button>
           </div>
           <nav>
-            <NavLink href={AppRoutes.groups.index()}>Groups</NavLink>
-            <NavLink href={AppRoutes.profile()}>Profile</NavLink>
+            <NavLink href={AppRoutes.groups.index()} onClick={() => util.setNavExpanded(false)}>Groups</NavLink>
+            <NavLink href={AppRoutes.profile()} onClick={() => util.setNavExpanded(false)}>Profile</NavLink>
           </nav>
         </div>
         <div class="Nav-bottom">

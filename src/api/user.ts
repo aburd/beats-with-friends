@@ -28,7 +28,7 @@ const api = {
 
     return {
       id: userId,
-      email: userId,
+      email: val.email,
       name: val.name,
       groupIds: Object.keys(val.groupIds || {}),
     }
@@ -66,8 +66,9 @@ const api = {
   async createWithId(id: string, email: string, name: string, groupIds: string[]): Promise<User> {
     const db = getDatabase();
     log.debug(util.idArrToFbMap(groupIds));
-    const dbUser = {
+    const dbUser: DbUser = {
       name,
+      email,
       groupIds: util.idArrToFbMap(groupIds),
     };
     await update(ref(db), {[`/users/${id}`]: dbUser})

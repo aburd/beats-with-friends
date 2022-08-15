@@ -17,8 +17,7 @@ type GroupCardProps = {
 
 function GroupCard(props: GroupCardProps) {
   return (
-    <div class="GroupCard" onClick={() => props.onClick(props.id)}>
-      <div>{props.id}</div>
+    <div class="card" onClick={() => props.onClick(props.id)}>
       <div>{props.name}</div>
     </div>
   );
@@ -28,26 +27,32 @@ type GroupsPageProps = {};
 
 export default function GroupsPage(props: GroupsPageProps) {
   const [appState] = useContext(AppContextContext);
-  const [groups, setGroups] = createSignal<null | GroupSimple[]>(null);
+  const [groups, groupsActions] = createResource<null | GroupSimple[]>(() => {
+    return api.group.index(appState?.fbUser?.uid || "")
+  });
+  const [creating, setCreating] = createSignal<boolean>(false);
+  const [submitting, setSubmitting] = createSignal<boolean>(false);
   const [groupName, setGroupName] = createSignal<string>("");
   const [otherErr, setOtherErr] = createSignal<string>("");
   const [apiErr, setApiError] = createSignal<null | GroupApiError>(null);
   const navigate = useNavigate();
 
-  createEffect(async () => {
-    if (appState?.user) {
-      const groups = await api.group.index(appState?.user?.id);
-      log.debug(groups);
-      setGroups(groups);
-    }
+  createEffect(() => {
+    if (appState?.fbUser?.uid)
+      groupsActions.refetch();
   });
 
   function handleGroupClick(groupId: string) {
     navigate(AppRoutes.groups.show(groupId));
   }
 
+  createEffect(() => {
+    log.debug({ groups: groups() });
+  });
+
   async function handleGroupSubmit(e: SubmitEvent) {
     e.preventDefault();
+    setSubmitting(true);
     if (!appState?.user?.id) {
       log.error(`This state should not be reached. There may be an issue with firebase.`);
       return;
@@ -62,6 +67,8 @@ export default function GroupsPage(props: GroupsPageProps) {
     } catch (e) {
       log.error(e);
       setApiError(e as GroupApiError);
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -71,16 +78,26 @@ export default function GroupsPage(props: GroupsPageProps) {
       <Show when={apiErr() || !!otherErr()}>
         <ErrorModal errorCode={apiErr()?.code} onClose={() => {setApiError(null); setOtherErr("");}}>{otherErr()}</ErrorModal>
       </Show>
-      <h1>Your Groups</h1>
-      <Show when={groups} fallback={<Loader loading={!groups} />}>
-        <section class="Group-list">
-          <For each={groups()}>
-            {(group) => (
-              <GroupCard {...group} onClick={handleGroupClick} />
-            )}
-          </For>
-        </section>
-        <section class="GroupsPage-create">
+      <section class="GroupsPage-header">
+        <h1>Your Groups</h1>
+      </section>
+      <section class="GroupsPage-list">
+        <Show when={groups()} fallback={<Loader loading={groups.loading} />}>
+          {() => groups().length ? (
+            <For each={groups()}>
+              {(group) => (
+                <GroupCard {...group} onClick={handleGroupClick} />
+              )}
+            </For>
+          ) : (
+            <span>You have no groups. Consider making one!</span>
+          )}
+        </Show>
+      </section>
+      <section class="GroupsPage-create">
+        <Show when={creating()} fallback={
+          <button type="submit" class="primary" onClick={() => setCreating(true)}>Create a New Group</button>
+        }>
           <form onSubmit={handleGroupSubmit}>
             <div class="form-group">
               <label for="group-name">New Group Name</label>
@@ -91,12 +108,11 @@ export default function GroupsPage(props: GroupsPageProps) {
               />
             </div>
             <div class="form-group">
-
-              <button type="submit" class="primary">Create a New Group</button>
+              <button type="submit" class={submitting() ? "warning" : "primary"} disabled={submitting()}>Create!</button>
             </div>
           </form>
-        </section>
-      </Show>
+        </Show>
+      </section>
     </div>
   );
 }

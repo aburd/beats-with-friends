@@ -1,0 +1,25 @@
+.GroupPage {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: 4rem 2fr 1fr;
+  grid-template-areas: 
+    "header header"
+    "info info"
+    "invite turn-mode";
+}
+
+.GroupPage-header {
+  grid-area: header;
+}
+.GroupPage-info {
+  grid-area: info;
+  overflow: scroll;
+}
+.GroupPage-invite {
+  grid-area: invite;
+}
+.GroupPage-turn-mode {
+  grid-area: turn-mode;
+}
+
+

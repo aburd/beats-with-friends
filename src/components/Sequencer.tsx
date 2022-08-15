@@ -1,12 +1,14 @@
-import {For, onMount, onCleanup, createSignal, createEffect} from "solid-js";
+import {For, onMount, onCleanup, createSignal, createEffect, useContext} from "solid-js";
+import log from "loglevel";
 import SequencerTrack from "./SequencerTrack";
 import SequencerBeatTracker from "./SequencerBeatTracker";
-import audio from "../audio";
+import audio, {Song} from "../audio";
 import "./Sequencer.css"
 
-type SequencerProps = {};
+type SequencerProps = {
+};
 
-export default function Sequencer({}: SequencerProps) {
+export default function Sequencer(props: SequencerProps) {
   onMount(() => {
     audio.init();
     window.addEventListener("keyup", function (e) {
@@ -16,7 +18,10 @@ export default function Sequencer({}: SequencerProps) {
     });
   });
 
-  onCleanup(() => audio.cleanup());
+  onCleanup(() => {
+    audio.stop();
+    audio.cleanup();
+  });
 
   function handleBpmChange(newBpm: number) {
     if (newBpm > 0) {
@@ -25,7 +30,7 @@ export default function Sequencer({}: SequencerProps) {
   }
 
   function handleSequenceChange(id: string, sixteenth: number, on: boolean) {
-    console.log({id, sixteenth, on})
+    log.debug({id, sixteenth, on})
     audio.updateTrackSequence(id, sixteenth, on);
   }
 
@@ -74,12 +79,15 @@ export default function Sequencer({}: SequencerProps) {
         />
         <For each={Object.values(audio.audioStore.trackMap)}>
           {(item) => (
-            <SequencerTrack
-              id={item.id}
-              initialSequence={item.sequence}
-              timeSignature={audio.audioStore.timeSignature || [4, 4]}
-              onBtnClick={handleSequenceChange}
-            />
+            <>
+              <div style={{'text-align': 'center'}}>{audio.audioStore.instrumentMap[item.instrumentId].name}</div>
+              <SequencerTrack
+                id={item.id}
+                initialSequence={item.sequence}
+                timeSignature={audio.audioStore.timeSignature || [4, 4]}
+                onBtnClick={handleSequenceChange}
+              />
+            </>
           )}
         </For>
       </section>

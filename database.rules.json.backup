@@ -1,0 +1,131 @@
+{
+  "rules": {
+    "users": {
+      "$user_id": {
+        ".read": true,
+        ".write": true,
+        "name": {
+          ".write": "$user_id === auth.uid",
+          ".validate": true
+        },
+        "email": {
+          ".write": "$user_id === auth.uid",
+          ".validate": true
+        },
+        "groupIds": {
+          ".write": true,
+          "$group_id": {
+            ".validate": "root.child('groups').child($group_id).exists()"
+          }
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "groups": {
+      "$group_id": {
+        ".read": true,
+        ".write": true,
+        "name": {
+          ".validate": true
+        },
+        "userIds": {
+          "$user_id": {
+            ".validate": "root.child('users').child($user_id).exists()"
+          }
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "songs": {
+      "$song_id": {
+        ".read": true,
+        ".write": "data.child('ownerId').val() == auth.uid || root.child('users').child(auth.uid).child('groupIds').val().contains(data.child('ownerId').val())",
+        "ownerId": {
+          ".validate": "root.child('users').child(newData.child('ownerId').val()).exists() || root.child('groups').child(newData.child('ownerId').val()).exists()"
+        },
+        "name": {
+          ".validate": "newData.isString()"
+        },
+        "timeSignature": {
+          ".validate": "newData.child('top').isNumber() && newData.child('bottom').isNumber()"
+        },
+        "instrumentIds": {
+          "$instrument_id": {
+            ".validate": "root.child('instruments').child($instrument_id).exists()"
+          }
+        },
+        "patternIds": {
+          "$pattern_id": {
+            ".validate": "root.child('patterns').child($pattern_id).exists()"
+          }
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "instruments": {
+      "$instrument_id": {
+        ".read": true,
+        ".write": false,
+        "name": {
+          ".validate": "newData.isString()"
+        },
+        "url": {
+          ".validate": "newData.isString()"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "patterns": {
+      "$pattern_id": {
+        ".read": true,
+        ".write": "data.child('ownerId').val() == auth.uid || root.child('users').child(auth.uid).child('groupIds').val().contains(data.child('ownerId').val())",
+        "ownerId": {
+          ".validate": "root.child('users').child(newData.child('ownerId').val()).exists() || root.child('groups').child(newData.child('ownerId').val()).exists()"
+        },
+        "name": {
+          ".validate": true
+        },
+        "tracks": {
+          "$track_id": {
+            "instrumentId": {
+              ".validate": "root.child('instruments').child(newData.child('instrumentId').val()).exists()"
+            },
+            "sequenceId": {
+              ".validate": "root.child('sequences').child(newData.child('sequenceId').val()).exists()"
+            }
+          }
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "sequences": {
+      "$sequence_id": {
+        ".read": true,
+        ".write": "data.child('ownerId').val() == auth.uid || root.child('users').child(auth.uid).child('groupIds').val().contains(data.child('ownerId').val())",
+        "ownerId": {
+          ".validate": "root.child('users').child(newData.child('ownerId').val()).exists() || root.child('groups').child(newData.child('ownerId').val()).exists()"
+        },
+        "notes": {
+          "$note_id": {
+            "startTime": {
+              ".validate": "newData.child('beats').isNumber() && newData.child('sixteenths').isNumber()"
+            },
+            "length": {
+              ".validate": "newData.isNumber()"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -9,7 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@solidjs/router": "^0.4.2",
+    "firebase": "^9.9.2",
     "lodash": "^4.17.21",
+    "loglevel": "^1.8.0",
     "solid-js": "^1.4.8",
     "tone": "^14.7.77",
     "uuid": "^8.3.2"

@@ -1,4 +1,5 @@
 import * as Tone from "tone";
+import log from "loglevel";
 import * as tracks from "./tracks";
 import * as patterns from "./patterns";
 import * as instruments from "./instruments";
@@ -33,7 +34,7 @@ function loop(time: number) {
 }
 
 function init() {
-  console.log('Setting up audio environment');
+  log.info('Setting up audio environment');
   Tone.Transport.setLoopPoints("0:0:0", "1:0:0");
   Tone.Transport.loop = true;
   const evId = Tone.Transport.scheduleRepeat(loop, "16n");
@@ -52,9 +53,11 @@ function unsubscribe(name: AudioEvent, callback: Function) {
 }
 
 export function cleanup() {
-  audioStore.eventIds.forEach((id) => {
-    Tone.Transport.clear(id)
-  });
+  // audioStore.eventIds.forEach((id) => {
+  //   Tone.Transport.clear(id)
+  // });
+  Tone.Transport.cancel(0);
+  Tone.Transport.pause(0);
   setStore({eventIds: []});
 }
 
@@ -69,7 +72,7 @@ function pause() {
 }
 
 function stop() {
-  cleanup();
+  // cleanup();
   setStore({cur16th: -1});
   Tone.Transport.stop();
   setStore({playState: "stopped"});

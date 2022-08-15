@@ -1,0 +1,21 @@
+.GroupsPage {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 4rem 2fr 1fr;
+  grid-template-areas: 
+    "header"
+    "list"
+    "create";
+}
+
+.GroupsPage-header {
+  grid-area: header;
+}
+.GroupsPage-list {
+  grid-area: list;
+  overflow: scroll;
+}
+.GroupsPage-create {
+  grid-area: create;
+}
+

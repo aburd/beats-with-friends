@@ -1,0 +1,85 @@
+/* General */
+input {
+  padding: 0;
+}
+
+button {
+  border-radius: 4px;
+  position: relative;
+  padding: 0.7rem 1.4rem;
+  font-weight: bold;
+  border: none;
+  border-bottom-width: 3px;
+  border-bottom-style: solid;
+  top: 0;
+  transition: all 0.15s ease 0s;
+}
+button img {
+  display: inline-block;
+  height: 0.75rem;
+  margin-right: 2px;
+}
+button:active {
+  top: 2px;
+  border-bottom-width: 1px!important;
+}
+button.primary {
+  background-color: var(--808-white);
+  border-bottom-color: var(--808-white-dark);
+  color: var(--main-bg-color);
+}
+button.secondary {
+  background-color: var(--808-orange);
+  border-bottom-color: var(--808-orange-dark);
+  color: var(--808-white);
+}
+button.warning {
+  background-color: var(--808-red);
+  border-bottom-color: var(--808-red-dark);
+  color: var(--808-white);
+}
+form button[type="submit"] {
+  margin-top: 0.5rem;
+}
+
+.form-group {
+  margin-bottom: 0.5rem;
+}
+.form-group label, .form-group input {
+  display: block;
+}
+.form-group label {
+  width: 100%;
+  font-size: 0.9rem;
+}
+.form-group input {
+  height: 2rem;
+  padding: 0 0.5rem;
+  width: calc(100% - 1rem - 4px);
+}
+label[for="email"]:before {
+  content: "\1F4E7"; 
+}
+label[for="password"]:before {
+  content: "\1F511";
+}
+
+#app-portal-modal {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+}
+
+.card {
+  background-color: var(--secondary-bg-color);
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--808-white);
+  border-radius: 10px;
+  font-weight: bold;
+  opacity: 0.8;
+  transition: all 0.2s ease 0s;
+}
+.card:hover, .card:active {
+  opacity: 1.0;
+}

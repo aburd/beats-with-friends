@@ -1,26 +1,46 @@
 /* @refresh reload */
-import { render } from 'solid-js/web'
+import {render} from 'solid-js/web'
+import {Router} from "@solidjs/router"
+import log from "loglevel";
+import AppContextProvider from "./AppContextProvider"
 import App from './App'
-import './index.css'
-// import audio from './audio';
 
-// audio.init();
-// const track = audio.tracks.create('1', '1', [
-//   true, false, false, false,
-//   true, false, false, false,
-//   true, false, false, false,
-//   true, false, false, false,
-// ]);
-// audio.setStore({ trackMap: { '1': track }});
-// const pattern = audio.patterns.create('1', 'kick', ['1']);
-// audio.setStore({ patternMap: {'1': pattern } });
-// const instrument = audio.instruments.create('1', { samplerUrl: 'kick(2).wav' })
-// audio.setStore({ instrumentMap: { '1': instrument }});
+// ** RUNTIME ENVIRONMENT SETUP **
+//
+// Reference for levels of logs in 'loglevel' pkg
+// log.error("error");
+// log.warn("warn");
+// log.info("info");
+// log.debug("debug");
+// log.trace("trace");
+//
+if (import.meta.env.PROD) {
+  log.setLevel(4)
+}
+if (import.meta.env.DEV) {
+  log.setLevel(0)
+}
 
-// window.addEventListener('keyup', function(e) {
-//   if (e.key === " ") {
-//     audio.play();
-//   }
-// })
+// ** APP ** 
+render(
+  () => (
+    <AppContextProvider
+      fbApp={null}
+      fbAuth={null}
+      fbUser={null}
+    user={null}
+      bootstrapped={false} 
+    >
+      <Router>
+      <App />
+</Router>
+    </AppContextProvider>
+  ),
+  document.getElementById('root') as HTMLElement
+);
 
-render(() => <App />, document.getElementById('root') as HTMLElement);
+// ** CLEAN UP FROM BEFORE APP IS LOADED ** 
+const splashEl = document.getElementById("app-splash");
+if (splashEl) {
+  splashEl.remove();
+}

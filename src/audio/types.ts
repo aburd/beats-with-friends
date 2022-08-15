@@ -7,6 +7,7 @@ export type BeatsSixteenths = [number, number];
 export type TimeSignature = [number, number];
 
 export type Note = {
+  id: string;
   startTime: BeatsSixteenths;
   length: number, // in seconds
 }
@@ -19,6 +20,7 @@ export type Instrument = {
 }
 
 export type Track = {
+  id: string,
   instrumentId: InstrumentId,
   sequence: Note[]
 }

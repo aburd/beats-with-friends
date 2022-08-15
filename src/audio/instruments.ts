@@ -5,6 +5,7 @@ import * as util from './util';
 export interface ClientInstrument {
   id: string;
   name: string;
+  url: string;
   meter: Tone.Meter;
   sampler?: Tone.Sampler;
   synth?: Tone.Synth;
@@ -49,6 +50,7 @@ export async function create(
   return {
     id,
     name: opts.name || 'New Instrument',
+    url: opts?.samplerUrl || "",
     meter,
     sampler,
   }

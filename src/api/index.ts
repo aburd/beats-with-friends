@@ -1,9 +1,24 @@
-import song from './song';
-import group from './group';
-import user from './user';
+import auth, { AuthErrorCode } from './auth';
+import group, { GroupApiErrorCode } from './group';
+import song, { SongApiErrorCode } from './song';
+import user, { UserApiErrorCode } from './user';
+
+export type BaseApiErrorCode = "unknown";
+export type ErrorCode = 
+  BaseApiErrorCode | 
+  AuthErrorCode | 
+  GroupApiErrorCode | 
+  SongApiErrorCode | 
+  UserApiErrorCode;
+
+export type ApiError = {
+  description: string;
+  code: ErrorCode;
+};
 
 export {
-  song,
+  auth,
   group,
+  song,
   user,
 }

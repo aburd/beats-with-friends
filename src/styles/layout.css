@@ -1,0 +1,62 @@
+.App {
+  width: 100vw;
+  height: 100vh;
+}
+.App-body {
+  height: 100%;
+  width: 100%;
+}
+.App-btn-menu {
+  position: fixed;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+.Nav {
+  position: fixed;
+  top: 0;
+  right: -80%;
+  width: calc(80% - 2rem);
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 5rem;
+  grid-template-areas: 
+    "top"
+    "bottom";
+  transition: all 0.2s ease 0s;
+  overflow: hidden;
+  background-color: var(--secondary-bg-color); 
+  height: 100%;
+  z-index: 1;
+  padding: 1rem;
+  box-shadow: none;
+}
+.App.nav-expanded .Nav {
+  right: 0;
+  box-shadow: -10px 10px 10px rgba(0, 0, 0, 0.5);
+}
+.Nav-btn-container .btn-icon {
+  font-size: 2rem;
+}
+.Nav .Nav-btn-container {
+  text-align: right;
+}
+.Nav nav a {
+  display: block;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid white;
+  font-size: 2rem;
+  height: 2rem;
+} 
+.Nav-top {
+  grid-area: top;
+}
+.Nav-bottom {
+  grid-area: bottom;
+}
+
+.page {
+  width: 85%;
+  height: 100%;
+  margin: auto;
+}
+

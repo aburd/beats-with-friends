@@ -1,8 +1,8 @@
 .SequencerTrack {
   display: flex;
   justify-content: space-between;
-  gap: 0.4rem;
-  margin-top: 1rem;
+  /* gap: 0.4rem; */
+  margin-bottom: 1rem;
 }
 
 .btn-container {

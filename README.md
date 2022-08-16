@@ -2,6 +2,8 @@
 
 Beats with friends. A piece of software where beatmakers can make beats with each other.
 
+[Demo](https://beat-with-friends.web.app)
+
 ### Turn Mode
 
 Each beatmaker is assigned to a group. That group can collaborate on music turn by turn.

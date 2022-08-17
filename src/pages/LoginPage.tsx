@@ -19,7 +19,7 @@ export default function LoginPage() {
   const [loginErr, setLoginErr] = createSignal<null | AuthError>(null);
   const [signingIn, setSigningIn] = createSignal<boolean>(false);
   const navigate = useNavigate();
-  let emailRef: HTMLInputElement;
+  const emailRef: HTMLInputElement = null as any;
 
   log.debug(appState);
 
@@ -64,7 +64,8 @@ export default function LoginPage() {
           <form onSubmit={handleFormSubmit}>
             <div class="form-group">
               <label for="email">E-mail</label>
-              <input ref={emailRef} type="text" name="email" value={formState().email} placeholder="beatmaker@beats-with-friends.com" onChange={(e) => handleFormUpdate("email", e.currentTarget.value)} />
+              <input
+                ref={emailRef} type="text" name="email" value={formState().email} placeholder="beatmaker@beats-with-friends.com" onChange={(e) => handleFormUpdate("email", e.currentTarget.value)} />
             </div>
             <div class="form-group">
               <label for="password">Password</label>

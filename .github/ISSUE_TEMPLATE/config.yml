@@ -1,9 +1,8 @@
 blank_issues_enabled: true
-Bug:
+contact_links:
   - name: Bug Report 
     url: https://github.com/aburd/beats-with-friends/issues/new?template=bug.md
     about: Any issues regarding bugs 
-Feature:
   - name: Feature request 
     url: https://github.com/aburd/beats-with-friends/issues/new?template=bug.md
     about: If you are developing a new feature or would like to discuss a new feature 

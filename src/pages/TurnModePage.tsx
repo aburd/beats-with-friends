@@ -6,14 +6,16 @@ import Sequencer from "../components/Sequencer";
 import Loader from "../components/Loader";
 import MenuButton from "../components/MenuButton";
 import ErrorModal from "../components/ErrorModal";
+import TurnDisplay from "../components/TurnDisplay";
 import * as api from "../api";
 import audio, {Song, TimeSignature} from "../audio";
-import {Group, TurnModeState} from "../types";
+import {User, Group, TurnModeState} from "../types";
 import "./TurnModePage.css";
 
 export default function TurnModePage() {
   const params = useParams();
   const [initializing, setInitializing] = createSignal(true);
+  const [turnModeDisplayed, setTurnModeDisplayed] = createSignal(false);
   const [turnModeState, setTurnMode] = createSignal<TurnModeState | null>(null);
   const [group, groupActions] = createResource<Group | null>(() => api.group.get(params.groupId));
   const [song, setSong] = createSignal<Song | null>(null);
@@ -88,17 +90,8 @@ export default function TurnModePage() {
     log.warn('Not implemented!')
   }
 
-  async function handlePassTurn() {
-    if (!group()) throw Error('Need a group to pass turn.');
-
-    const nextUsers = (group() as Group).users?.filter(u => u.id !== appState?.user?.id)
-    if (!nextUsers.length) throw Error('No next user to pass to!');
-
-    const nextUserId = nextUsers[0].id;
-    log.debug("Song", song());
-    await api.song.update(audio.audioStore, (song() as Song).id, nextUserId, (group() as Group).id);
-
-    // await groupActions.refetch();
+  async function handlePassTurn(nextUser: User) {
+    await api.song.update(audio.audioStore, (song() as Song).id, nextUser.id, (group() as Group).id);
   }
 
   return (
@@ -109,10 +102,15 @@ export default function TurnModePage() {
           <ErrorModal onClose={handleModalClose}>{initErr()}</ErrorModal>
         </Show>
         <div class="title">
-          {ownTurn() ? "It's your turn!" : `It's ${group()?.users.find(u => u.id === group()?.turnMode?.activeUserId)?.name}'s turn!`}
-          <Show when={ownTurn()}>
-            <button class="warning" onClick={handlePassTurn}>Pass Turn</button>
-          </Show>
+          <Show when={turnModeDisplayed()} fallback={<button onClick={() => setTurnModeDisplayed(true)}>Turn Mode</button>}>
+          <TurnDisplay
+            userId={appState.user?.id}
+            activeUserId={group()?.turnMode?.activeUserId}
+            users={group()?.users || []}
+            onPassTurn={handlePassTurn}
+            onCloseDisplay={() => setTurnModeDisplayed(false)}
+          />
+    </Show>
         </div>
         <div class="body">
           <Show

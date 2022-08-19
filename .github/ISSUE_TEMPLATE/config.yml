@@ -1,5 +1,5 @@
 blank_issues_enabled: true
 contact_links:
   - name: GitHub Community Support
-    url: https://github.com/aburd/beats-with-friends/issues?template=bug_template
+    url: https://github.com/aburd/beats-with-friends/issues/new?template=bug.md
     about: Please ask and answer questions here.

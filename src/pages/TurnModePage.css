@@ -1,16 +1,24 @@
 .TurnModePage {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 2rem 1fr;
-  grid-template-areas: 
-    "title"
-    "body";
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas:
+    "body"
+    "group";
   width: 100%;
 }
 
-.TurnModePage .title {
-  grid-area: title;
-}
 .TurnModePage .body {
   grid-area: body;
+}
+.TurnModePage .group {
+  grid-area: group;
+}
+
+.TurnModePage .user-list ul {
+  position: fixed;
+  bottom: 3rem;
+  list-style-type: none;
+  max-height: 20vh;
+  overflow-y: auto;
 }

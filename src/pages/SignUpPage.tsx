@@ -17,7 +17,7 @@ export default function SignUpPage() {
   const [formState, setFormState] = createSignal<FormState>({email: "", password: "", name: ""});
   const [signUpErr, setSignUpErr] = createSignal<null | UserApiError>(null);
   const [signingUp, setSigningIn] = createSignal<boolean>(false);
-  const aliasRef: HTMLInputElement = null as any;
+  let aliasRef: HTMLInputElement | undefined;
 
   onMount(async () => {
     if (!aliasRef) {

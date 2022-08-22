@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
   Show,
   onMount,
@@ -7,6 +8,9 @@ import {
   useContext,
   createEffect,
 } from "solid-js";
+=======
+import {Show, onMount, onCleanup, createSignal, createResource, useContext, createEffect, For} from "solid-js";
+>>>>>>> d1a32c9 (feature: add user-list)
 import log from "loglevel";
 import { useParams } from "@solidjs/router";
 import { AppContextContext } from "../AppContextProvider";
@@ -16,8 +20,13 @@ import MenuButton from "../components/MenuButton";
 import ErrorModal from "../components/ErrorModal";
 import TurnDisplay from "../components/TurnDisplay";
 import * as api from "../api";
+<<<<<<< HEAD
 import audio, { Song, TimeSignature } from "../audio";
 import { User, Group, TurnModeState } from "../types";
+=======
+import audio, {Song, TimeSignature} from "../audio";
+import {User, Group, TurnModeState} from "../types";
+>>>>>>> d1a32c9 (feature: add user-list)
 import "./TurnModePage.css";
 
 export default function TurnModePage() {
@@ -115,6 +124,9 @@ export default function TurnModePage() {
       nextUser.id,
       (group() as Group).id
     );
+  }
+  function findActiveUser(): User | undefined {
+    return group()?.users.find(u => u.id === group()?.turnMode?.activeUserId)
   }
 
   return (

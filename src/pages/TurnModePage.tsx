@@ -1,7 +1,5 @@
 import {
   Show,
-  onMount,
-  onCleanup,
   createSignal,
   createResource,
   useContext,
@@ -14,35 +12,25 @@ import Sequencer from "../components/Sequencer";
 import Loader from "../components/Loader";
 import MenuButton from "../components/MenuButton";
 import ErrorModal from "../components/ErrorModal";
-import TurnDisplay from "../components/TurnDisplay";
+import GroupMenu from "../components/GroupMenu";
 import * as api from "../api";
 import audio, { Song, TimeSignature } from "../audio";
-import { User, Group, TurnModeState } from "../types";
+import { User, Group } from "../types";
 import "./TurnModePage.css";
 
 export default function TurnModePage() {
   const params = useParams();
   const [initializing, setInitializing] = createSignal(true);
   const [turnModeDisplayed, setTurnModeDisplayed] = createSignal(false);
-  const [turnModeState, setTurnMode] = createSignal<TurnModeState | null>(null);
   const [group, groupActions] = createResource<Group | null>(() =>
     api.group.get(params.groupId)
   );
   const [song, setSong] = createSignal<Song | null>(null);
   const [subscribedToSong, setSubscribedToSong] = createSignal<boolean>(false);
-  const [ownTurn, setOwnTurn] = createSignal<boolean>(false);
   const [initErr, setInitErr] = createSignal<string | null>(null);
   const [appState] = useContext(AppContextContext);
 
   log.debug(appState);
-
-  createEffect(() => {
-    if (!group()?.turnMode) return;
-
-    setOwnTurn(
-      (group() as Group).turnMode?.activeUserId === appState?.fbUser?.uid
-    );
-  });
 
   async function fetchSong(group: Group): Promise<Song | null> {
     log.debug({ group });
@@ -98,16 +86,6 @@ export default function TurnModePage() {
     setInitErr(null);
   }
 
-  function handleSequenceChange(
-    patternId: string,
-    trackId: string,
-    sequenceId: string,
-    sixteenth: number,
-    on: boolean
-  ) {
-    log.warn("Not implemented!");
-  }
-
   async function handlePassTurn(nextUser: User) {
     await api.song.update(
       audio.audioStore,
@@ -115,9 +93,6 @@ export default function TurnModePage() {
       nextUser.id,
       (group() as Group).id
     );
-  }
-  function findActiveUser(): User | undefined {
-    return group()?.users.find(u => u.id === group()?.turnMode?.activeUserId)
   }
 
   return (
@@ -127,33 +102,22 @@ export default function TurnModePage() {
         <Show when={initErr()}>
           <ErrorModal onClose={handleModalClose}>{initErr()}</ErrorModal>
         </Show>
-        <div class="title">
-          <div class="title-right">{group()?.name}</div>
-        </div>
-        <div class="body">
-          <Show
-            when={!initializing()}
-            fallback={<Loader loading={initializing()} />}
-          >
+        <Show
+          when={!initializing()}
+          fallback={<Loader loading={initializing()} />}
+        >
+          <div class="body">
             <Sequencer />
-          </Show>
-          <Show
-            when={turnModeDisplayed()}
-            fallback={
-              <button onClick={() => setTurnModeDisplayed(true)}>
-                Turn Mode
-              </button>
-            }
-          >
-            <TurnDisplay
+          </div>
+          <div class="group">
+            <GroupMenu
               userId={appState.user?.id}
               activeUserId={group()?.turnMode?.activeUserId}
               users={group()?.users || []}
               onPassTurn={handlePassTurn}
-              onCloseDisplay={() => setTurnModeDisplayed(false)}
             />
-          </Show>
-        </div>
+          </div>
+        </Show>
       </div>
     </>
   );

@@ -2,33 +2,23 @@
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr 1fr;
-  grid-template-areas: 
-    "title"
-    "body";
+  grid-template-areas:
+    "body"
+    "group";
   width: 100%;
-}
-
-.TurnModePage .title {
-  grid-area: title;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 0.5rem
 }
 
 .TurnModePage .body {
   grid-area: body;
 }
+.TurnModePage .group {
+  grid-area: group;
+}
 
-.TurnModePage .user-list ul{
+.TurnModePage .user-list ul {
   position: fixed;
   bottom: 3rem;
   list-style-type: none;
   max-height: 20vh;
   overflow-y: auto;
-}
-
-.TurnModePage .user-list .user-active {
-  color: var(--808-orange-dark);
-  font-weight: bold;
 }

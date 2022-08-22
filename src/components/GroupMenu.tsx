@@ -2,17 +2,16 @@ import {Show, For, createSignal} from "solid-js";
 import log from "loglevel";
 import {User} from "../types";
 import Modal from "./Modal";
-import "./TurnDisplay.css"
+import "./GroupMenu.css"
 
-type TurnDisplayProps = {
+type GroupMenuProps = {
   userId?: string;
   activeUserId?: string;
   users: User[];
   onPassTurn: (nextUser: User) => void;
-  onCloseDisplay: () => void;
 };
 
-export default function TurnDisplay(props: TurnDisplayProps) {
+export default function GroupMenu(props: GroupMenuProps) {
   const [modalShown, setModalShown] = createSignal(false);
   const currentUserIdx = props.users.findIndex(u => u.id === props.activeUserId);
   const currentUser = props.users[currentUserIdx];
@@ -41,8 +40,7 @@ export default function TurnDisplay(props: TurnDisplayProps) {
   }
 
   return (
-    <div class="TurnDisplay">
-      <button onClick={props.onCloseDisplay}>Close</button>
+    <div class="GroupMenu">
       <Show when={modalShown()}>
         <Modal onClose={() => setModalShown(false)}>
           <div>Pass your beat to {nextUser()?.name}?</div>

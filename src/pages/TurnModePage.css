@@ -28,10 +28,6 @@
   overflow-y: auto;
 }
 
-.TurnModePage .user-list .user {
-
-}
-
 .TurnModePage .user-list .user-active {
   color: var(--808-orange-dark);
   font-weight: bold;

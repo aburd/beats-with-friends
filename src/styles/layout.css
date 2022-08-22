@@ -8,7 +8,7 @@
 }
 .App-btn-menu {
   position: fixed;
-  top: 0.5rem;
+  top: 2rem;
   right: 0.5rem;
 }
 .Nav {
@@ -19,12 +19,12 @@
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr 5rem;
-  grid-template-areas: 
+  grid-template-areas:
     "top"
     "bottom";
   transition: all 0.2s ease 0s;
   overflow: hidden;
-  background-color: var(--secondary-bg-color); 
+  background-color: var(--secondary-bg-color);
   height: 100%;
   z-index: 1;
   padding: 1rem;
@@ -46,7 +46,7 @@
   border-bottom: 1px solid white;
   font-size: 2rem;
   height: 2rem;
-} 
+}
 .Nav-top {
   grid-area: top;
 }
@@ -59,4 +59,3 @@
   height: 100%;
   margin: auto;
 }
-

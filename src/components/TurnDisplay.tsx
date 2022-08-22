@@ -35,8 +35,9 @@ export default function TurnDisplay(props: TurnDisplayProps) {
 
   function UserDisplay(user: User) {
     const current = user.id === props.activeUserId;
-    const next = user.id === nextUser()?.id; 
-    return <div>{user.name} {current ? "(Current)" : ""}{next ? "(Next)" : ""}</div>
+    return (
+      <li class={`user${current ? '-active' : ''}`}>{user.name}</li>
+    )
   }
 
   return (
@@ -51,11 +52,11 @@ export default function TurnDisplay(props: TurnDisplayProps) {
         </Modal>
       </Show>
       <Show when={currentUser}>
-        <div>
+        <ul class="user-list">
           <For each={props.users}>
             {UserDisplay}
           </For>
-        </div>
+        </ul>
         <Show when={ownTurn}>
           <button class="warning" onClick={() => setModalShown(true)}>Save Beat & Pass</button>
         </Show>

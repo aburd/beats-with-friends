@@ -1,5 +1,6 @@
 import * as Tone from "tone";
 import log from "loglevel";
+import debug from "./debug";
 import * as tracks from "./tracks";
 import * as patterns from "./patterns";
 import * as instruments from "./instruments";
@@ -94,4 +95,5 @@ export default {
   tracks,
   patterns,
   util,
+  debug,
 };

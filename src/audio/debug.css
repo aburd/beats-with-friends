@@ -1,0 +1,24 @@
+#debug-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+#debug-canvas {
+  height: 100px;
+  width: 200px;
+}
+#debug-canvas.hide {
+  height: 20px;
+  width: 50px;
+}
+
+#control-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+#control-panel button {
+  padding: 3px;
+  border: none;
+}

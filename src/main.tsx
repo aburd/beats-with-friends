@@ -4,6 +4,7 @@ import { Router } from "@solidjs/router";
 import log from "loglevel";
 import AppContextProvider from "./AppContextProvider";
 import App from "./App";
+import audio from "./audio";
 
 // ** RUNTIME ENVIRONMENT SETUP **
 //
@@ -18,7 +19,8 @@ if (import.meta.env.PROD) {
   log.setLevel(4);
 }
 if (import.meta.env.DEV) {
-  log.setLevel(import.meta.env.VITE_DEBUG === "1" ? 0 : 2);
+  log.setLevel(0);
+  audio.debug.init();
 }
 
 // ** APP **
@@ -44,3 +46,4 @@ const splashEl = document.getElementById("app-splash");
 if (splashEl) {
   splashEl.remove();
 }
+

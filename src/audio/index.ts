@@ -3,16 +3,25 @@ import log from "loglevel";
 import * as tracks from "./tracks";
 import * as patterns from "./patterns";
 import * as instruments from "./instruments";
-import * as util from './util';
+import * as util from "./util";
 // TODO: I hate this import export make export make more sense
-import {updateTrackSequence, importSongToAudioStore, audioStore, setStore} from "./store";
+import {
+  updateTrackSequence,
+  importSongToAudioStore,
+  audioStore,
+  setStore,
+} from "./store";
 export * from "./types";
 
 type AudioEvent = "sixteenthTick" | "stop" | "start";
 
 function loop(time: number) {
   // Update the current 16th
-  setStore({cur16th: (audioStore.cur16th + 1) % 16});
+  setStore({ cur16th: (audioStore.cur16th + 1) % 16 });
+  log.debug('Current 16th', audioStore.cur16th);
+  log.debug("Current ticks", Tone.Transport.ticks);
+  log.debug("Current time", time);
+  log.debug("Current position", Tone.Transport.position);
   Tone.Transport.emit("sixteenthTick", audioStore.cur16th);
 
   if (!audioStore.curPattern) return;
@@ -29,17 +38,18 @@ function loop(time: number) {
     const isActive = track.sequence[audioStore.cur16th];
     if (!isActive) continue;
 
+    log.debug(`Scheduling ${instrument.name} at ${time}`)
     instruments.play(instrument, time);
   }
 }
 
 function init() {
-  log.info('Setting up audio environment');
+  log.info("Setting up audio environment");
   Tone.Transport.setLoopPoints("0:0:0", "1:0:0");
   Tone.Transport.loop = true;
   const evId = Tone.Transport.scheduleRepeat(loop, "16n");
-  setStore({eventIds: [...audioStore.eventIds, evId]});
-  Tone.setContext(new Tone.Context({latencyHint: "playback"}))
+  setStore({ eventIds: [...audioStore.eventIds, evId] });
+  Tone.setContext(new Tone.Context({ latencyHint: "playback" }));
 }
 
 export function cleanup() {
@@ -48,24 +58,24 @@ export function cleanup() {
   // });
   Tone.Transport.cancel(0);
   Tone.Transport.pause(0);
-  setStore({eventIds: []});
+  setStore({ eventIds: [] });
 }
 
 function play() {
   Tone.Transport.start();
-  setStore({playState: "started"});
+  setStore({ playState: "started" });
 }
 
 function pause() {
   Tone.Transport.pause();
-  setStore({playState: "paused"});
+  setStore({ playState: "paused" });
 }
 
 function stop() {
   // cleanup();
-  setStore({cur16th: -1});
+  setStore({ cur16th: -1 });
   Tone.Transport.stop();
-  setStore({playState: "stopped"});
+  setStore({ playState: "stopped" });
 }
 
 export default {
@@ -84,4 +94,4 @@ export default {
   tracks,
   patterns,
   util,
-}
+};

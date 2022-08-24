@@ -1,9 +1,9 @@
 /* @refresh reload */
-import {render} from 'solid-js/web'
-import {Router} from "@solidjs/router"
+import { render } from "solid-js/web";
+import { Router } from "@solidjs/router";
 import log from "loglevel";
-import AppContextProvider from "./AppContextProvider"
-import App from './App'
+import AppContextProvider from "./AppContextProvider";
+import App from "./App";
 
 // ** RUNTIME ENVIRONMENT SETUP **
 //
@@ -15,31 +15,31 @@ import App from './App'
 // log.trace("trace");
 //
 if (import.meta.env.PROD) {
-  log.setLevel(4)
+  log.setLevel(4);
 }
 if (import.meta.env.DEV) {
-  log.setLevel(0)
+  log.setLevel(import.meta.env.VITE_DEBUG === "1" ? 0 : 2);
 }
 
-// ** APP ** 
+// ** APP **
 render(
   () => (
     <AppContextProvider
       fbApp={null}
       fbAuth={null}
       fbUser={null}
-    user={null}
-      bootstrapped={false} 
+      user={null}
+      bootstrapped={false}
     >
       <Router>
-      <App />
-</Router>
+        <App />
+      </Router>
     </AppContextProvider>
   ),
-  document.getElementById('root') as HTMLElement
+  document.getElementById("root") as HTMLElement
 );
 
-// ** CLEAN UP FROM BEFORE APP IS LOADED ** 
+// ** CLEAN UP FROM BEFORE APP IS LOADED **
 const splashEl = document.getElementById("app-splash");
 if (splashEl) {
   splashEl.remove();

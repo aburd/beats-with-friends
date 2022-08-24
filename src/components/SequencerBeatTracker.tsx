@@ -1,5 +1,5 @@
-import {For, createSignal, onMount, onCleanup} from 'solid-js'
-import audio, {TimeSignature} from "../audio";
+import {For} from 'solid-js'
+import {TimeSignature} from "../audio";
 import "./SequencerBeatTracker.css";
 
 interface Props {

@@ -1,9 +1,16 @@
-import {For, onMount, onCleanup, createSignal, createEffect, useContext} from "solid-js";
+import {
+  For,
+  onMount,
+  onCleanup,
+  createSignal,
+  createEffect,
+  useContext,
+} from "solid-js";
 import log from "loglevel";
 import SequencerTrack from "./SequencerTrack";
 import SequencerBeatTracker from "./SequencerBeatTracker";
 import audio from "../audio";
-import "./Sequencer.css"
+import "./Sequencer.css";
 
 export default function Sequencer() {
   onMount(() => {
@@ -22,29 +29,32 @@ export default function Sequencer() {
 
   function handleBpmChange(newBpm: number) {
     if (newBpm > 0) {
-      audio.setStore({bpm: newBpm});
+      audio.setStore({ bpm: newBpm });
     }
   }
 
   function handleSequenceChange(id: string, sixteenth: number, on: boolean) {
-    log.debug({id, sixteenth, on})
+    log.debug({ id, sixteenth, on });
     audio.updateTrackSequence(id, sixteenth, on);
   }
 
   function handlePlayClick() {
     if (audio.audioStore.playState === "started") {
+      log.debug("Pausing");
       audio.pause();
       return;
     }
+    log.debug("Playing");
     audio.play();
   }
 
   function handleStopClick() {
+    log.debug("Stopping");
     audio.stop();
   }
 
   function handlePatternSelect(id: string) {
-    audio.setStore({curPattern: id});
+    audio.setStore({ curPattern: id });
   }
 
   return (
@@ -55,18 +65,24 @@ export default function Sequencer() {
           <div>{audio.audioStore.songName || "NO SONG LOADED"}</div>
         </div>
         <div class="Sequencer-window">
-          <span>PATTERN</span>{}
-          <select value={audio.audioStore.curPattern || undefined} onSelect={(e) => handlePatternSelect(e.currentTarget.value)}>
+          <span>PATTERN</span>
+          {}
+          <select
+            value={audio.audioStore.curPattern || undefined}
+            onSelect={(e) => handlePatternSelect(e.currentTarget.value)}
+          >
             <For each={Object.entries(audio.audioStore.patternMap)}>
-              {([id, pat]) => (
-                <option value={id}>{pat.name}</option>
-              )}
+              {([id, pat]) => <option value={id}>{pat.name}</option>}
             </For>
           </select>
         </div>
         <div class="Sequencer-window">
           <span>BPM</span>
-          <input type="number" value={audio.audioStore.bpm} onInput={(e) => handleBpmChange(Number(e.currentTarget.value))} />
+          <input
+            type="number"
+            value={audio.audioStore.bpm}
+            onInput={(e) => handleBpmChange(Number(e.currentTarget.value))}
+          />
         </div>
       </section>
       <section class="Sequencer-tracks">
@@ -77,7 +93,9 @@ export default function Sequencer() {
         <For each={Object.values(audio.audioStore.trackMap)}>
           {(item) => (
             <>
-              <div style={{'text-align': 'center'}}>{audio.audioStore.instrumentMap[item.instrumentId].name}</div>
+              <div style={{ "text-align": "center" }}>
+                {audio.audioStore.instrumentMap[item.instrumentId].name}
+              </div>
               <SequencerTrack
                 id={item.id}
                 initialSequence={item.sequence}
@@ -89,7 +107,9 @@ export default function Sequencer() {
         </For>
       </section>
       <section class="Sequencer-controls">
-        <button onClick={handlePlayClick}>{audio.audioStore.playState === "started" ? "Pause" : "Play"}</button>
+        <button onClick={handlePlayClick}>
+          {audio.audioStore.playState === "started" ? "Pause" : "Play"}
+        </button>
         <button onClick={handleStopClick}>Stop</button>
       </section>
     </div>

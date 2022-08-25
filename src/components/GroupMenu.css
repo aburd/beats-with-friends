@@ -1,0 +1,10 @@
+.GroupMenu ul.user-list {
+  list-style-type: none;
+  max-height: 20vh;
+  overflow-y: auto;
+}
+
+.GroupMenu .user-list .user-active {
+  color: var(--808-orange-dark);
+  font-weight: bold;
+}

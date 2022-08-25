@@ -1,7 +1,6 @@
-import { Show, createSignal, useContext, useTransition } from "solid-js";
+import { Show, createSignal } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import log from "loglevel";
-import { AppContextContext } from "@/AppContextProvider";
 import { AppRoutes } from "@/routes";
 import ErrorModal from "@/components/ErrorModal";
 import * as api from "@/api";
@@ -15,7 +14,6 @@ import { InferType, object, string } from "yup";
 import { validator } from "@felte/validator-yup";
 import beatWithFriendsLogoUrl from '@/assets/img/beatWithFriendsLogo.png';
 import useTranslation from "@/i18n/useTranslation";
-import { Trans } from "@mbarzda/solid-i18next";
 
 YupPassword(yup);
 const schema = object({

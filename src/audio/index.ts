@@ -19,10 +19,6 @@ type AudioEvent = "sixteenthTick" | "stop" | "start";
 function loop(time: number) {
   // Update the current 16th
   setStore({ cur16th: (audioStore.cur16th + 1) % 16 });
-  log.debug('Current 16th', audioStore.cur16th);
-  log.debug("Current ticks", Tone.Transport.ticks);
-  log.debug("Current time", time);
-  log.debug("Current position", Tone.Transport.position);
   Tone.Transport.emit("sixteenthTick", audioStore.cur16th);
 
   if (!audioStore.curPattern) return;
@@ -50,7 +46,7 @@ function init() {
   Tone.Transport.loop = true;
   const evId = Tone.Transport.scheduleRepeat(loop, "16n");
   setStore({ eventIds: [...audioStore.eventIds, evId] });
-  Tone.setContext(new Tone.Context({ latencyHint: "playback" }));
+  // Tone.setContext(new Tone.Context({ latencyHint: "playback" }));
 }
 
 export function cleanup() {

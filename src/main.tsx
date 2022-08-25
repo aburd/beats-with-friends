@@ -15,11 +15,14 @@ import audio from "./audio";
 // log.debug("debug");
 // log.trace("trace");
 //
-if (import.meta.env.PROD) {
-  log.setLevel(4);
-}
-if (import.meta.env.DEV) {
-  log.setLevel(0);
+let logLevel: number;
+if (import.meta.env.DEV) logLevel = 1;
+if (import.meta.env.VITE_DEBUG) logLevel = 0;
+if (import.meta.env.PROD) logLevel = 4;
+log.setLevel(logLevel);
+log.debug(`Set loglevel to ${logLevel}`);
+
+if (import.meta.env.VITE_DEBUG) {
   audio.debug.init();
 }
 

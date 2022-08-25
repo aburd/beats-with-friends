@@ -30,13 +30,9 @@ function hideShowDebug(e: MouseEvent) {
 }
 
 function controls() {
-  const controlPanel = document.createElement("div");
-  controlPanel.id = "control-panel";
-  const hideShowBtn = document.createElement("button");
-  hideShowBtn.innerText = "hide";
-  hideShowBtn.addEventListener("click", hideShowDebug);
-  hideShowBtn.classList.add("minimize-btn");
-  controlPanel.appendChild(hideShowBtn);
+  const controlPanel = <div id="control-panel">
+    <button onclick={hideShowDebug} class="minimize-btn">Test</button> 
+  </div>
   debugContainer.appendChild(controlPanel);
 }
 

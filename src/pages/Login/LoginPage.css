@@ -1,0 +1,82 @@
+#login-container {
+  display: grid;
+  grid-template-areas:
+    "header header header"
+    "body body body"
+    "footer footer footer";
+  grid-template-columns: 3em 1fr 3em;
+  grid-template-rows: auto 1fr auto;
+  height: 100%;
+  width: 100%;
+}
+
+#login-container footer {
+  display: flex;
+  grid-area: footer;
+  justify-content: center;
+  text-align: center;
+  white-space: pre;
+  width: 100%
+}
+
+#login-container header {
+  display: flex;
+  grid-area: header;
+  justify-content: center;
+  width: 100%
+}
+
+header #logo {
+  margin: 10px;
+  max-width: 500px;
+  width: 50%;
+}
+
+#login-container #form-body {
+  display: flex;
+  flex-direction: column;
+  grid-area: body;
+  grid-column: 2;
+  justify-content: center;
+  justify-items: center;
+  justify-self: center;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.hope-form-control {
+  margin-top: 10px;
+}
+
+.hope-stack {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.hope-stack button {
+  margin: 5px 0px 5px 0px;
+  width: 100%;
+}
+
+a:link {
+  color: #0894b3;
+}
+
+a:visited {
+  color: #0894b3;
+}
+
+@media screen and (min-width: 640px) {
+  #login-container #form-body {
+    display: flex;
+    flex-direction: column;
+    grid-area: body;
+    grid-column: 2;
+    justify-content: center;
+    justify-items: center;
+    justify-self: center;
+    margin-bottom: 2rem;
+    width: 40%;
+  }
+}

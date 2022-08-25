@@ -1,13 +1,44 @@
 import * as Tone from "tone";
+import log from "loglevel";
 import "./debug.css";
 
-const debugContainer = document.createElement("div");
-const canvas = document.createElement("canvas");
+const debugContainer = (
+  <div id="debug-container"> 
+    <div id="control-panel">
+      <button onclick={hideShowDebug} class="minimize-btn">Test</button> 
+    </div>
+  </div>
+) as HTMLDivElement;
+const canvas = <canvas id="debug-canvas" /> as HTMLCanvasElement;
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+const w = new Tone.Analyser('waveform', 16);
 
 let paused = true;
+let fpsT = 0;
 
-function debug(_time: number) {
+function fps(t: number) {
+  const d = t - fpsT;
+  const fps = (1000 / d).toFixed(1);
+  ctx.fillText(`FPS: ${fps}`, 10, 70);
+  fpsT = t;
+}
+
+function masterWaveform() {
+  function barHeights(waves: Float32Array, maxHeight: number) {
+    return waves.map(wave => {
+      const amplitude = Math.abs(wave / 1);
+      return maxHeight * amplitude * 8; 
+    });
+  }
+  const waves = w.getValue();
+  const barWidth = (canvas.width - 10) / waves.length; 
+  ctx.strokeStyle = 'green';
+  barHeights(waves as Float32Array, 30).forEach((barHeight, i) => {
+    ctx.fillRect(i * barWidth, 125, barWidth, -barHeight);
+  })
+}
+
+function debug(time: number) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "gray";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -15,6 +46,8 @@ function debug(_time: number) {
   ctx.font = "20px monospace";
   ctx.fillText("DEBUG", 10, 20);
   ctx.fillText("Audio Position: " + Tone.Transport.position.toString(), 10, 50);
+  fps(time);
+  masterWaveform();
 }
 
 function hideShowDebug(e: MouseEvent) {
@@ -29,13 +62,6 @@ function hideShowDebug(e: MouseEvent) {
   btn.innerText = "Show";
 }
 
-function controls() {
-  const controlPanel = <div id="control-panel">
-    <button onclick={hideShowDebug} class="minimize-btn">Test</button> 
-  </div>
-  debugContainer.appendChild(controlPanel);
-}
-
 function debugLoop(time: number) {
   debug(time);
 
@@ -44,13 +70,11 @@ function debugLoop(time: number) {
 }
 
 function mountDebug() {
-  // Give identifiers to important debug elements
-  debugContainer.id = "debug-container";
-  canvas.id = "debug-canvas";
   // Add the debug elements to the page
   debugContainer.appendChild(canvas);
   document.body.appendChild(debugContainer);
-  controls();
+  // Add eaveform to master channel
+  Tone.getDestination().connect(w);
 }
 
 export default {

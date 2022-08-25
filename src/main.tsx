@@ -1,7 +1,7 @@
 /* @refresh reload */
-import { render } from "solid-js/web";
-import { Router } from "@solidjs/router";
-import log from "loglevel";
+import {render} from "solid-js/web";
+import {Router} from "@solidjs/router";
+import log, {LogLevelDesc} from "loglevel";
 import AppContextProvider from "./AppContextProvider";
 import App from "./App";
 import audio from "./audio";
@@ -15,11 +15,11 @@ import audio from "./audio";
 // log.debug("debug");
 // log.trace("trace");
 //
-let logLevel: number;
+let logLevel: number = 0;
 if (import.meta.env.DEV) logLevel = 1;
 if (import.meta.env.VITE_DEBUG) logLevel = 0;
 if (import.meta.env.PROD) logLevel = 4;
-log.setLevel(logLevel);
+log.setLevel(logLevel as LogLevelDesc);
 log.debug(`Set loglevel to ${logLevel}`);
 
 if (import.meta.env.VITE_DEBUG) {

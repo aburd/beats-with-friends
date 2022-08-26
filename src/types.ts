@@ -8,6 +8,7 @@ export type Group = {
   name: string;
   users: User[];
   turnMode?: TurnModeState;
+  chat?: Chat
 }
 
 export type GroupSimple = {
@@ -20,4 +21,18 @@ export type User = {
   name: string;
   email: string;
   groupIds: string[],
+}
+
+export type Message = { 
+  createdAt: any
+  photoURL: string
+  text: string
+  id: string
+  name: string
+  email: string
+}
+
+export type Chat = { 
+  groupId: string
+  messages?: Message[]
 }

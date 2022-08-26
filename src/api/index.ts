@@ -2,6 +2,7 @@ import auth, { AuthErrorCode } from './auth';
 import group, { GroupApiErrorCode } from './group';
 import song, { SongApiErrorCode } from './song';
 import user, { UserApiErrorCode } from './user';
+import chat from './chat';
 
 export type BaseApiErrorCode = "unknown";
 export type ErrorCode = 
@@ -21,4 +22,5 @@ export {
   group,
   song,
   user,
+  chat,
 }

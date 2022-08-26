@@ -1,7 +1,8 @@
 import {onValue, getDatabase, ref, set, update, push, child, get} from "firebase/database";
 import log from "loglevel";
-import {GroupSimple, Group, TurnModeState, User} from '../types';
+import {GroupSimple, Group, TurnModeState, User, Message} from '../types';
 import usersApi from "./user";
+import chatApi from './chat';
 import * as util from "./util";
 
 export type GroupApiErrorCode =
@@ -16,6 +17,8 @@ export interface GroupApiError {
   code: GroupApiErrorCode;
 }
 
+type DbMessage = Record<string, Message>
+
 type DbGroup = {
   name: string;
   userIds: Record<string, boolean>;
@@ -23,6 +26,7 @@ type DbGroup = {
     activeUserId: string,
     songId: string,
   },
+  chat?: Record<string, DbMessage> 
 };
 
 const groupFromServer: Group = {
@@ -32,11 +36,16 @@ const groupFromServer: Group = {
 };
 
 function dbGroupToGroup(dbGroup: DbGroup, groupId: string, users: User[]): Group {
+
   return {
     id: groupId,
     name: dbGroup.name,
     users,
     turnMode: dbGroup.turnMode,
+    chat: {
+      groupId,
+      messages: dbGroup.chat?.messages ? util.fbMapToIdArr(dbGroup.chat?.messages) : []
+    }
   }
 }
 
@@ -46,19 +55,26 @@ export default {
     const groupRef = ref(db, `groups/${groupId}`);
     const snapshot = await get(groupRef);
     const val = snapshot.val() as DbGroup;
-    if (!val) {
-      return null;
-    }
-    const userIds = Object.keys(val.userIds);
-    const users = await Promise.all(userIds.map(id => usersApi.get(id)));
+    if (!val) null;
+    if (!val.chat) await chatApi.create(groupId);
 
+    const userIds = Object.keys(val.userIds);  
+    const users = await Promise.all(userIds.map(id => usersApi.get(id)));
+  
+    const messages = val?.chat?.messages ? util.fbMapToIdArr(val?.chat?.messages) : []
+  
     return {
       id: groupId,
       name: val.name,
       users: users as User[],
       turnMode: val.turnMode,
+      chat: {
+        groupId,
+        messages
+      } 
     }
   },
+
   async subscribe(groupId: string, callback: (group: Group) => void): Promise<void> {
     const db = getDatabase();
     const groupRef = ref(db, `groups/${groupId}`);
@@ -70,6 +86,7 @@ export default {
       callback(dbGroupToGroup(dbGroup, groupId, users as User[]));
     });
   },
+
   async create(userIds: string[], name: string): Promise<GroupSimple> {
     const db = getDatabase();
     const groupData: DbGroup = {
@@ -105,6 +122,7 @@ export default {
       name: name,
     }
   },
+
   async index(userId: string): Promise<GroupSimple[]> {
     const user = await usersApi.get(userId);
     if (!user) {
@@ -132,6 +150,7 @@ export default {
 
     return groups.filter(Boolean) as GroupSimple[];
   },
+
   async addUser(group: Group, email: string): Promise<Group> {
     const user = await usersApi.getByEmail(email);
     if (!user) {
@@ -162,6 +181,7 @@ export default {
       users: [...group.users, user],
     }
   },
+
   removeUser(groupId: string, userId: string): Promise<Group> {
     log.warn("Not implemented!");
     if (groupId !== '1') Promise.reject('Group does not exist');

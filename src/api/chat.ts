@@ -1,16 +1,12 @@
-import { onValue, getDatabase, ref, set, update, push, child, get, serverTimestamp } from "firebase/database";
+import { getDatabase, ref, update, push, child, get, serverTimestamp } from "firebase/database";
 import log from "loglevel";
-import { GroupSimple, Group, TurnModeState, User, Message, Chat } from '../types';
-import group from "./group";
-
+import * as util from './util'
+import { Message, Chat} from '../types';
 
 export interface DbChat { 
   id: string,
   messages?: Record<string, Message>
 }
-
-
-
 
 export default {
   async get(groupId: string): Promise<Chat | null> {
@@ -18,17 +14,16 @@ export default {
     const chatRef = ref(db, `groups/${groupId}/chat`);
     const snapshot = await get(chatRef);
     const val = snapshot.val() as DbChat;
+    if (!val) null
+    const chat: Chat = { groupId: val.id }
+    // WHEN THERE IS NO MESSAGE, RETURN GROUPID ONLY
+    if (!val.messages) return chat
+    chat.messages = util.fbMapToIdArr(val.messages)
 
-    if (!val) {
-      return null;
-    }
-    return {
-      groupId
-    }
+    return chat
   },
 
   async create(groupId: string): Promise<Chat> {
-
     const db = getDatabase()
     const updates = {} as Record<string, any>
     const chatData: DbChat = {
@@ -46,10 +41,12 @@ export default {
       throw e;
     });
   
+    return {
+      groupId
+    }
   },
 
-  async addMessage({ groupId, text, photoURL, email, name, id }: any): Promise<any> {
-    
+  async addMessage({ groupId, text, photoURL, email, name, id }: any): Promise<Message> {
     const db = getDatabase()
     const updates = {} as Record<string, any>
     const messageData: Message = {
@@ -60,7 +57,6 @@ export default {
       email,
       name
     }
-
     const newMessageKey = push(child(ref(db), `groups/${groupId}/chat/messages`)).key;
 
     updates[`groups/${groupId}/chat/messages/${newMessageKey}`] = messageData
@@ -73,5 +69,6 @@ export default {
       };
       throw e;
     });
+    return messageData
   }
 }

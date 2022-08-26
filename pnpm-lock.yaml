@@ -6,6 +6,7 @@ specifiers:
   '@hope-ui/solid': ^0.6.7
   '@mbarzda/solid-i18next': ^1.1.7
   '@solidjs/router': ^0.4.2
+  '@stitches/core': ^1.2.8
   '@types/lodash': ^4.14.182
   '@types/uuid': ^8.3.4
   '@typescript-eslint/eslint-plugin': ^5.33.1
@@ -32,8 +33,9 @@ specifiers:
 dependencies:
   '@felte/solid': 1.2.3_solid-js@1.4.8
   '@felte/validator-yup': 1.0.9_yup@0.32.11
-  '@hope-ui/solid': 0.6.7_oi63lgsnxcwqfqbns5ipxbewxm
+  '@hope-ui/solid': 0.6.7_sszzskbueur5rfztas6oehtsky
   '@solidjs/router': 0.4.2_solid-js@1.4.8
+  '@stitches/core': 1.2.8
   firebase: 9.9.3
   i18next: 21.9.1
   i18next-browser-languagedetector: 6.1.5
@@ -957,7 +959,7 @@ packages:
       yargs: 16.2.0
     dev: false
 
-  /@hope-ui/solid/0.6.7_oi63lgsnxcwqfqbns5ipxbewxm:
+  /@hope-ui/solid/0.6.7_sszzskbueur5rfztas6oehtsky:
     resolution: {integrity: sha512-7zGGy4QbGUC7QhwRnNH8HO0MZFg4jFISlC2cnAMBfFBy272uqQN3PYdTjiIbnpR/4JilUfxCWpFQY+4qslqcIw==}
     peerDependencies:
       '@stitches/core': ^1.2.8
@@ -965,6 +967,7 @@ packages:
       solid-transition-group: ^0.0.10
     dependencies:
       '@floating-ui/dom': 0.4.4
+      '@stitches/core': 1.2.8
       csstype: 3.0.11
       focus-trap: 6.7.3
       lodash.merge: 4.6.2
@@ -1110,6 +1113,10 @@ packages:
       solid-js: ^1.3.5
     dependencies:
       solid-js: 1.4.8
+    dev: false
+
+  /@stitches/core/1.2.8:
+    resolution: {integrity: sha512-Gfkvwk9o9kE9r9XNBmJRfV8zONvXThnm1tcuojL04Uy5uRyqg93DC83lDebl0rocZCfKSjUv+fWYtMQmEDJldg==}
     dev: false
 
   /@trysound/sax/0.2.0:

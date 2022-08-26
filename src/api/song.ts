@@ -4,10 +4,10 @@ import {TurnModeState} from "../types";
 import {Song, Note, BeatsSixteenths, TimeSignature} from '../audio/types';
 import * as util from "./util";
 import {AudioStore} from "../audio/store";
-import {ClientInstrument} from "audio/instruments";
+import {ClientInstrument} from "../audio/instruments";
 import {zipObject} from "lodash";
-import {ClientPattern} from "audio/patterns";
-import {ClientTrack} from "audio/tracks";
+import {ClientPattern} from "../audio/patterns";
+import {ClientTrack} from "../audio/tracks";
 
 export type SongApiErrorCode =
   "unknown";

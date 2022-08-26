@@ -1,9 +1,10 @@
 /* @refresh reload */
-import {render} from 'solid-js/web'
-import {Router} from "@solidjs/router"
+import { render } from 'solid-js/web'
+import { Router } from "@solidjs/router"
 import log from "loglevel";
 import AppContextProvider from "./AppContextProvider"
 import App from './App'
+import { HopeProvider } from '@hope-ui/solid'
 
 // ** RUNTIME ENVIRONMENT SETUP **
 //
@@ -28,12 +29,14 @@ render(
       fbApp={null}
       fbAuth={null}
       fbUser={null}
-    user={null}
-      bootstrapped={false} 
+      user={null}
+      bootstrapped={false}
     >
       <Router>
-      <App />
-</Router>
+        <HopeProvider>
+          <App />
+        </HopeProvider>
+      </Router>
     </AppContextProvider>
   ),
   document.getElementById('root') as HTMLElement

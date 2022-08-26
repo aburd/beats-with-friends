@@ -13,6 +13,7 @@ import Loader from "../components/Loader";
 import MenuButton from "../components/MenuButton";
 import ErrorModal from "../components/ErrorModal";
 import GroupMenu from "../components/GroupMenu";
+import ChatRoom from '../components/ChatRoom'
 import * as api from "../api";
 import audio, { Song, TimeSignature } from "../audio";
 import { User, Group } from "../types";
@@ -117,6 +118,7 @@ export default function TurnModePage() {
               onPassTurn={handlePassTurn}
             />
           </div>
+          <ChatRoom group={group() as Group} />
         </Show>
       </div>
     </>

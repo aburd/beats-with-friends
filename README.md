@@ -51,6 +51,8 @@ Firebase Hosting
 - Build: pnpm
 - View: Solid JS
 - Audio: Tone.js
+- UI: Hope-UI
+- intl: i18next
 
 ## Features
 

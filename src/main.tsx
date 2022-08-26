@@ -1,10 +1,12 @@
 /* @refresh reload */
-import { render } from "solid-js/web";
-import { Router } from "@solidjs/router";
+import { render } from 'solid-js/web'
+import { Router } from "@solidjs/router"
 import log, { LogLevelDesc } from "loglevel";
-import AppContextProvider from "./AppContextProvider";
-import App from "./App";
+import AppContextProvider from "./AppContextProvider"
+import App from './App'
+import { HopeProvider } from '@hope-ui/solid'
 import audio from "./audio";
+
 
 // ** RUNTIME ENVIRONMENT SETUP **
 //
@@ -37,7 +39,9 @@ render(
       bootstrapped={false}
     >
       <Router>
-        <App />
+        <HopeProvider>
+          <App />
+        </HopeProvider>
       </Router>
     </AppContextProvider>
   ),

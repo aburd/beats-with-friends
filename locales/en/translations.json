@@ -1,0 +1,22 @@
+{
+    "footer": "App by <a href=\"{{ app_link }}\" target=\"{{ target }}\">Aaron</a>. Piano icon by <a href=\"{{ piano_link }}\" target=\"{{ target }}\">I am Garreth</a>. Other icons from <a href=\"{{ other_icons_link }}\">BasicIcon</a>.",
+    "login": {
+        "buttons": {
+            "googleLogin": "Login with Gmail",
+            "signup": "Sign Up",
+            "submit": "Login"
+        },
+        "fields": {
+            "email": {
+                "label": "Email",
+                "placeholder": "email@example.com"
+            },
+            "password": {
+                "label": "Password",
+                "placeholder": "password"
+            }
+        },
+        "signup": "Don't have an account yet?",
+        "title": "Login"
+    }
+}

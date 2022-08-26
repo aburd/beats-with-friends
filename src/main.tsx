@@ -1,10 +1,12 @@
 /* @refresh reload */
 import { render } from 'solid-js/web'
 import { Router } from "@solidjs/router"
-import log from "loglevel";
+import log, { LogLevelDesc } from "loglevel";
 import AppContextProvider from "./AppContextProvider"
 import App from './App'
 import { HopeProvider } from '@hope-ui/solid'
+import audio from "./audio";
+
 
 // ** RUNTIME ENVIRONMENT SETUP **
 //
@@ -15,14 +17,18 @@ import { HopeProvider } from '@hope-ui/solid'
 // log.debug("debug");
 // log.trace("trace");
 //
-if (import.meta.env.PROD) {
-  log.setLevel(4)
-}
-if (import.meta.env.DEV) {
-  log.setLevel(0)
+let logLevel = 0;
+if (import.meta.env.DEV) logLevel = 1;
+if (import.meta.env.VITE_DEBUG) logLevel = 0;
+if (import.meta.env.PROD) logLevel = 4;
+log.setLevel(logLevel as LogLevelDesc);
+log.debug(`Set loglevel to ${logLevel}`);
+
+if (import.meta.env.VITE_DEBUG) {
+  audio.debug.init();
 }
 
-// ** APP ** 
+// ** APP **
 render(
   () => (
     <AppContextProvider
@@ -39,11 +45,12 @@ render(
       </Router>
     </AppContextProvider>
   ),
-  document.getElementById('root') as HTMLElement
+  document.getElementById("root") as HTMLElement
 );
 
-// ** CLEAN UP FROM BEFORE APP IS LOADED ** 
+// ** CLEAN UP FROM BEFORE APP IS LOADED **
 const splashEl = document.getElementById("app-splash");
 if (splashEl) {
   splashEl.remove();
 }
+

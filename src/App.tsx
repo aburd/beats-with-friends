@@ -1,5 +1,5 @@
 import { Show, onMount, useContext, lazy, createSignal } from "solid-js";
-import { Routes, Route, NavLink, useNavigate, Navigate } from "@solidjs/router";
+import { Routes, Route, NavLink, useNavigate, useLocation, Navigate } from "@solidjs/router";
 import log from "loglevel";
 import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -25,6 +25,9 @@ export default function App() {
   const [appState, setAppContext] = useContext(AppContextContext);
   const navigate = useNavigate();
   const [loaded, setLoaded] = createSignal(false);
+  const location = useLocation();
+  log.debug({ location: location.pathname });
+
 
   onMount(async () => {
     setLoaded(true);
@@ -75,6 +78,9 @@ export default function App() {
       log.debug({ user });
       if (user) {
         setAppContext({ user });
+        if ([AppRoutes.login(), AppRoutes.signUp(), AppRoutes.userSetup()].includes(location.pathname)) {
+          navigate(AppRoutes.profile());
+        }
         return;
       }
       // There is no matching user, we should set that up

@@ -46,11 +46,6 @@ function init() {
   Tone.Transport.loop = true;
   const evId = Tone.Transport.scheduleRepeat(loop, "16n");
   setStore({ eventIds: [...audioStore.eventIds, evId] });
-<<<<<<< HEAD
-  // Tone.setContext(new Tone.Context({ latencyHint: "playback" }));
-=======
-  Tone.setContext(new Tone.Context({ latencyHint: "playback" }));
->>>>>>> 46c58e2 (fix: various updates)
 }
 
 export function cleanup() {
@@ -95,8 +90,5 @@ export default {
   tracks,
   patterns,
   util,
-<<<<<<< HEAD
   debug,
-=======
->>>>>>> 46c58e2 (fix: various updates)
 };

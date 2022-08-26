@@ -15,7 +15,7 @@ import audio from "./audio";
 // log.debug("debug");
 // log.trace("trace");
 //
-let logLevel: number = 0;
+let logLevel = 0;
 if (import.meta.env.DEV) logLevel = 1;
 if (import.meta.env.VITE_DEBUG) logLevel = 0;
 if (import.meta.env.PROD) logLevel = 4;

@@ -19,7 +19,7 @@ export default function LoginPage() {
   const [loginErr, setLoginErr] = createSignal<null | AuthError>(null);
   const [signingIn, setSigningIn] = createSignal<boolean>(false);
   const navigate = useNavigate();
-  let emailRef: HTMLInputElement;
+  let emailRef: HTMLInputElement | undefined;
 
   log.debug(appState);
 

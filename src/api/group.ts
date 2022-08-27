@@ -1,6 +1,6 @@
-import {onValue, getDatabase, ref, set, update, push, child, get} from "firebase/database";
+import { onValue, getDatabase, ref, set, update, push, child, get } from "firebase/database";
 import log from "loglevel";
-import {GroupSimple, Group, TurnModeState, User, Message} from '../types';
+import { GroupSimple, Group, TurnModeState, User, Message } from '../types';
 import usersApi from "./user";
 import chatApi from './chat';
 import * as util from "./util";
@@ -17,8 +17,6 @@ export interface GroupApiError {
   code: GroupApiErrorCode;
 }
 
-type DbMessage = Record<string, Message>
-
 type DbGroup = {
   name: string;
   userIds: Record<string, boolean>;
@@ -26,7 +24,10 @@ type DbGroup = {
     activeUserId: string,
     songId: string,
   },
-  chat?: Record<string, DbMessage> 
+  chat?: {
+    id: string,
+    messages: Record<string, Message>
+  }
 };
 
 const groupFromServer: Group = {

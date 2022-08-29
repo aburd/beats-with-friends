@@ -19,10 +19,10 @@ button img {
   height: 0.75rem;
   margin-right: 2px;
 }
-button:active {
+/* button:active {
   top: 2px;
   border-bottom-width: 1px!important;
-}
+} */
 button.primary {
   background-color: var(--808-white);
   border-bottom-color: var(--808-white-dark);
@@ -45,7 +45,8 @@ form button[type="submit"] {
 .form-group {
   margin-bottom: 0.5rem;
 }
-.form-group label, .form-group input {
+.form-group label,
+.form-group input {
   display: block;
 }
 .form-group label {
@@ -58,7 +59,7 @@ form button[type="submit"] {
   width: calc(100% - 1rem - 4px);
 }
 label[for="email"]:before {
-  content: "\1F4E7"; 
+  content: "\1F4E7";
 }
 label[for="password"]:before {
   content: "\1F511";
@@ -80,6 +81,7 @@ label[for="password"]:before {
   opacity: 0.8;
   transition: all 0.2s ease 0s;
 }
-.card:hover, .card:active {
-  opacity: 1.0;
+.card:hover,
+.card:active {
+  opacity: 1;
 }

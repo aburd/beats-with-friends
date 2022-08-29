@@ -1,22 +1,28 @@
-import { Show, For, createSignal, useContext, createEffect } from "solid-js";
+import { Show, For, createSignal, useContext, onMount } from "solid-js";
 import log from "loglevel";
 import { AppContextContext } from "../AppContextProvider";
-import { User, Group } from "../types";
+import { Group, Message } from "../types";
 import * as api from '../api'
-import "./GroupMenu.css"
+import "./ChatRoom.css"
 
 type ChatRoomProps = {
   group: Group
 };
 
-export default function ChatRoom(props: ChatRoomProps) {
 
+export default function ChatRoom(props: ChatRoomProps) {
+  let divRef: HTMLDivElement | undefined
   const [formValue, setFormValue] = createSignal('')
   const [appState] = useContext(AppContextContext);
+  const [openChatRoom, setOpenChatRoom] = createSignal(true);
+  
+  onMount(() => { 
+    divRef?.scrollIntoView();
+  })
 
   async function handleSendMessage() { 
     try {
-      if (setFormValue) { 
+      if (formValue())  {
         const message = {
           groupId: props.group?.id,
           id: appState?.user?.id,
@@ -25,32 +31,49 @@ export default function ChatRoom(props: ChatRoomProps) {
           photoURL: appState?.fbUser?.photoURL,
           text: formValue(),
         }
-        await api.chat.addMessage(message) 
+        await api.chat.addMessage(message)
         setFormValue('')
       }
     } catch (e) {
       log.error(e);
+    } finally { 
+      divRef?.scrollIntoView({ behavior: 'smooth', block: "end"});
     }
+  }
+
+  function ChatMessage(message: Message) {
+    const messageType = message.id === appState?.user?.id ? 'sent' : 'received'
+    return (
+      <div class="ChatMessage">
+        <div class={`message ${messageType}`}>
+          <img class="user-photo" src={message.photoURL || '/piano-favicon.ico'} alt="" />
+          <p>{message.text}</p>
+          <span class="date">{new Date(message.createdAt).toLocaleDateString()}</span>
+        </div>
+      </div>
+    )
   }
 
   return (
     <div class="ChatRoom">
-      <Show when={props.group?.chat}>
-        <For each={props.group?.chat?.messages}>
-          {(message) => { 
-            return (
-              <>
-                <div>{message.text}</div>
-                <div>{new Date(message.createdAt).toString()}</div>
-                <div>{message.name}</div>
-                <div>{message.email}</div>
-                <img src={message.photoURL || '/piano-favicon.ico'} alt="" />
-              </>
-            )
-          }}
-        </For>
-        <input type="text" name='chat' value={formValue()} onChange={(e) => setFormValue(e.currentTarget.value)} />
-        <button onClick={() => handleSendMessage()}></button>
+      <button class='toggle-button'onClick={() => setOpenChatRoom(!openChatRoom())}>{ openChatRoom() ? '▼' : '▲'}</button>
+      <Show when={props.group?.chat && openChatRoom()}>
+        <div class="main">
+          <For each={props.group?.chat?.messages}>
+            {ChatMessage}
+          </For>
+          <div ref={divRef} class='main-bottom' />
+        </div>
+        <div class="footer">
+          <input
+            type="text"
+            name='chat'
+            value={formValue()}
+            onChange={(e) => setFormValue(e.currentTarget.value)}
+            onKeyUp={(e) => e.key === 'Enter' && handleSendMessage()}
+          />
+          <button onClick={() => handleSendMessage()}>Send</button>
+        </div>
       </Show>
     </div>
   );

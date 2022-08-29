@@ -25,11 +25,15 @@ export type User = {
 
 export type Message = { 
   createdAt: any
-  photoURL: string
+  photoURL: string | null
   text: string
   id: string
   name: string
   email: string
+}
+
+export interface MessageParams extends Omit<Message, 'createdAt'> {
+  groupId: string
 }
 
 export type Chat = { 

@@ -1,7 +1,7 @@
 import { getDatabase, ref, update, push, child, get, serverTimestamp } from "firebase/database";
 import log from "loglevel";
 import * as util from './util'
-import { Message, Chat} from '../types';
+import { Message, Chat, MessageParams } from '../types';
 
 export interface DbChat { 
   id: string,
@@ -46,7 +46,7 @@ export default {
     }
   },
 
-  async addMessage({ groupId, text, photoURL, email, name, id }: any): Promise<Message> {
+  async addMessage({ groupId, text, photoURL, email, name, id }: MessageParams): Promise<Message> {
     const db = getDatabase()
     const updates = {} as Record<string, any>
     const messageData: Message = {

@@ -1,7 +1,7 @@
 import { Show, For, createSignal, useContext, onMount } from "solid-js";
 import log from "loglevel";
 import { AppContextContext } from "../AppContextProvider";
-import { Group, Message } from "../types";
+import { Group, Message, MessageParams } from "../types";
 import * as api from '../api'
 import "./ChatRoom.css"
 
@@ -31,7 +31,7 @@ export default function ChatRoom(props: ChatRoomProps) {
           photoURL: appState?.fbUser?.photoURL,
           text: formValue(),
         }
-        await api.chat.addMessage(message)
+        await api.chat.addMessage(message as MessageParams)
         setFormValue('')
       }
     } catch (e) {

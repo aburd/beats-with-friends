@@ -1,9 +1,6 @@
-import {
-  For,
-  onMount,
-  onCleanup,
-} from "solid-js";
+import { For, onMount, onCleanup } from "solid-js";
 import log from "loglevel";
+import SampleExplorer from "./SampleExplorer";
 import SequencerTrack from "./SequencerTrack";
 import SequencerBeatTracker from "./SequencerBeatTracker";
 import audio from "../audio";
@@ -86,6 +83,7 @@ export default function Sequencer() {
           timeSignature={audio.audioStore.timeSignature || undefined}
           cur16th={audio.audioStore.cur16th}
         />
+        <SampleExplorer />
         <For each={Object.values(audio.audioStore.trackMap)}>
           {(item) => (
             <>

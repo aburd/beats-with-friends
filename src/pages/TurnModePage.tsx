@@ -21,7 +21,6 @@ import "./TurnModePage.css";
 export default function TurnModePage() {
   const params = useParams();
   const [initializing, setInitializing] = createSignal(true);
-  const [turnModeDisplayed, setTurnModeDisplayed] = createSignal(false);
   const [group, groupActions] = createResource<Group | null>(() =>
     api.group.get(params.groupId)
   );

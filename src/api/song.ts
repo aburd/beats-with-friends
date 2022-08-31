@@ -190,53 +190,6 @@ const defaultDbSong: DbSong = {
   sheet: {},
 }
 
-export const songFromServer: Song = {
-  id: '1',
-  name: 'Beat 1',
-  // TODO: should probably move this to patterns to allow each pattern to have its own timeSignature 
-  timeSignature: [4, 4],
-  instruments: [
-    {
-      id: '1',
-      name: 'kick',
-      url: 'kick(2).wav',
-    },
-    {
-      id: '2',
-      name: 'clap',
-      url: 'clap.wav',
-    }
-  ],
-  patterns: [
-    {
-      id: '1',
-      name: 'drums',
-      tracks: [
-        {
-          id: '1',
-          instrumentId: '1',
-          sequence: [
-            {id: '1', startTime: [0, 0], length: 0.1},
-            {id: '2', startTime: [1, 0], length: 0.1},
-            {id: '3', startTime: [2, 0], length: 0.1},
-            {id: '4', startTime: [3, 0], length: 0.1},
-            {id: '5', startTime: [3, 2], length: 0.1},
-          ],
-        },
-        {
-          id: '2',
-          instrumentId: '2',
-          sequence: [
-            {id: '6', startTime: [1, 0], length: 0.1},
-            {id: '7', startTime: [3, 0], length: 0.1},
-          ],
-        }
-      ],
-    },
-  ],
-  sheet: {},
-};
-
 function dbSongToSong(dbSong: DbSong, id: string): Song {
   const instruments = util.fbMapToIdArr(dbSong.instruments);
   const patternsNoTracks = util.fbMapToIdArr(dbSong.patterns)

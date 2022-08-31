@@ -20,7 +20,7 @@ export type SampleExplorerProps = {
  */
 export default function SampleExplorer(props: SampleExplorerProps) {
   const [dir, setDir] = createSignal<Directory | null>(null);
-  const [curPath, setCurPath] = createSignal("");
+  const [curPath, setCurPath] = createSignal("samples");
 
   createEffect(() => {
     if (props.onDirChange && dir()) {
@@ -87,11 +87,11 @@ export default function SampleExplorer(props: SampleExplorerProps) {
       <Show when={curPath()}>
         <button onClick={() => handleGoBack()}>Back</button>
       </Show>
-    <div class="container-directory-display">
-      <Show when={dir()} fallback={"Loading..."}>
-        <DirectoryDisplay dir={dir() as Directory} />
-      </Show>
-    </div>
+      <div class="container-directory-display">
+        <Show when={dir()} fallback={"Loading..."}>
+          <DirectoryDisplay dir={dir() as Directory} />
+        </Show>
+      </div>
     </div>
   );
 }

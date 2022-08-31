@@ -58,7 +58,6 @@ export default function Sequencer() {
         </div>
         <div class="Sequencer-window">
           <span>PATTERN</span>
-          {}
           <select
             value={audio.audioStore.curPattern || undefined}
             onSelect={(e) => handlePatternSelect(e.currentTarget.value)}
@@ -83,7 +82,7 @@ export default function Sequencer() {
           timeSignature={audio.audioStore.timeSignature || undefined}
           cur16th={audio.audioStore.cur16th}
         />
-        <SampleExplorer />
+        <SampleExplorer onSampleSelect={log.debug} />
         <For each={Object.values(audio.audioStore.trackMap)}>
           {(item) => (
             <>

@@ -34,7 +34,7 @@ export default {
    * Will just get root of all samples dir at first
    * Pass in paths to other directories to progressively go deeper
    */ 
-  async list(path: string = '/'): Promise<Directory> {
+  async list(path = '/'): Promise<Directory> {
     return getDirectory(path);
   },
   /**

@@ -76,6 +76,7 @@ export default function Sequencer() {
           <input
             type="number"
             value={audio.audioStore.bpm}
+            min={1}
             onInput={(e) => handleBpmChange(Number(e.currentTarget.value))}
           />
         </div>

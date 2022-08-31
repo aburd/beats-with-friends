@@ -1,0 +1,42 @@
+.SampleExplorer {
+  background: white;
+  padding: 1rem;
+}
+
+.SampleExplorer button {
+  padding: 0;
+  border: none;
+  margin: none;
+  background: none;
+  color: grey;
+}
+.SampleExplorer button:hover {
+  cursor: pointer;
+}
+.SampleExplorer button:before {
+  content: "| ";
+}
+
+.item-directory.active {
+  font-size: 1.5rem;
+  cursor: inherit;
+  margin-left: 0rem;
+  margin-bottom: 0.3rem;
+}
+.item-directory {
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 0.7rem;
+}
+.item-directory:after {
+  content: "/";
+}
+
+.item-sample {
+  cursor: pointer;
+  margin-left: 0.7rem;
+}
+.item-sample:before {
+  content: "♬";
+  font-size: 1.4rem;
+}

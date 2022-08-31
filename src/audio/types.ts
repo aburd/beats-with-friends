@@ -39,6 +39,7 @@ export type Song = {
   id: string,
   name: string;
   timeSignature: TimeSignature;
+  bpm: number;
   instruments: Instrument[], 
   patterns: Pattern[], 
   sheet: Record<PatternId, Time[]>;

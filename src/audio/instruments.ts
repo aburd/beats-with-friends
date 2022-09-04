@@ -1,5 +1,5 @@
 import * as Tone from "tone";
-import {Instrument} from './types';
+import {ApiInstrument} from '@/api/types';
 import * as util from './util';
 
 export interface ClientInstrument {
@@ -56,7 +56,7 @@ export async function create(
   }
 }
 
-export async function instrumentToClientInstrument(ins: Instrument): Promise<ClientInstrument> {
+export async function instrumentToClientInstrument(ins: ApiInstrument): Promise<ClientInstrument> {
   if (ins.url) {
     return await create(ins.id, {samplerUrl: ins.url, name: ins.name});
   }

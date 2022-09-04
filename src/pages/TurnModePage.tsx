@@ -8,78 +8,66 @@ import {
 import log from "loglevel";
 import { useParams } from "@solidjs/router";
 import { AppContextContext } from "../AppContextProvider";
-import Sequencer from "../components/Sequencer";
-import Loader from "../components/Loader";
-import MenuButton from "../components/MenuButton";
-import ErrorModal from "../components/ErrorModal";
-import GroupMenu from "../components/GroupMenu";
-import * as api from "../api";
-import audio, { Song, TimeSignature } from "../audio";
-import { User, Group } from "../types";
+import Sequencer from "@/components/Sequencer";
+import Loader from "@/components/Loader";
+import MenuButton from "@/components/MenuButton";
+import ErrorModal from "@/components/ErrorModal";
+import GroupMenu from "@/components/GroupMenu";
+import * as api from "@/api";
+import { ApiSong } from "@/api/types";
+import audio from "@/audio";
+import { User, Group } from "@/types";
 import "./TurnModePage.css";
 
 export default function TurnModePage() {
   const params = useParams();
-  const [initializing, setInitializing] = createSignal(true);
+  const [initialized, setInitialized] = createSignal(false);
+  const [initErr, setInitErr] = createSignal<string | null>(null);
   const [group, groupActions] = createResource<Group | null>(() =>
     api.group.get(params.groupId)
   );
-  const [song, setSong] = createSignal<Song | null>(null);
-  const [subscribedToSong, setSubscribedToSong] = createSignal<boolean>(false);
-  const [initErr, setInitErr] = createSignal<string | null>(null);
   const [appState] = useContext(AppContextContext);
 
   log.debug(appState);
 
-  async function fetchSong(group: Group): Promise<Song | null> {
+  async function fetchSong(group: Group): Promise<ApiSong | null> {
     log.debug({ group });
     if (!group?.turnMode) return null;
 
     try {
-      // This probably should be retrieved in the bootstrap process somehow
-      // Maybe just use Firebase for this
       const song = await api.song.get(group.turnMode?.songId);
-      log.debug({ song });
       if (!song) throw Error("No song in database");
-
-      // Hooray patterns, lets add them to our audio context
-      await audio.importSongToAudioStore(song);
-      audio.setStore({
-        timeSignature: song.timeSignature as TimeSignature,
-        curPattern: song.patterns[0].id as string,
-        songName: song.name,
-      });
 
       return song;
     } catch (e) {
       log.error(e);
       setInitErr("There was an error loading turn mode");
       throw e;
-    } finally {
-      setInitializing(false);
     }
   }
 
   createEffect(async () => {
     const song = await fetchSong(group() as Group);
-    setSong(song);
-  });
+    if (!song) {
+      // TODO: Handle no song case
+      return;
+    }
 
-  createEffect(() => {
-    if (!song()) return;
-    if (!group()) return;
-    if (!subscribedToSong()) {
-      api.song.subscribeToSongUpdate((song() as Song).id, (song) => {
+    await audio.loadSong(song);
+
+    if (!initialized()) {
+      api.song.subscribeToSongUpdate(song.id, (song) => {
         log.debug("The song has been updated!");
-        setSong(song);
+        audio.loadSong(song);
       });
       api.group.subscribe((group() as Group).id, (group) => {
         log.debug("The group has been updated!");
         groupActions.mutate(group);
       });
-      setSubscribedToSong(true);
+      setInitialized(true);
     }
   });
+
 
   function handleModalClose() {
     setInitErr(null);
@@ -87,8 +75,7 @@ export default function TurnModePage() {
 
   async function handlePassTurn(nextUser: User) {
     await api.song.update(
-      audio.audioStore,
-      (song() as Song).id,
+      audio.store,
       nextUser.id,
       (group() as Group).id
     );
@@ -102,8 +89,8 @@ export default function TurnModePage() {
           <ErrorModal onClose={handleModalClose}>{initErr()}</ErrorModal>
         </Show>
         <Show
-          when={!initializing()}
-          fallback={<Loader loading={initializing()} />}
+          when={initialized()}
+          fallback={<Loader loading={!initialized()} />}
         >
           <div class="body">
             <Sequencer />

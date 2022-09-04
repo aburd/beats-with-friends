@@ -1,4 +1,6 @@
-import {InstrumentId, TimeSignature, Track} from './types';
+import log from "loglevel";
+import {InstrumentId, ApiTimeSignature, ApiTrack} from '@/api/types';
+import {store, setStore} from "./store";
 import {v4 as uuid} from 'uuid';
 
 export type ClientTrack = {
@@ -7,15 +9,11 @@ export type ClientTrack = {
   sequence: boolean[];
 }
 
-export function create(id: string, instrumentId: InstrumentId, sequence: boolean[]): ClientTrack {
-  return {
-    id,
-    instrumentId,
-    sequence,
-  }
+export function addTrack(track: ClientTrack) {
+   log.debug(`Adding track: ${track}`);
 }
 
-export function trackToClientTrack(track: Track, timeSig: TimeSignature): ClientTrack {
+export function trackToClientTrack(track: ApiTrack, timeSig: ApiTimeSignature): ClientTrack {
   const {instrumentId, sequence} = track;
   const [top, bot] = timeSig;
   const activeSixteenths = sequence
@@ -26,11 +24,3 @@ export function trackToClientTrack(track: Track, timeSig: TimeSignature): Client
   return {id: uuid(), instrumentId, sequence: clientSeq};
 }
 
-export function updateSequence(track: ClientTrack, idx: number, on: boolean) {
-  const len = track.sequence.length;
-  if ((len - 1) < idx) {
-    throw new Error(`Can't update track of length [${len}] with index of [${idx}]`);
-  }
-
-  track.sequence[idx] = on;
-}

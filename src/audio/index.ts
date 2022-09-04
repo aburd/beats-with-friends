@@ -5,38 +5,30 @@ import * as tracks from "./tracks";
 import * as patterns from "./patterns";
 import * as instruments from "./instruments";
 import * as util from "./util";
-// TODO: I hate this import export make export make more sense
-import {
-  updateTrackSequence,
-  importSongToAudioStore,
-  audioStore,
-  setStore,
-  setBpm,
-} from "./store";
-export * from "./types";
+import * as storage from "./store";
 
 type AudioEvent = "sixteenthTick" | "stop" | "start";
 
 function loop(time: number) {
   // Update the current 16th
-  setStore({ cur16th: (audioStore.cur16th + 1) % 16 });
-  Tone.Transport.emit("sixteenthTick", audioStore.cur16th);
+  storage.set16th((storage.store.cur16th + 1) % 16);
+  Tone.Transport.emit("sixteenthTick" as AudioEvent, storage.store.cur16th);
 
-  if (!audioStore.curPattern) return;
+  if (!storage.store.curPattern) return;
 
   // Find the current pattern to play
-  const pattern = audioStore.patternMap[audioStore.curPattern];
+  const pattern = storage.store.patternMap[storage.store.curPattern];
 
   for (const trackId of pattern.trackIds) {
-    const track = audioStore.trackMap[trackId];
+    const track = storage.store.trackMap[trackId];
     if (!track) continue;
 
-    const instrument = audioStore.instrumentMap[track.instrumentId];
+    const instrument = storage.store.instrumentMap[track.instrumentId];
 
-    const isActive = track.sequence[audioStore.cur16th];
+    const isActive = track.sequence[storage.store.cur16th];
     if (!isActive) continue;
 
-    log.debug(`Scheduling ${instrument.name} at ${time}`)
+    log.debug(`Scheduling ${instrument.name} at ${time}`);
     instruments.play(instrument, time);
   }
 }
@@ -46,33 +38,28 @@ function init() {
   Tone.Transport.setLoopPoints("0:0:0", "1:0:0");
   Tone.Transport.loop = true;
   const evId = Tone.Transport.scheduleRepeat(loop, "16n");
-  setStore({ eventIds: [...audioStore.eventIds, evId] });
 }
 
 export function cleanup() {
-  // audioStore.eventIds.forEach((id) => {
-  //   Tone.Transport.clear(id)
-  // });
   Tone.Transport.cancel(0);
   Tone.Transport.pause(0);
-  setStore({ eventIds: [] });
 }
 
 function play() {
   Tone.Transport.start();
-  setStore({ playState: "started" });
+  storage.setPlayState("started");
 }
 
 function pause() {
   Tone.Transport.pause();
-  setStore({ playState: "paused" });
+  storage.setPlayState("paused");
 }
 
 function stop() {
   // cleanup();
-  setStore({ cur16th: -1 });
+  storage.set16th(-1);
   Tone.Transport.stop();
-  setStore({ playState: "stopped" });
+  storage.setPlayState("stopped");
 }
 
 export default {
@@ -82,15 +69,15 @@ export default {
   stop,
   pause,
   cleanup,
-  audioStore,
-  setStore,
-  importSongToAudioStore,
-  updateTrackSequence,
-  setBpm,
   // modules
   instruments,
   tracks,
   patterns,
   util,
   debug,
+  store: storage.store,
+  loadSong: storage.loadSong,
+  setBpm: storage.setBpm,
+  updateTrackSequence: storage.updateTrackSequence,
+  setCurPattern: storage.setCurPattern,
 };

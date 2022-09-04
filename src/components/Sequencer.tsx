@@ -1,5 +1,6 @@
 import { For, onMount, onCleanup } from "solid-js";
 import log from "loglevel";
+import { Sample } from "@/api/samples";
 import SampleExplorer from "./SampleExplorer";
 import SequencerTrack from "./SequencerTrack";
 import SequencerBeatTracker from "./SequencerBeatTracker";
@@ -31,7 +32,7 @@ export default function Sequencer() {
   }
 
   function handlePlayClick() {
-    if (audio.audioStore.playState === "started") {
+    if (audio.store.playState === "started") {
       log.debug("Pausing");
       audio.pause();
       return;
@@ -46,7 +47,10 @@ export default function Sequencer() {
   }
 
   function handlePatternSelect(id: string) {
-    audio.setStore({ curPattern: id });
+    audio.setCurPattern(id);
+  }
+
+  function handleSampleSelect(sample: Sample) {
   }
 
   return (
@@ -54,15 +58,15 @@ export default function Sequencer() {
       <section class="Sequencer-info">
         <div class="Sequencer-window">
           <span>SONG</span>
-          <div>{audio.audioStore.songName || "NO SONG LOADED"}</div>
+          <div>{audio.store.song.name || "NO SONG LOADED"}</div>
         </div>
         <div class="Sequencer-window">
           <span>PATTERN</span>
           <select
-            value={audio.audioStore.curPattern || undefined}
+            value={audio.store.curPattern || undefined}
             onSelect={(e) => handlePatternSelect(e.currentTarget.value)}
           >
-            <For each={Object.entries(audio.audioStore.patternMap)}>
+            <For each={Object.entries(audio.store.patternMap)}>
               {([id, pat]) => <option value={id}>{pat.name}</option>}
             </For>
           </select>
@@ -71,7 +75,7 @@ export default function Sequencer() {
           <span>BPM</span>
           <input
             type="number"
-            value={audio.audioStore.bpm}
+            value={audio.store.song.bpm}
             min={1}
             onInput={(e) => handleBpmChange(Number(e.currentTarget.value))}
           />
@@ -79,20 +83,20 @@ export default function Sequencer() {
       </section>
       <section class="Sequencer-tracks">
         <SequencerBeatTracker
-          timeSignature={audio.audioStore.timeSignature || undefined}
-          cur16th={audio.audioStore.cur16th}
+          timeSignature={audio.store.song.timeSignature || undefined}
+          cur16th={audio.store.cur16th}
         />
-        <SampleExplorer onSampleSelect={log.debug} />
-        <For each={Object.values(audio.audioStore.trackMap)}>
+        <SampleExplorer onSampleSelect={handleSampleSelect} />
+        <For each={Object.values(audio.store.trackMap)}>
           {(item) => (
             <>
               <div style={{ "text-align": "center" }}>
-                {audio.audioStore.instrumentMap[item.instrumentId].name}
+                {audio.store.instrumentMap[item.instrumentId].name}
               </div>
               <SequencerTrack
                 id={item.id}
                 initialSequence={item.sequence}
-                timeSignature={audio.audioStore.timeSignature || [4, 4]}
+                timeSignature={audio.store.song.timeSignature || [4, 4]}
                 onBtnClick={handleSequenceChange}
               />
             </>
@@ -101,7 +105,7 @@ export default function Sequencer() {
       </section>
       <section class="Sequencer-controls">
         <button onClick={handlePlayClick}>
-          {audio.audioStore.playState === "started" ? "Pause" : "Play"}
+          {audio.store.playState === "started" ? "Pause" : "Play"}
         </button>
         <button onClick={handleStopClick}>Stop</button>
       </section>

@@ -5,6 +5,7 @@ import SampleExplorer from "./SampleExplorer";
 import SequencerTrack from "./SequencerTrack";
 import SequencerBeatTracker from "./SequencerBeatTracker";
 import audio from "../audio";
+import * as api from "@/api";
 import "./Sequencer.css";
 
 export default function Sequencer() {
@@ -51,6 +52,8 @@ export default function Sequencer() {
   }
 
   function handleSampleSelect(sample: Sample) {
+    log.debug({ sample })
+    api.song.addInstrument(audio.store.song.id, sample.path, sample.name as string);
   }
 
   return (

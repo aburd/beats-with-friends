@@ -82,7 +82,7 @@ function createSampler(samplerUrl: string, meter: Tone.Meter): Promise<Tone.Samp
       urls: {
         A1: samplerUrl,
       },
-      baseUrl: util.sampleBaseUrl(),
+      baseUrl: samplerUrl.includes('http') ? '': util.sampleBaseUrl(),
       volume: DEFAULT_INSTRUMENT_DECIBEL,
       onload: () => res(sampler),
       onerror: (e) => rej(e.message),

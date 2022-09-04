@@ -1,6 +1,6 @@
 import log from "loglevel";
 import {InstrumentId, ApiTimeSignature, ApiTrack} from '@/api/types';
-import {store, setStore} from "./store";
+import {ClientInstrument} from "./instruments";
 import {v4 as uuid} from 'uuid';
 
 export type ClientTrack = {
@@ -24,3 +24,10 @@ export function trackToClientTrack(track: ApiTrack, timeSig: ApiTimeSignature): 
   return {id: uuid(), instrumentId, sequence: clientSeq};
 }
 
+export function instrumentToTrack(instrument: ClientInstrument, timeSig: ApiTimeSignature): ClientTrack {
+  const [top, bot] = timeSig;
+  const clientSeq: boolean[] = Array(top * bot)
+    .fill(null)
+    .map(() => false);
+  return {id: uuid(), instrumentId: instrument.id, sequence: clientSeq};
+}

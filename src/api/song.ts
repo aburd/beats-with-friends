@@ -1,14 +1,17 @@
 import {onValue, getDatabase, ref, set, update, push, child, get} from "firebase/database";
 import log from "loglevel";
+import {zipObject} from "lodash";
 import {TurnModeState} from "../types";
-import {ApiSong, ApiNote, ApiBeatsSixteenths, ApiTimeSignature} from './types';
 import * as util from "./util";
 import {AudioStore} from "../audio/store";
 import {ClientInstrument} from "../audio/instruments";
-import {zipObject} from "lodash";
 import {ClientPattern} from "../audio/patterns";
 import {ClientTrack} from "../audio/tracks";
-import { DbSong, DbNote, DbInstrument, DbPattern, DbTrack } from './types';
+import sampleApi from "./samples";
+import { 
+  DbSong, DbNote, DbInstrument, DbPattern, DbTrack,
+  ApiSong, ApiBeatsSixteenths, ApiTimeSignature,
+} from './types';
 
 export type SongApiErrorCode =
   "unknown";
@@ -41,6 +44,7 @@ function patternMapToDbPatterns(timeSignature: ApiTimeSignature, trackMap: Recor
   const ids = Object.keys(patternMap);
   const cPatterns = Object.values(patternMap);
   const dbPatterns = cPatterns.map((cPattern): DbPattern => {
+    log.debug({cPattern})
     const dbTracks = cPattern.trackIds.map((id): DbTrack => {
       const dbNotes = trackMap[id].sequence
         .map((on, sixteenth) => {
@@ -160,6 +164,7 @@ const defaultDbSong: DbSong = {
 }
 
 function dbSongToSong(dbSong: DbSong, id: string): ApiSong {
+  log.debug({ dbSong })
   const instruments = util.fbMapToIdArr(dbSong.instruments);
   const patternsNoTracks = util.fbMapToIdArr(dbSong.patterns)
   const patterns = patternsNoTracks.map(p => {
@@ -168,7 +173,7 @@ function dbSongToSong(dbSong: DbSong, id: string): ApiSong {
       tracks: util.fbMapToIdArr(p.tracks).map(t => {
         return {
           ...t,
-          sequence: util.fbMapToIdArr(t.notes).map(n => ({
+          sequence: util.fbMapToIdArr(t.notes || []).map(n => ({
             ...n,
             startTime: [n.startTime.beat, n.startTime.sixteenth] as [number, number],
           })),
@@ -260,11 +265,42 @@ export default {
       callback(dbSongToSong(dbSong, songId));
     });
   },
-  addInstrument(songId: string, instrumentId: string): Promise<void> {
-    log.warn("Not implemented!");
-    return Promise.resolve();
+
+  async addInstrument(songId: string, path: string, name: string): Promise<void> {
+    const url = await sampleApi.getSampleUrl(path);
+    const db = getDatabase();
+    const instrument: DbInstrument = {
+      name,
+      url,
+    };
+
+    const patternsRef = ref(db, `songs/${songId}/patterns`);
+    const patterns = await get(patternsRef);
+
+    // Add new instrument to song
+    const newInstrumentKey = push(child(ref(db), `songs/${songId}/instruments`)).key;
+    const updates = {
+      [`songs/${songId}/instruments/${newInstrumentKey}`]: instrument,
+    } as any;
+    // Ensure we are also adding the instrumnet to every pattern
+    patterns.forEach(p => {
+      const newTrack = { instrumentId: newInstrumentKey, notes: {} }
+      const newTrackKey = push(child(ref(db), `songs/${songId}/patterns/${p.key}/tracks`)).key;
+      updates[`songs/${songId}/patterns/${p.key}/tracks/${newTrackKey}`] = newTrack; 
+    })
+
+    await update(ref(db), updates)
+      .catch(fbErr => {
+        log.error(fbErr);
+        const e: SongApiError = {
+          description: "Error with Firebase",
+          code: "unknown",
+        };
+        throw e;
+      });
   },
-  addSample(name: string, file: File): Promise<void> {
+
+  uploadSample(name: string, file: File): Promise<void> {
     log.warn("Not implemented!");
     if (!(file.name && file.size)) {
       log.error(`Not a valid file. Name: ${file.name}, Size: ${file.size}.`);
@@ -273,6 +309,7 @@ export default {
 
     return Promise.resolve();
   },
+
   async updateSequence(songId: string, patternId: string, trackId: string, sequenceId: string, startTime: ApiBeatsSixteenths, length: number): Promise<void> {
     const db = getDatabase();
     const data = {
@@ -285,7 +322,7 @@ export default {
     const updates = {
       [`/songs/${songId}/patterns/${patternId}/tracks/${trackId}/notes/${sequenceId}`]: data,
     };
-    await update(ref(db), update)
+    await update(ref(db), updates)
       .catch(fbErr => {
         log.error(fbErr);
         const e: SongApiError = {

@@ -77,10 +77,10 @@ export function updateTrackSequence(id: string, sixteenth: number, on: boolean) 
 }
 
 export async function loadSong(song: ApiSong) {
-  const clientPatternArr = song.patterns.map((pat) => patterns.patternToClientPattern(pat, song.timeSignature));
+  const cIns = await Promise.all(song.instruments.map(instruments.instrumentToClientInstrument));
+  const clientPatternArr = song.patterns.map((pat) => patterns.patternToClientPattern(pat, song.timeSignature, cIns));
   const cTracksArr = clientPatternArr.map(([_, cTracks]) => cTracks);
 
-  const cIns = await Promise.all(song.instruments.map(instruments.instrumentToClientInstrument));
   const cPatterns = clientPatternArr.map(([cPattern]) => cPattern);
   const cTracks = flatten(cTracksArr);
 

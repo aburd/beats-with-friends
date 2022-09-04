@@ -40,12 +40,9 @@ export default {
   /**
    * gets full sample information
    */ 
-  async getSample(path: string): Promise<Sample> {
+  async getSampleUrl(path: string): Promise<string> {
     const fileRef = ref(storage, path);
     const url = await getDownloadURL(fileRef);
-    return {
-      path,
-      url,
-    }
+    return url;
   }
 }

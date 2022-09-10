@@ -41,6 +41,7 @@ type DbInstrument = {
 
 export type DbSong = {
   name: string;
+  bpm: number;
   timeSignature: {
     top: number;
     bottom: number;
@@ -102,6 +103,7 @@ function audioStoreToDbSong(store: AudioStore): DbSong {
   return {
     name: store.songName,
     instruments: instrumentMapToDbInstruments(store.instrumentMap),
+    bpm: store.bpm,
     timeSignature: {
       top: store.timeSignature[0],
       bottom: store?.timeSignature[1],
@@ -113,6 +115,7 @@ function audioStoreToDbSong(store: AudioStore): DbSong {
 
 const defaultDbSong: DbSong = {
   name: "New Song",
+  bpm: 120,
   timeSignature: {top: 4, bottom: 4},
   instruments: {
     '1': {
@@ -190,53 +193,6 @@ const defaultDbSong: DbSong = {
   sheet: {},
 }
 
-export const songFromServer: Song = {
-  id: '1',
-  name: 'Beat 1',
-  // TODO: should probably move this to patterns to allow each pattern to have its own timeSignature 
-  timeSignature: [4, 4],
-  instruments: [
-    {
-      id: '1',
-      name: 'kick',
-      url: 'kick(2).wav',
-    },
-    {
-      id: '2',
-      name: 'clap',
-      url: 'clap.wav',
-    }
-  ],
-  patterns: [
-    {
-      id: '1',
-      name: 'drums',
-      tracks: [
-        {
-          id: '1',
-          instrumentId: '1',
-          sequence: [
-            {id: '1', startTime: [0, 0], length: 0.1},
-            {id: '2', startTime: [1, 0], length: 0.1},
-            {id: '3', startTime: [2, 0], length: 0.1},
-            {id: '4', startTime: [3, 0], length: 0.1},
-            {id: '5', startTime: [3, 2], length: 0.1},
-          ],
-        },
-        {
-          id: '2',
-          instrumentId: '2',
-          sequence: [
-            {id: '6', startTime: [1, 0], length: 0.1},
-            {id: '7', startTime: [3, 0], length: 0.1},
-          ],
-        }
-      ],
-    },
-  ],
-  sheet: {},
-};
-
 function dbSongToSong(dbSong: DbSong, id: string): Song {
   const instruments = util.fbMapToIdArr(dbSong.instruments);
   const patternsNoTracks = util.fbMapToIdArr(dbSong.patterns)
@@ -257,6 +213,7 @@ function dbSongToSong(dbSong: DbSong, id: string): Song {
   return {
     id,
     name: dbSong.name,
+    bpm: dbSong.bpm,
     timeSignature: [dbSong.timeSignature.top, dbSong.timeSignature.bottom],
     instruments,
     patterns,

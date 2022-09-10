@@ -1,5 +1,4 @@
 import * as Tone from 'tone';
-import {createEffect} from 'solid-js';
 import * as patterns from './patterns';
 import * as tracks from './tracks';
 import * as instruments from "./instruments";
@@ -39,6 +38,7 @@ function initialStore(): AudioStore {
   }
 }
 
+
 export async function importSongToAudioStore(song: Song) {
   const clientPatternArr = song.patterns.map((pat) => patterns.patternToClientPattern(pat, song.timeSignature));
   const cTracksArr = clientPatternArr.map(([_, cTracks]) => cTracks);
@@ -52,6 +52,7 @@ export async function importSongToAudioStore(song: Song) {
   const trackMap = zipObject(cTracks.map(t => t.id), cTracks);
 
   setStore({
+    bpm: song.bpm || 120,
     instrumentMap,
     patternMap,
     trackMap,
@@ -71,4 +72,10 @@ export function updateTrackSequence(id: string, sixteenth: number, on: boolean) 
   setStore("trackMap", id, "sequence", newSequence);
 }
 
-createEffect(() => Tone.Transport.bpm.value = audioStore.bpm);
+export function setBpm(bpm: number) {
+  if (bpm <= 0) return;
+
+  setStore({ bpm });
+  Tone.Transport.bpm.value = bpm;
+}
+

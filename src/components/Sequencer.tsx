@@ -2,9 +2,6 @@ import {
   For,
   onMount,
   onCleanup,
-  createSignal,
-  createEffect,
-  useContext,
 } from "solid-js";
 import log from "loglevel";
 import SequencerTrack from "./SequencerTrack";
@@ -28,9 +25,7 @@ export default function Sequencer() {
   });
 
   function handleBpmChange(newBpm: number) {
-    if (newBpm > 0) {
-      audio.setStore({ bpm: newBpm });
-    }
+    audio.setBpm(newBpm);
   }
 
   function handleSequenceChange(id: string, sixteenth: number, on: boolean) {
@@ -81,6 +76,7 @@ export default function Sequencer() {
           <input
             type="number"
             value={audio.audioStore.bpm}
+            min={1}
             onInput={(e) => handleBpmChange(Number(e.currentTarget.value))}
           />
         </div>

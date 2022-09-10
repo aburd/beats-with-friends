@@ -1,6 +1,28 @@
 {
   "rules": {
-    ".read": true,
-    ".write": true
+    "users": {
+      "$user_id": {
+        ".read": true,
+        ".write": "$user_id === auth.uid"
+      }
+    },
+    "groups": {
+      "$group_id": {
+        ".read": true,
+        ".write": true
+      }
+    },
+    "chats": {
+      "$chat_id": {
+        ".read": true,
+        ".write": true
+      }
+    },
+    "songs": {
+      "$song_id": {
+        ".read": true,
+        ".write": true
+      }
+    }
   }
 }

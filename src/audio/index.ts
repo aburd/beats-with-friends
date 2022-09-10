@@ -11,6 +11,7 @@ import {
   importSongToAudioStore,
   audioStore,
   setStore,
+  setBpm,
 } from "./store";
 export * from "./types";
 
@@ -85,6 +86,7 @@ export default {
   setStore,
   importSongToAudioStore,
   updateTrackSequence,
+  setBpm,
   // modules
   instruments,
   tracks,

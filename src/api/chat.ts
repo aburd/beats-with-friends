@@ -3,50 +3,56 @@ import log from "loglevel";
 import * as util from './util'
 import { Message, Chat, MessageParams } from '../types';
 
+export type ChatApiError = "chat_db_failure"
+
 export interface DbChat { 
-  id: string,
+  id?: string,
   messages?: Record<string, Message>
 }
 
 export default {
-  async get(groupId: string): Promise<Chat | null> {
+  async get(chatId: string): Promise<Chat | null> {
     const db = getDatabase()
-    const chatRef = ref(db, `groups/${groupId}/chat`);
+    const chatRef = ref(db, `chats/${chatId}`);
     const snapshot = await get(chatRef);
     const val = snapshot.val() as DbChat;
-    if (!val) null
-    const chat: Chat = { groupId: val.id }
-    // WHEN THERE IS NO MESSAGE, RETURN GROUPID ONLY
+    console.log(val);
+    
+    if (!val) return null
+    // if(!val.id) return null
+    // const chat: Chat = { chatId: val.id }
+    // WHEN THERE IS NO MESSAGE, RETURN CHATID ONLY
+    const chat: Chat = { chatId: ''}
     if (!val.messages) return chat
     chat.messages = util.fbMapToIdArr(val.messages)
 
     return chat
   },
 
-  async create(groupId: string): Promise<Chat> {
+  async create(chatId: string): Promise<Chat> {
     const db = getDatabase()
     const updates = {} as Record<string, any>
     const chatData: DbChat = {
-      id: groupId,
+      id: chatId
     }
 
-    updates[`/groups/${groupId}/chat`] = chatData
+    updates[`/chats/${chatId}`] = chatData
 
     await update(ref(db), updates).catch(fbErr => {
       log.error(fbErr);
       const e: any = {
         description: "Error with Firebase",
-        code: "group_db_failure",
+        code: "chat_db_failure",
       };
       throw e;
     });
   
     return {
-      groupId
+      chatId
     }
   },
 
-  async addMessage({ groupId, text, photoURL, email, name, id }: MessageParams): Promise<Message> {
+  async addMessage({ chatId, text, photoURL, email, name, id }: MessageParams): Promise<Message> {
     const db = getDatabase()
     const updates = {} as Record<string, any>
     const messageData: Message = {
@@ -57,15 +63,15 @@ export default {
       email,
       name
     }
-    const newMessageKey = push(child(ref(db), `groups/${groupId}/chat/messages`)).key;
+    const newMessageKey = push(child(ref(db), `chats/${chatId}/messages`)).key;
 
-    updates[`groups/${groupId}/chat/messages/${newMessageKey}`] = messageData
+    updates[`chats/${chatId}/messages/${newMessageKey}`] = messageData
 
     await update(ref(db), updates).catch((fbErr) => {
       log.error(fbErr);
       const e: any = {
         description: "Error with Firebase",
-        code: "group_db_failure",
+        code: "chat_db_failure",
       };
       throw e;
     });

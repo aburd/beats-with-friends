@@ -1,13 +1,15 @@
-import { Show, For, createSignal, useContext, onMount } from "solid-js";
+import { Show, For, createSignal, useContext, onMount, createEffect, createResource } from "solid-js";
 import log from "loglevel";
 import { AppContextContext } from "../AppContextProvider";
-import { Group, Message, MessageParams } from "../types";
+import { Chat, Message, MessageParams } from "../types";
 import * as api from '../api'
 import "./ChatRoom.css"
 
 type ChatRoomProps = {
-  group: Group
+  chatId?: string
+  chat?: Chat
 };
+
 
 
 export default function ChatRoom(props: ChatRoomProps) {
@@ -15,7 +17,11 @@ export default function ChatRoom(props: ChatRoomProps) {
   const [formValue, setFormValue] = createSignal('')
   const [appState] = useContext(AppContextContext);
   const [openChatRoom, setOpenChatRoom] = createSignal(true);
-  
+
+  createEffect(async() => { 
+    await api.chat.get(props.chatId || '')
+  })
+
   onMount(() => { 
     divRef?.scrollIntoView();
   })
@@ -24,7 +30,7 @@ export default function ChatRoom(props: ChatRoomProps) {
     try {
       if (formValue())  {
         const message = {
-          groupId: props.group?.id,
+          chatId: props.chatId,
           id: appState?.user?.id,
           name: appState?.user?.name,
           email: appState?.fbUser?.email,
@@ -54,12 +60,13 @@ export default function ChatRoom(props: ChatRoomProps) {
     )
   }
 
+
   return (
     <div class="ChatRoom">
       <button class='toggle-button'onClick={() => setOpenChatRoom(!openChatRoom())}>{ openChatRoom() ? '▼' : '▲'}</button>
-      <Show when={props.group?.chat && openChatRoom()}>
+      <Show when={props.chatId &&  openChatRoom()}>
         <div class="main">
-          <For each={props.group?.chat?.messages}>
+          <For each={props.chat?.messages}>
             {ChatMessage}
           </For>
           <div ref={divRef} class='main-bottom' />

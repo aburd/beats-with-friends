@@ -2,7 +2,6 @@ import { onValue, getDatabase, ref, set, update, push, child, get } from "fireba
 import log from "loglevel";
 import { GroupSimple, Group, TurnModeState, User, Message } from '../types';
 import usersApi from "./user";
-import chatApi from './chat';
 import * as util from "./util";
 
 export type GroupApiErrorCode =
@@ -24,10 +23,6 @@ type DbGroup = {
     activeUserId: string,
     songId: string,
   },
-  chat?: {
-    id: string,
-    messages: Record<string, Message>
-  }
 };
 
 const groupFromServer: Group = {
@@ -43,10 +38,6 @@ function dbGroupToGroup(dbGroup: DbGroup, groupId: string, users: User[]): Group
     name: dbGroup.name,
     users,
     turnMode: dbGroup.turnMode,
-    chat: {
-      groupId,
-      messages: dbGroup.chat?.messages ? util.fbMapToIdArr(dbGroup.chat?.messages) : []
-    }
   }
 }
 
@@ -57,22 +48,16 @@ export default {
     const snapshot = await get(groupRef);
     const val = snapshot.val() as DbGroup;
     if (!val) null;
-    if (!val.chat) await chatApi.create(groupId);
 
     const userIds = Object.keys(val.userIds);  
     const users = await Promise.all(userIds.map(id => usersApi.get(id)));
-  
-    const messages = val?.chat?.messages ? util.fbMapToIdArr(val?.chat?.messages) : []
+
   
     return {
       id: groupId,
       name: val.name,
       users: users as User[],
       turnMode: val.turnMode,
-      chat: {
-        groupId,
-        messages
-      } 
     }
   },
 

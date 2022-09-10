@@ -16,7 +16,7 @@ import GroupMenu from "../components/GroupMenu";
 import ChatRoom from '../components/ChatRoom'
 import * as api from "../api";
 import audio, { Song, TimeSignature } from "../audio";
-import { User, Group } from "../types";
+import { User, Group, Chat } from "../types";
 import "./TurnModePage.css";
 
 export default function TurnModePage() {
@@ -118,7 +118,7 @@ export default function TurnModePage() {
               onPassTurn={handlePassTurn}
             />
           </div>
-          <ChatRoom group={group() as Group} />
+          <ChatRoom chatId={group()?.id}/>
         </Show>
       </div>
     </>

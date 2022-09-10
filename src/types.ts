@@ -8,7 +8,6 @@ export type Group = {
   name: string;
   users: User[];
   turnMode?: TurnModeState;
-  chat?: Chat
 }
 
 export type GroupSimple = {
@@ -33,10 +32,10 @@ export type Message = {
 }
 
 export interface MessageParams extends Omit<Message, 'createdAt'> {
-  groupId: string
+  chatId: string
 }
 
 export type Chat = { 
-  groupId: string
+  chatId: string
   messages?: Message[]
 }

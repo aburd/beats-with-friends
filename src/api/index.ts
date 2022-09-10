@@ -2,15 +2,16 @@ import auth, { AuthErrorCode } from './auth';
 import group, { GroupApiErrorCode } from './group';
 import song, { SongApiErrorCode } from './song';
 import user, { UserApiErrorCode } from './user';
-import chat from './chat';
+import chat, { ChatApiError } from './chat';
 
 export type BaseApiErrorCode = "unknown";
-export type ErrorCode = 
-  BaseApiErrorCode | 
-  AuthErrorCode | 
-  GroupApiErrorCode | 
-  SongApiErrorCode | 
-  UserApiErrorCode;
+export type ErrorCode =
+  BaseApiErrorCode |
+  AuthErrorCode |
+  GroupApiErrorCode |
+  SongApiErrorCode |
+  UserApiErrorCode |
+  ChatApiError;
 
 export type ApiError = {
   description: string;

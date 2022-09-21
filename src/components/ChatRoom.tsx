@@ -6,7 +6,6 @@ import * as api from '../api'
 import "./ChatRoom.css"
 
 type ChatRoomProps = {
-  chatId?: string
   chat?: Chat
 };
 
@@ -19,18 +18,14 @@ export default function ChatRoom(props: ChatRoomProps) {
   const [openChatRoom, setOpenChatRoom] = createSignal(true);
 
   createEffect(async() => { 
-    await api.chat.get(props.chatId || '')
+    divRef?.scrollIntoView({ behavior: 'smooth', block: "end" });
   })
-
-  onMount(() => { 
-    divRef?.scrollIntoView();
-  })
-
+  
   async function handleSendMessage() { 
     try {
-      if (formValue())  {
+      if (formValue()) {
         const message = {
-          chatId: props.chatId,
+          chatId: props.chat?.chatId,
           id: appState?.user?.id,
           name: appState?.user?.name,
           email: appState?.fbUser?.email,
@@ -42,8 +37,6 @@ export default function ChatRoom(props: ChatRoomProps) {
       }
     } catch (e) {
       log.error(e);
-    } finally { 
-      divRef?.scrollIntoView({ behavior: 'smooth', block: "end"});
     }
   }
 
@@ -64,7 +57,7 @@ export default function ChatRoom(props: ChatRoomProps) {
   return (
     <div class="ChatRoom">
       <button class='toggle-button'onClick={() => setOpenChatRoom(!openChatRoom())}>{ openChatRoom() ? '▼' : '▲'}</button>
-      <Show when={props.chatId &&  openChatRoom()}>
+      <Show when={props.chat?.chatId &&  openChatRoom()}>
         <div class="main">
           <For each={props.chat?.messages}>
             {ChatMessage}

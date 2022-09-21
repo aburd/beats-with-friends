@@ -26,6 +26,7 @@ export default function TurnModePage() {
     api.group.get(params.groupId)
   );
   const [song, setSong] = createSignal<Song | null>(null);
+  const [chat, setChat] = createSignal<Chat | null>(null)
   const [subscribedToSong, setSubscribedToSong] = createSignal<boolean>(false);
   const [initErr, setInitErr] = createSignal<string | null>(null);
   const [appState] = useContext(AppContextContext);
@@ -66,14 +67,24 @@ export default function TurnModePage() {
     setSong(song);
   });
 
+  createEffect(async() => { 
+    const chat = await api.chat.get(group()?.id|| '')
+    setChat(chat)
+  })
+
   createEffect(() => {
     if (!song()) return;
     if (!group()) return;
+    if (!chat()) return;
     if (!subscribedToSong()) {
       api.song.subscribeToSongUpdate((song() as Song).id, (song) => {
         log.debug("The song has been updated!");
         setSong(song);
       });
+      api.chat.subscribe((chat() as Chat)?.chatId, (chat) => {
+        log.debug("The chat has been updated!");
+        setChat(chat)
+      })
       api.group.subscribe((group() as Group).id, (group) => {
         log.debug("The group has been updated!");
         groupActions.mutate(group);
@@ -94,7 +105,9 @@ export default function TurnModePage() {
       (group() as Group).id
     );
   }
+  createEffect(() => { 
 
+  })
   return (
     <>
       <MenuButton />
@@ -117,7 +130,7 @@ export default function TurnModePage() {
               onPassTurn={handlePassTurn}
             />
           </div>
-          <ChatRoom chatId={group()?.id}/>
+          <ChatRoom chat={chat() as Chat} />
         </Show>
       </div>
     </>

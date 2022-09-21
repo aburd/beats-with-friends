@@ -105,9 +105,7 @@ export default function TurnModePage() {
       (group() as Group).id
     );
   }
-  createEffect(() => { 
 
-  })
   return (
     <>
       <MenuButton />

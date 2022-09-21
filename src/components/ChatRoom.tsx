@@ -9,16 +9,16 @@ type ChatRoomProps = {
   chat?: Chat
 };
 
-
-
 export default function ChatRoom(props: ChatRoomProps) {
   let divRef: HTMLDivElement | undefined
   const [formValue, setFormValue] = createSignal('')
   const [appState] = useContext(AppContextContext);
-  const [openChatRoom, setOpenChatRoom] = createSignal(true);
+  const [open, setOpen] = createSignal(false);
 
-  createEffect(async() => { 
-    divRef?.scrollIntoView({ behavior: 'smooth', block: "end" });
+  createEffect(() => { 
+    if (props.chat && open()) {
+      divRef?.scrollIntoView({ behavior: 'smooth', block: "end" });
+    }
   })
   
   async function handleSendMessage() { 
@@ -56,8 +56,8 @@ export default function ChatRoom(props: ChatRoomProps) {
 
   return (
     <div class="ChatRoom">
-      <button class='toggle-button'onClick={() => setOpenChatRoom(!openChatRoom())}>{ openChatRoom() ? '▼' : '▲'}</button>
-      <Show when={props.chat?.chatId &&  openChatRoom()}>
+      <button class='toggle-button'onClick={() => setOpen(!open())}>{ open() ? '▼' : '▲'}</button>
+      <Show when={props.chat?.chatId &&  open()}>
         <div class="main">
           <For each={props.chat?.messages}>
             {ChatMessage}

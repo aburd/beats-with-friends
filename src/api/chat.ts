@@ -1,4 +1,4 @@
-import { getDatabase, ref, update, push, child, get, serverTimestamp } from "firebase/database";
+import { onValue, getDatabase, ref, update, push, child, get, serverTimestamp } from "firebase/database";
 import log from "loglevel";
 import * as util from './util'
 import { Message, Chat, MessageParams } from '../types';
@@ -10,23 +10,39 @@ export interface DbChat {
   messages?: Record<string, Message>
 }
 
+function dbChatToChat(dbChat: DbChat, chatId: string): Chat { 
+  return {
+    chatId: chatId,
+    messages: dbChat.messages? util.fbMapToIdArr(dbChat.messages) :[]
+  }
+
+}
+
 export default {
   async get(chatId: string): Promise<Chat | null> {
     const db = getDatabase()
     const chatRef = ref(db, `chats/${chatId}`);
     const snapshot = await get(chatRef);
     const val = snapshot.val() as DbChat;
-    console.log(val);
-    
-    if (!val) return null
-    // if(!val.id) return null
-    // const chat: Chat = { chatId: val.id }
+
+    if (!val) this.create(chatId)
     // WHEN THERE IS NO MESSAGE, RETURN CHATID ONLY
-    const chat: Chat = { chatId: ''}
+    const chat: Chat = { chatId }
     if (!val.messages) return chat
     chat.messages = util.fbMapToIdArr(val.messages)
 
     return chat
+  },
+
+
+  async subscribe(chatId: string, callback: (chat: Chat) => void): Promise<void> { 
+    const db = getDatabase();
+    const chatRef = ref(db, `chats/${chatId}`);
+    onValue(chatRef, async (snapshot) => {
+      const dbChat = snapshot.val() as DbChat;
+      callback(dbChatToChat(dbChat, chatId))
+    })
+    
   },
 
   async create(chatId: string): Promise<Chat> {

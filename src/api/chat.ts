@@ -24,10 +24,12 @@ export default {
     const chatRef = ref(db, `chats/${chatId}`);
     const snapshot = await get(chatRef);
     const val = snapshot.val() as DbChat;
-
-    if (!val) this.create(chatId)
-    // WHEN THERE IS NO MESSAGE, RETURN CHATID ONLY
     const chat: Chat = { chatId }
+    if (!val) {
+      this.create(chatId);
+      return chat
+    }
+    // WHEN THERE IS NO MESSAGE, RETURN CHATID ONLY
     if (!val.messages) return chat
     chat.messages = util.fbMapToIdArr(val.messages)
 

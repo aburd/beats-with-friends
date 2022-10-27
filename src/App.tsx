@@ -1,8 +1,9 @@
 import { Show, onMount, useContext, lazy, createSignal } from "solid-js";
 import { Routes, Route, NavLink, useNavigate, useLocation, Navigate } from "@solidjs/router";
 import log from "loglevel";
-import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {getStorage, ref, listAll} from "firebase/storage";
+import { onAuthStateChanged } from "firebase/auth";
+import fb from "./firebase";
 import Loader from "@/components/Loader";
 import { AppContextContext } from "@/AppContextProvider"
 import { AppRoutes } from "@/routes";
@@ -28,7 +29,6 @@ export default function App() {
   const location = useLocation();
   log.debug({ location: location.pathname });
 
-
   onMount(async () => {
     setLoaded(true);
   });
@@ -38,24 +38,8 @@ export default function App() {
       log.warn("No firebase app context detected");
       return;
     }
-    // See: https://firebase.google.com/docs/web/learn-more#config-object
-    //import.meta.env.VITE_SOME_KEY
-    const firebaseConfig = {
-      apiKey: import.meta.env.VITE_FB_API_KEY,
-      authDomain: import.meta.env.VITE_FB_AUTH_DOMAIN,
-      // The value of `databaseURL` depends on the location of the database
-      databaseURL: import.meta.env.VITE_FB_DB_URL,
-      projectId: import.meta.env.VITE_FB_PROJECT_ID,
-      // storageBucket: "PROJECT_ID.appspot.com",
-      // messagingSenderId: "SENDER_ID",
-      // appId: "APP_ID",
-      // For Firebase JavaScript SDK v7.20.0 and later, `measurementId` is an optional field
-      // measurementId: "G-MEASUREMENT_ID",
-    };
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth();
+    const {app,auth} = fb.init();
     setAppContext({
       fbApp: app,
       fbAuth: auth,
@@ -71,6 +55,7 @@ export default function App() {
       }
 
       log.info("User is signed in");
+
       // User is signed in, see docs for a list of available properties
       // https://firebase.google.com/docs/reference/js/firebase.User
       setAppContext({ fbUser });

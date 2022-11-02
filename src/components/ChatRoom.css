@@ -1,0 +1,84 @@
+.ChatRoom {
+  width: 20vw;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  background-color: var(--secondary-bg-color);
+  padding: 1rem;
+  border-radius: 6px 6px 0 0;
+}
+
+.ChatRoom .toggle-button {
+  background: none;
+  font-weight: bold;
+  font-size: 1.5rem;
+  padding: 0;
+  border-bottom-style: none;
+  outline: inherit;
+  cursor: pointer;
+}
+
+.ChatRoom .main {
+  height: 43vh;
+  overflow-y: auto;
+}
+
+.ChatRoom .main .main-bottom {
+  height: 5vh;
+}
+
+.ChatRoom .footer {
+  width: 100%;
+  display: flex;
+}
+
+.ChatRoom .footer input {
+  width: 100%;
+  padding: 1rem;
+}
+
+.ChatRoom button {
+  margin-left: 1rem;
+}
+.ChatMessage .message {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.ChatMessage p {
+  max-width: 500px;
+  line-height: 24px;
+  padding: 10px 20px;
+  border-radius: 25px;
+  position: relative;
+  color: white;
+  text-align: center;
+}
+
+.ChatMessage .message .date {
+  font-size: 0.6rem;
+  padding: 0.5rem;
+}
+
+.ChatMessage .sent {
+  flex-direction: row-reverse;
+}
+
+.ChatMessage .sent p {
+  color: #ffff;
+  background: var(--808-orange);
+  align-self: flex-end;
+}
+
+.ChatMessage .received p {
+  background:  var(--main-bg-color);
+  color: #ffff;
+}
+
+.ChatMessage img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin: 2px 5px;
+}

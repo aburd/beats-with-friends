@@ -8,6 +8,7 @@ import {
 import log from "loglevel";
 import { useParams } from "@solidjs/router";
 import { AppContextContext } from "../AppContextProvider";
+import ChatRoom from '@/components/ChatRoom'
 import Sequencer from "@/components/Sequencer";
 import Loader from "@/components/Loader";
 import MenuButton from "@/components/MenuButton";
@@ -16,7 +17,7 @@ import GroupMenu from "@/components/GroupMenu";
 import * as api from "@/api";
 import { ApiSong } from "@/api/types";
 import audio from "@/audio";
-import { User, Group } from "@/types";
+import { User, Group, Chat } from "@/types";
 import "./TurnModePage.css";
 
 export default function TurnModePage() {
@@ -26,6 +27,7 @@ export default function TurnModePage() {
   const [group, groupActions] = createResource<Group | null>(() =>
     api.group.get(params.groupId)
   );
+  const [chat, setChat] = createSignal<Chat | null>(null)
   const [appState] = useContext(AppContextContext);
 
   log.debug(appState);
@@ -46,6 +48,11 @@ export default function TurnModePage() {
     }
   }
 
+  createEffect(async() => { 
+    const chat = await api.chat.get(group()?.id|| '')
+    setChat(chat)
+  })
+
   createEffect(async () => {
     const song = await fetchSong(group() as Group);
     if (!song) {
@@ -60,6 +67,10 @@ export default function TurnModePage() {
         log.debug("The song has been updated!");
         audio.loadSong(song);
       });
+      api.chat.subscribe((chat() as Chat)?.chatId, (chat) => {
+        log.debug("The chat has been updated!");
+        setChat(chat)
+      })
       api.group.subscribe((group() as Group).id, (group) => {
         log.debug("The group has been updated!");
         groupActions.mutate(group);
@@ -103,6 +114,7 @@ export default function TurnModePage() {
               onPassTurn={handlePassTurn}
             />
           </div>
+          <ChatRoom chat={chat() as Chat} />
         </Show>
       </div>
     </>

@@ -21,3 +21,21 @@ export type User = {
   email: string;
   groupIds: string[],
 }
+
+export type Message = { 
+  createdAt: any
+  photoURL: string | null
+  text: string
+  id: string
+  name: string
+  email: string
+}
+
+export interface MessageParams extends Omit<Message, 'createdAt'> {
+  chatId: string
+}
+
+export type Chat = { 
+  chatId: string
+  messages?: Message[]
+}
